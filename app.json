@@ -21,10 +21,19 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.aguspignal.repp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d1371617-0f5e-4e32-a94e-4f03f7e3ee7c"
+      }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
