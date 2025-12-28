@@ -1,3 +1,4 @@
+import './src/lib/i18n'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 import { NavigationContainer } from '@react-navigation/native'

@@ -5,6 +5,9 @@ import { theme } from '../resources/theme';
 import Home from '../screens/Home';
 import HomeHeader from '../components/header/HomeHeader';
 import Settings from '../screens/Settings';
+import ExerciseRepository from '../screens/ExerciseRepository';
+import i18next from 'i18next';
+import CreateExercise from '../screens/CreateExercise';
 
 type Props = {
     uuid: string
@@ -35,6 +38,20 @@ function RootNavigator() {
             <RootStack.Screen
                 name='Settings'
                 component={Settings}
+            />
+            <RootStack.Screen 
+                name='ExerciseRepository'
+                component={ExerciseRepository}
+                options={{
+                    headerTitle: i18next.t('titles.exercise-repository')
+                }}
+            />
+            <RootStack.Screen 
+                name='CreateExercise'
+                component={CreateExercise}
+                options={{
+                    headerTitle: i18next.t('actions.create-exercise')
+                }}
             />
         </RootStack.Navigator>
     );

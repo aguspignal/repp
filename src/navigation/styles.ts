@@ -14,6 +14,10 @@ export const navigationStyles = StyleSheet.create({
         color: theme.colors.textLight,
         marginLeft: theme.spacing.m,
     },
+	headerImage: {
+		width: theme.fontSize.h1,
+		height: theme.fontSize.h1,
+	},
     headerRightContainer: {
         flexDirection: "row",
         alignItems: "center",

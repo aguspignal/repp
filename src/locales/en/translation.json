@@ -1,0 +1,70 @@
+{
+    "actions": {
+        "add": "Add",
+        "confirm-password": "Confirm password",
+		"create-account": "Create account",
+        "create-exercise": "Create exercise",
+        "create-an-account": "Create an account",
+        "login": "Login",
+		"go-signin": "Sign in!",
+		"go-signup": "Create one now!",
+        "signin": "Sign in",
+        "recover-password": "Recover password",
+        "update-password": "Update password",
+        "update-your-password": "Update your password",
+        "verify": "Verify"
+    },
+    "attributes": {
+        "email": "Email",
+        "description": "Description",
+        "name": "Name",
+        "password": "Password",
+        "bodyweight": "Bodyweight",
+        "freeweight": "Freeweight",
+        "isometric": "Isometric",
+        "weighted": "Weighted",
+        "progression-name": "Progression name",
+        "properties": "Properties",
+        "type": "Type"
+    },
+    "error-messages": {
+        "an-error-ocurred-try-again": "It looks like an error occurred, please try again",
+        "ups-error-ocurred": "Oops! It looks like an error occurred",
+        "required": "Required",
+        "invalid-email": "Invalid email"
+    },
+    "messages": {
+        "accepting-terms-policies": "By registering with any of these options, you certify that you have read, understood and accepted our",
+		"terms-and-policies": "Terms of Service and Privacy Policy",
+        "you-dont-have-routines-yet": "You don't have any routine yet",
+        "create-routine-to-start-workingout": "Create a routine to start working out",
+        "notes-for-this-exercise": "Notes for this exercise"
+    },
+    "questions": {
+        "already-have-one": "Already have one?",
+		"dont-have-account": "Don't have an account?",
+		"forgot-password": "Forgot your password?"
+    },
+    "supabase-error-codes": {
+        "email_address_invalid": "The entered email is invalid, please try again",
+		"email_exists": "This email is already in use",
+		"email_not_confirmed": "This email is not verified, please verify it to continue",
+		"invalid_credentials": "Incorrect email or password, please try again",
+		"otp-expired": "The code has expired, request a new one",
+		"over_email_send_rate_limit": "Wait a few moments and try again",
+		"over_request_rate_limit": "Wait a few minutes and try again",
+		"reauthentication_not_valid": "The entered code is incorrect, please try again",
+		"request_timeout": "Processing the request took too long, please try again",
+		"session_expired": "The session has expired, please sign in again",
+		"session_not_found": "Could not get session, please try again",
+		"unexpected_failure": "Oops! It looks like an error occurred, please try again",
+		"user_already_exists": "This email is already in use",
+		"user_not_found": "Could not get user information",
+		"validation_failed": "Validation error, check the entered data",
+		"weak_password": "Password too weak, try a stronger one"
+	},
+    "titles": {
+        "exercise-repository": "Exercise repository",
+        "progressions": "Progressions"
+    }
+}

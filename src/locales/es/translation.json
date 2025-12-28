@@ -1,0 +1,38 @@
+{
+    "actions": {
+
+    },
+    "attributes": {
+
+    },
+    "error-messages": {
+
+    },
+    "messages": {
+
+    },
+    "questions": {
+        
+    },
+    "supabase-error-codes": {
+        "email_address_invalid": "The entered email is invalid, please try again",
+		"email_exists": "This email is already in use",
+		"email_not_confirmed": "This email is not verified, please verify it to continue",
+		"invalid_credentials": "Incorrect email or password, please try again",
+		"otp-expired": "The code has expired, request a new one",
+		"over_email_send_rate_limit": "Wait a few moments and try again",
+		"over_request_rate_limit": "Wait a few minutes and try again",
+		"reauthentication_not_valid": "The entered code is incorrect, please try again",
+		"request_timeout": "Processing the request took too long, please try again",
+		"session_expired": "The session has expired, please sign in again",
+		"session_not_found": "Could not get session, please try again",
+		"unexpected_failure": "Oops! It looks like an error occurred, please try again",
+		"user_already_exists": "This email is already in use",
+		"user_not_found": "Could not get user information",
+		"validation_failed": "Validation error, check the entered data",
+		"weak_password": "Password too weak, try a stronger one"
+	},
+    "titles": {
+
+    }
+}
