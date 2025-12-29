@@ -15,7 +15,9 @@
 		"recover-password": "Recover password",
 		"update-password": "Update password",
 		"update-your-password": "Update your password",
-		"verify": "Verify"
+		"verify": "Verify",
+		"sort": "Sort",
+		"filter": "Filter"
 	},
 	"attributes": {
 		"email": "Email",
@@ -28,7 +30,8 @@
 		"weighted": "Weighted",
 		"progression-name": "Progression name",
 		"properties": "Properties",
-		"type": "Type"
+		"type": "Type",
+		"all": "All"
 	},
 	"error-messages": {
 		"ups": "Oops!",
@@ -39,6 +42,7 @@
 		"invalid-email": "Invalid email",
 		"user-not-found": "User not found",
 		"couldnt-fetch-exercises": "We couldn't fetch exercises",
+		"trouble-deleting-exercise": "We had trouble deleting the exercise",
 		"trouble-getting-exercise": "We had trouble retrieving the exercise",
 		"trouble-getting-progressions": "We had trouble retrieving progressions",
 		"please-select-type-for-exercise": "Please select a type for this exercise"

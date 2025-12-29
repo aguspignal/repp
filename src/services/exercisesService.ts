@@ -99,6 +99,26 @@ const exercisesService = {
 		return data[0]
 	},
 
+	async deleteExerciseAndProgressions(
+		exerciseId: number
+	): Promise<number | PostgrestError> {
+		console.log("E-SERVICE: deleteExerciseAndProgressions")
+		const { error: progressionsError } = await supabase
+			.from("Progressions")
+			.delete({ count: "exact" })
+			.eq("exercise_id", exerciseId)
+
+		if (progressionsError) return progressionsError
+
+		const { error, count } = await supabase
+			.from("Exercises")
+			.delete({ count: "exact" })
+			.eq("id", exerciseId)
+
+		if (error) return error
+		return count ?? 0
+	},
+
 	async deleteAndInsertProgressionsBulk({
 		exerciseId,
 		progressions

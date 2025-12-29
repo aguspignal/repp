@@ -95,10 +95,18 @@ export default function useExercisesMutation() {
 		onError: handleOnError
 	})
 
+	const deleteExerciseMutation = useMutation({
+		mutationFn: async (id: number) => {
+			return await exercisesService.deleteExerciseAndProgressions(id)
+		},
+		onError: handleOnError
+	})
+
 	return {
 		createExerciseAndProgressionsMutation,
 		updateExerciseAndProgressionsMutation,
-		updateProgressionsMutation
+		updateProgressionsMutation,
+		deleteExerciseMutation
 	}
 }
 

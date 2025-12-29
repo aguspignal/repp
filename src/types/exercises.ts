@@ -24,3 +24,6 @@ export type ExerciseAndProgressions = {
 	exercise: DatabaseExercise
 	progressions: DatabaseProgression[]
 }
+
+export type ExerciseSortBy = "ascending" | "descending" | "type"
+export type ExerciseFilterBy = "all" | "bodyweight" | "freeweight" | "isometric"

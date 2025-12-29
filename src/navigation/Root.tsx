@@ -4,7 +4,7 @@ import useUserQuery, {
 } from "../hooks/useUserQuery"
 import { invalidateQueries } from "../utils/queriesHelpers"
 import { navigationStyles } from "./styles"
-import { RootStackParams } from "./params"
+import { RootStackParams, RootStackScreenProps } from "./params"
 import { theme } from "../resources/theme"
 import { useEffect } from "react"
 import ExerciseRepository from "../screens/Exercises/ExerciseRepository"
@@ -14,6 +14,7 @@ import i18next from "i18next"
 import Settings from "../screens/Settings"
 import Loading from "../screens/Loading"
 import { CreateExercise, EditExercise } from "../screens/Exercises/Exercise"
+import EditExerciseHeader from "../components/header/EditExerciseHeader"
 
 type Props = {
 	uuid: string
@@ -75,7 +76,15 @@ function RootNavigator() {
 				name="EditExercise"
 				component={EditExercise}
 				options={{
-					headerTitle: i18next.t("actions.edit-exercise")
+					header: ({ navigation, route, back }) => (
+						<EditExerciseHeader
+							navigation={navigation}
+							route={
+								route as RootStackScreenProps<"EditExercise">["route"]
+							}
+							back={back}
+						/>
+					)
 				}}
 			/>
 		</RootStack.Navigator>

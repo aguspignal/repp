@@ -10,8 +10,10 @@ interface UserState {
 
 	loadUser: (u: DatabaseUser | null) => void
 	loadExercises: (exs: DatabaseExercise[]) => void
+
 	addExercise: (ex: DatabaseExercise) => void
 
+	removeExercise: (eId: number) => void
 	clearUserStore: () => void
 }
 
@@ -31,6 +33,8 @@ export const useUserStore = create<UserState>()(
 						.concat(ex)
 				}),
 
+			removeExercise: (eId) =>
+				set({ exercises: get().exercises.filter((e) => e.id !== eId) }),
 			clearUserStore: () => set({ user: null, exercises: [] })
 		}),
 		{
