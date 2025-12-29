@@ -1,20 +1,21 @@
-import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import useUserQuery, {
 	GETANDUPDATEINITIALDATABYUUID_KEY
 } from "../hooks/useUserQuery"
+import { CreateExercise, EditExercise } from "../screens/Exercises/Exercise"
+import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { invalidateQueries } from "../utils/queriesHelpers"
 import { navigationStyles } from "./styles"
 import { RootStackParams, RootStackScreenProps } from "./params"
 import { theme } from "../resources/theme"
 import { useEffect } from "react"
+import EditExerciseHeader from "../components/header/EditExerciseHeader"
 import ExerciseRepository from "../screens/Exercises/ExerciseRepository"
 import Home from "../screens/Home"
 import HomeHeader from "../components/header/HomeHeader"
 import i18next from "i18next"
-import Settings from "../screens/Settings"
 import Loading from "../screens/Loading"
-import { CreateExercise, EditExercise } from "../screens/Exercises/Exercise"
-import EditExerciseHeader from "../components/header/EditExerciseHeader"
+import Routine from "../screens/Routines/Routine"
+import Settings from "../screens/Settings"
 
 type Props = {
 	uuid: string
@@ -86,6 +87,11 @@ function RootNavigator() {
 						/>
 					)
 				}}
+			/>
+			<RootStack.Screen
+				name="Routine"
+				component={Routine}
+				options={{ headerTitle: "" }}
 			/>
 		</RootStack.Navigator>
 	)

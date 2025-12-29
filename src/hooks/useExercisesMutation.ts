@@ -6,7 +6,10 @@ import {
 	DatabaseProgression,
 	DraftProgression
 } from "../types/exercises"
-import { isPostgrestError } from "../utils/queriesHelpers"
+import {
+	handleOnMutationError,
+	isPostgrestError
+} from "../utils/queriesHelpers"
 import { useMutation } from "@tanstack/react-query"
 import i18next from "i18next"
 import ToastNotification from "../components/notifications/ToastNotification"
@@ -40,7 +43,7 @@ export default function useExercisesMutation() {
 
 			return exercise
 		},
-		onError: handleOnError
+		onError: handleOnMutationError
 	})
 
 	const updateExerciseAndProgressionsMutation = useMutation({
@@ -74,7 +77,7 @@ export default function useExercisesMutation() {
 
 			return updatedExercise
 		},
-		onError: handleOnError
+		onError: handleOnMutationError
 	})
 
 	const updateProgressionsMutation = useMutation({
@@ -92,14 +95,14 @@ export default function useExercisesMutation() {
 				}))
 			})
 		},
-		onError: handleOnError
+		onError: handleOnMutationError
 	})
 
 	const deleteExerciseMutation = useMutation({
 		mutationFn: async (id: number) => {
 			return await exercisesService.deleteExerciseAndProgressions(id)
 		},
-		onError: handleOnError
+		onError: handleOnMutationError
 	})
 
 	return {
@@ -108,13 +111,6 @@ export default function useExercisesMutation() {
 		updateProgressionsMutation,
 		deleteExerciseMutation
 	}
-}
-
-function handleOnError(error: Error) {
-	console.log(error)
-	ToastNotification({
-		title: i18next.t("error-messages.an-error-ocurred-try-again")
-	})
 }
 
 type ExerciseDataAndProgressions = {

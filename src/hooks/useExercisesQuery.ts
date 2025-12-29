@@ -1,12 +1,8 @@
-import {
-	DatabaseExercise,
-	DatabaseProgression,
-	ExerciseAndProgressions
-} from "../types/exercises"
+import { DatabaseExercise, ExerciseAndProgressions } from "../types/exercises"
+import { isPostgrestError } from "../utils/queriesHelpers"
 import { PostgrestError } from "@supabase/supabase-js"
 import { useQuery } from "@tanstack/react-query"
 import exercisesService from "../services/exercisesService"
-import { isPostgrestError } from "../utils/queriesHelpers"
 
 const RQKEY_ROOT = "exercises"
 export const GETEXERCISEANDPROGRESSIONSBYID_KEY = (id: number) => [

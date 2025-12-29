@@ -118,62 +118,39 @@ export type Database = {
           },
         ]
       }
-      Routine: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: number
-          name: string
-          status: Database["public"]["Enums"]["RoutineStatus"]
-          user_id: number
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: number
-          name: string
-          status: Database["public"]["Enums"]["RoutineStatus"]
-          user_id: number
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: number
-          name?: string
-          status?: Database["public"]["Enums"]["RoutineStatus"]
-          user_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "Routine_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "Users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       RoutineDayExercises: {
         Row: {
           created_at: string
           exercise_id: number
           id: number
           order: number
+          rep_goal_high: number | null
+          rep_goal_low: number | null
           routineday_id: number
+          set_goal_high: number | null
+          set_goal_low: number | null
         }
         Insert: {
           created_at?: string
           exercise_id: number
           id?: number
           order: number
+          rep_goal_high?: number | null
+          rep_goal_low?: number | null
           routineday_id: number
+          set_goal_high?: number | null
+          set_goal_low?: number | null
         }
         Update: {
           created_at?: string
           exercise_id?: number
           id?: number
           order?: number
+          rep_goal_high?: number | null
+          rep_goal_low?: number | null
           routineday_id?: number
+          set_goal_high?: number | null
+          set_goal_low?: number | null
         }
         Relationships: [
           {
@@ -219,7 +196,42 @@ export type Database = {
             foreignKeyName: "RoutineDays_routine_id_fkey"
             columns: ["routine_id"]
             isOneToOne: false
-            referencedRelation: "Routine"
+            referencedRelation: "Routines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      Routines: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: number
+          name: string
+          status: Database["public"]["Enums"]["RoutineStatus"]
+          user_id: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          name: string
+          status: Database["public"]["Enums"]["RoutineStatus"]
+          user_id: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          name?: string
+          status?: Database["public"]["Enums"]["RoutineStatus"]
+          user_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "Routine_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "Users"
             referencedColumns: ["id"]
           },
         ]

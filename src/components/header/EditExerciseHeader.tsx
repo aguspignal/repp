@@ -5,12 +5,14 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { navigationStyles } from "../../navigation/styles"
 import { ParamListBase } from "@react-navigation/native"
 import { RootStackScreenProps } from "../../navigation/params"
-import { TouchableOpacity } from "react-native"
+import { TouchableOpacity, View } from "react-native"
 import { useUserStore } from "../../stores/useUserStore"
 import i18next from "i18next"
 import MCIcon from "../icons/MCIcon"
 import ToastNotification from "../notifications/ToastNotification"
 import useExercisesMutation from "../../hooks/useExercisesMutation"
+import { useState } from "react"
+import ConfirmationModal from "../modals/ConfirmationModal"
 
 type Props = {
 	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>
@@ -34,6 +36,7 @@ export default function EditExerciseHeader({ navigation, route, back }: Props) {
 			)}
 			headerStyle={navigationStyles.headerBackground}
 			headerShadowVisible={false}
+			headerTintColor={navigationStyles.headerTextColor.color}
 			back={back}
 		/>
 	)
@@ -48,6 +51,8 @@ function HeaderRight({ navigation, exerciseId }: HeaderRightProps) {
 	const { deleteExerciseMutation } = useExercisesMutation()
 
 	const { mutate: deleteExercise, isPending } = deleteExerciseMutation
+
+	const [modalVisible, setModalVisible] = useState(false)
 
 	function handleDeleteExercise() {
 		deleteExercise(exerciseId, {
@@ -72,12 +77,27 @@ function HeaderRight({ navigation, exerciseId }: HeaderRightProps) {
 	}
 
 	return (
-		<TouchableOpacity
-			onPress={handleDeleteExercise}
-			disabled={isPending}
-			style={navigationStyles.headerRightContainer}
-		>
-			<MCIcon name="trash-can" style={navigationStyles.headerIcon} />
-		</TouchableOpacity>
+		<View style={navigationStyles.headerRightContainer}>
+			<TouchableOpacity
+				onPress={() => setModalVisible(true)}
+				disabled={isPending}
+			>
+				<MCIcon name="trash-can" style={navigationStyles.headerIcon} />
+			</TouchableOpacity>
+
+			<ConfirmationModal
+				isVisible={modalVisible}
+				setIsVisible={setModalVisible}
+				title={i18next.t("questions.sure-want-to-delete-exercise")}
+				subtitle={i18next.t(
+					"messages.this-will-also-delete-progressions"
+				)}
+				confirmText={i18next.t("actions.delete")}
+				confirmColor="danger"
+				onConfirm={handleDeleteExercise}
+				onCancel={() => setModalVisible(false)}
+				isLoadingConfirm={isPending}
+			/>
+		</View>
 	)
 }

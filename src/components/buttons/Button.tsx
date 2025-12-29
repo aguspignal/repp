@@ -3,7 +3,7 @@ import {
 	StyleProp,
 	TextStyle,
 	TouchableOpacity,
-	ViewStyle,
+	ViewStyle
 } from "react-native"
 import { theme } from "../../resources/theme"
 import MCIcon from "../icons/MCIcon"
@@ -32,7 +32,7 @@ export default function Button({
 	isBordered = false,
 	isLoading = false,
 	alignSelf = false,
-	style,
+	style
 }: Props) {
 	const textColor: keyof typeof theme.colors = isDisabled
 		? "grayDark"
@@ -41,17 +41,25 @@ export default function Button({
 		: "textDark"
 
 	const iconSize =
-		size === "s" ? theme.fontSize.l : size === "m" ? theme.fontSize.xl : theme.fontSize.xxl
+		size === "s"
+			? theme.fontSize.l
+			: size === "m"
+			? theme.fontSize.xl
+			: theme.fontSize.xxl
 
 	const paddingVertical =
-		size === "xs" || size === "s" || size === "m" ? theme.spacing.xxs : theme.spacing.xs
+		size === "xs" || size === "s" || size === "m"
+			? theme.spacing.xxs
+			: theme.spacing.xs
 
 	const paddingHorizontal =
-		size === "xs" || size === "s" || size === "m" ? theme.spacing.s : theme.spacing.m
+		size === "xs" || size === "s" || size === "m"
+			? theme.spacing.s
+			: theme.spacing.m
 
 	const bgColor =
 		isDisabled || isLoading
-			? theme.colors.grayLight
+			? theme.colors.gray
 			: !isBordered
 			? theme.colors[color as keyof typeof theme.colors]
 			: undefined
@@ -70,18 +78,20 @@ export default function Button({
 		borderWidth: isDisabled ? 0 : isBordered ? 1 : 0,
 		borderColor: borderColor,
 		borderRadius: theme.spacing.xxs,
-		alignSelf: alignSelf ? "center" : "auto",
+		alignSelf: alignSelf ? "center" : "auto"
 	}
 
-	const textType = 
-		size === "xs" || size === "s" ? "boldNote"
-		: size === "m" ? "boldText"
-		: "boldText"
+	const textType =
+		size === "xs" || size === "s"
+			? "boldNote"
+			: size === "m"
+			? "boldText"
+			: "boldText"
 
 	const iconStyles: StyleProp<TextStyle> = {
 		color: textColor,
 		fontSize: iconSize,
-		marginRight: theme.spacing.xxs,
+		marginRight: theme.spacing.xxs
 	}
 
 	return isLoading ? (
@@ -91,8 +101,11 @@ export default function Button({
 				btnStyles,
 				style,
 				isLoading && size === "xs"
-					? { paddingHorizontal: theme.spacing.xxs, paddingVertical: theme.spacing.xxs }
-					: {},
+					? {
+							paddingHorizontal: theme.spacing.xxs,
+							paddingVertical: theme.spacing.xxs
+					  }
+					: {}
 			]}
 		>
 			<ActivityIndicator size="small" />
@@ -104,8 +117,12 @@ export default function Button({
 			onPress={onPress}
 			disabled={isDisabled}
 		>
-			{icon === undefined ? null : <MCIcon name={icon} style={iconStyles} />}
-			<StyledText type={textType} color={textColor}>{title}</StyledText>
+			{icon === undefined ? null : (
+				<MCIcon name={icon} style={iconStyles} />
+			)}
+			<StyledText type={textType} color={textColor}>
+				{title}
+			</StyledText>
 		</TouchableOpacity>
 	)
 }

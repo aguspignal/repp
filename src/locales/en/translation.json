@@ -1,63 +1,75 @@
 {
 	"actions": {
 		"add": "Add",
+		"add-day": "Add day",
+		"cancel": "Cancel",
 		"confirm-password": "Confirm password",
+		"confirm": "Confirm",
 		"create-account": "Create account",
-		"create-exercise": "Create exercise",
 		"create-an-account": "Create an account",
+		"create-exercise": "Create exercise",
+		"create-new-routine": "Create new routine",
+		"create-routine": "Create routine",
+		"delete": "Delete",
 		"edit-exercise": "Edit exercise",
-		"save-changes": "Save changes",
-		"login": "Login",
-		"logout": "Log out",
+		"filter": "Filter",
+		"give-your-routine-name": "Give your routine a name",
 		"go-signin": "Sign in!",
 		"go-signup": "Create one now!",
-		"signin": "Sign in",
+		"login": "Login",
+		"logout": "Log out",
 		"recover-password": "Recover password",
+		"save-changes": "Save changes",
+		"signin": "Sign in",
+		"sort": "Sort",
+		"start-workout": "Start workout",
 		"update-password": "Update password",
 		"update-your-password": "Update your password",
-		"verify": "Verify",
-		"sort": "Sort",
-		"filter": "Filter"
+		"verify": "Verify"
 	},
 	"attributes": {
-		"email": "Email",
-		"description": "Description",
-		"name": "Name",
-		"password": "Password",
+		"all": "All",
 		"bodyweight": "Bodyweight",
+		"description": "Description",
+		"email": "Email",
 		"freeweight": "Freeweight",
 		"isometric": "Isometric",
-		"weighted": "Weighted",
+		"name": "Name",
+		"password": "Password",
 		"progression-name": "Progression name",
 		"properties": "Properties",
 		"type": "Type",
-		"all": "All"
+		"weighted": "Weighted"
 	},
 	"error-messages": {
-		"ups": "Oops!",
-		"an-error-ocurred": "It looks like an error occurred",
 		"an-error-ocurred-try-again": "It looks like an error occurred, please try again",
-		"ups-error-ocurred": "Oops! It looks like an error occurred",
-		"required": "Required",
-		"invalid-email": "Invalid email",
-		"user-not-found": "User not found",
+		"an-error-ocurred": "It looks like an error occurred",
 		"couldnt-fetch-exercises": "We couldn't fetch exercises",
+		"couldnt-fetch-routines": "We couldn't fetch routines",
+		"invalid-email": "Invalid email",
+		"please-select-type-for-exercise": "Please select a type for this exercise",
+		"required": "Required",
 		"trouble-deleting-exercise": "We had trouble deleting the exercise",
 		"trouble-getting-exercise": "We had trouble retrieving the exercise",
 		"trouble-getting-progressions": "We had trouble retrieving progressions",
-		"please-select-type-for-exercise": "Please select a type for this exercise"
+		"trouble-getting-routine": "We had trouble retrieving the routine",
+		"ups-error-ocurred": "Oops! It looks like an error occurred",
+		"ups": "Oops!",
+		"user-not-found": "User not found"
 	},
 	"messages": {
 		"accepting-terms-policies": "By registering with any of these options, you certify that you have read, understood and accepted our",
-		"terms-and-policies": "Terms of Service and Privacy Policy",
-		"you-dont-have-routines-yet": "You don't have any routine yet",
 		"create-routine-to-start-workingout": "Create a routine to start working out",
-		"notes-for-this-exercise": "Notes for this exercise"
+		"notes-for-this-exercise": "Notes for this exercise",
+		"terms-and-policies": "Terms of Service and Privacy Policy",
+		"this-will-also-delete-progressions": "This action will delete all data and progressions and cannot be undone",
+		"you-dont-have-routines-yet": "You don't have any routine yet"
 	},
 	"questions": {
 		"already-have-one": "Already have one?",
 		"dont-have-account": "Don't have an account?",
-		"forgot-password": "Forgot your password?"
+		"forgot-password": "Forgot your password?",
+		"sure-want-to-delete-exercise": "Are you sure you want to delete this exercise?"
 	},
 	"supabase-error-codes": {
 		"email_address_invalid": "The entered email is invalid, please try again",
@@ -79,6 +91,7 @@
 	},
 	"titles": {
 		"exercise-repository": "Exercise repository",
+		"my-routines": "My routines",
 		"progressions": "Progressions"
 	}
 }

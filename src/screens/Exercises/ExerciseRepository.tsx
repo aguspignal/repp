@@ -1,27 +1,27 @@
 import useExercisesQuery, {
 	GETUSEREXERCISESLAZY_KEY
 } from "../../hooks/useExercisesQuery"
-import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
-import { RefreshControl, ScrollView, StyleSheet, View } from "react-native"
-import { RootStackScreenProps } from "../../navigation/params"
-import { theme } from "../../resources/theme"
-import { useEffect, useState } from "react"
-import { useUserStore } from "../../stores/useUserStore"
-import IconButton from "../../components/buttons/IconButton"
-import ItemCard from "../../components/cards/ExerciseCard"
+import {
+	parseExerciseFilterByToText,
+	parseExerciseSortByToText
+} from "../../utils/parsing"
 import {
 	DatabaseExercise,
 	ExerciseFilterBy,
 	ExerciseSortBy
 } from "../../types/exercises"
-import StyledText from "../../components/texts/StyledText"
+import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native"
+import { RootStackScreenProps } from "../../navigation/params"
+import { theme } from "../../resources/theme"
+import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { useUserStore } from "../../stores/useUserStore"
 import DropdownMenu from "../../components/dropdowns/DropdownMenu"
+import IconButton from "../../components/buttons/IconButton"
+import ItemCard from "../../components/cards/ExerciseCard"
 import ListActionCard from "../../components/cards/ListActionCard"
-import {
-	parseExerciseFilterByToText,
-	parseExerciseSortByToText
-} from "../../utils/textParsing"
+import StyledText from "../../components/texts/StyledText"
 
 export default function ExerciseRepository({
 	navigation

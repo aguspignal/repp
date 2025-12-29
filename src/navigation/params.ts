@@ -18,6 +18,7 @@ export type RootStackParams = {
 	ExerciseRepository: undefined
 	CreateExercise: undefined
 	EditExercise: { id: number }
+	Routine: { id: number }
 }
 
 export type RootStackScreenProps<T extends keyof RootStackParams> =
