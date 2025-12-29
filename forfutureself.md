@@ -1,9 +1,9 @@
 # To fix
 
-
 # To implement
 
-    - Create exercise
-        - initialize with 1 empty prog
+    - improve update progressions queries efficiency
+    - delete exercise
+    - sort and filter exercises
 
 # To test

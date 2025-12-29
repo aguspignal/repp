@@ -1,52 +1,62 @@
 {
-    "actions": {
-        "add": "Add",
-        "confirm-password": "Confirm password",
+	"actions": {
+		"add": "Add",
+		"confirm-password": "Confirm password",
 		"create-account": "Create account",
-        "create-exercise": "Create exercise",
-        "create-an-account": "Create an account",
-        "login": "Login",
+		"create-exercise": "Create exercise",
+		"create-an-account": "Create an account",
+		"edit-exercise": "Edit exercise",
+		"save-changes": "Save changes",
+		"login": "Login",
+		"logout": "Log out",
 		"go-signin": "Sign in!",
 		"go-signup": "Create one now!",
-        "signin": "Sign in",
-        "recover-password": "Recover password",
-        "update-password": "Update password",
-        "update-your-password": "Update your password",
-        "verify": "Verify"
-    },
-    "attributes": {
-        "email": "Email",
-        "description": "Description",
-        "name": "Name",
-        "password": "Password",
-        "bodyweight": "Bodyweight",
-        "freeweight": "Freeweight",
-        "isometric": "Isometric",
-        "weighted": "Weighted",
-        "progression-name": "Progression name",
-        "properties": "Properties",
-        "type": "Type"
-    },
-    "error-messages": {
-        "an-error-ocurred-try-again": "It looks like an error occurred, please try again",
-        "ups-error-ocurred": "Oops! It looks like an error occurred",
-        "required": "Required",
-        "invalid-email": "Invalid email"
-    },
-    "messages": {
-        "accepting-terms-policies": "By registering with any of these options, you certify that you have read, understood and accepted our",
+		"signin": "Sign in",
+		"recover-password": "Recover password",
+		"update-password": "Update password",
+		"update-your-password": "Update your password",
+		"verify": "Verify"
+	},
+	"attributes": {
+		"email": "Email",
+		"description": "Description",
+		"name": "Name",
+		"password": "Password",
+		"bodyweight": "Bodyweight",
+		"freeweight": "Freeweight",
+		"isometric": "Isometric",
+		"weighted": "Weighted",
+		"progression-name": "Progression name",
+		"properties": "Properties",
+		"type": "Type"
+	},
+	"error-messages": {
+		"ups": "Oops!",
+		"an-error-ocurred": "It looks like an error occurred",
+		"an-error-ocurred-try-again": "It looks like an error occurred, please try again",
+		"ups-error-ocurred": "Oops! It looks like an error occurred",
+		"required": "Required",
+		"invalid-email": "Invalid email",
+		"user-not-found": "User not found",
+		"couldnt-fetch-exercises": "We couldn't fetch exercises",
+		"trouble-getting-exercise": "We had trouble retrieving the exercise",
+		"trouble-getting-progressions": "We had trouble retrieving progressions",
+		"please-select-type-for-exercise": "Please select a type for this exercise"
+	},
+	"messages": {
+		"accepting-terms-policies": "By registering with any of these options, you certify that you have read, understood and accepted our",
 		"terms-and-policies": "Terms of Service and Privacy Policy",
-        "you-dont-have-routines-yet": "You don't have any routine yet",
-        "create-routine-to-start-workingout": "Create a routine to start working out",
-        "notes-for-this-exercise": "Notes for this exercise"
-    },
-    "questions": {
-        "already-have-one": "Already have one?",
+		"you-dont-have-routines-yet": "You don't have any routine yet",
+		"create-routine-to-start-workingout": "Create a routine to start working out",
+		"notes-for-this-exercise": "Notes for this exercise"
+	},
+	"questions": {
+		"already-have-one": "Already have one?",
 		"dont-have-account": "Don't have an account?",
 		"forgot-password": "Forgot your password?"
-    },
-    "supabase-error-codes": {
-        "email_address_invalid": "The entered email is invalid, please try again",
+	},
+	"supabase-error-codes": {
+		"email_address_invalid": "The entered email is invalid, please try again",
 		"email_exists": "This email is already in use",
 		"email_not_confirmed": "This email is not verified, please verify it to continue",
 		"invalid_credentials": "Incorrect email or password, please try again",
@@ -63,8 +73,8 @@
 		"validation_failed": "Validation error, check the entered data",
 		"weak_password": "Password too weak, try a stronger one"
 	},
-    "titles": {
-        "exercise-repository": "Exercise repository",
-        "progressions": "Progressions"
-    }
+	"titles": {
+		"exercise-repository": "Exercise repository",
+		"progressions": "Progressions"
+	}
 }
