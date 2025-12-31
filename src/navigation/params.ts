@@ -19,6 +19,7 @@ export type RootStackParams = {
 	CreateExercise: undefined
 	EditExercise: { id: number }
 	Routine: { id: number }
+	EditRoutineDay: { id: number }
 }
 
 export type RootStackScreenProps<T extends keyof RootStackParams> =

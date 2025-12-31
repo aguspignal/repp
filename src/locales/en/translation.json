@@ -3,6 +3,7 @@
 		"add": "Add",
 		"add-day": "Add day",
 		"cancel": "Cancel",
+		"choose-name-code-for-this-day": "Choose a name and code for this day",
 		"confirm-password": "Confirm password",
 		"confirm": "Confirm",
 		"create-account": "Create account",
@@ -12,8 +13,9 @@
 		"create-routine": "Create routine",
 		"delete": "Delete",
 		"edit-exercise": "Edit exercise",
+		"edit-routine-day": "Edit routine day",
 		"filter": "Filter",
-		"give-your-routine-name": "Give your routine a name",
+		"give-your-routineday-name-code": "Give your routine a name",
 		"go-signin": "Sign in!",
 		"go-signup": "Create one now!",
 		"login": "Login",
@@ -30,6 +32,7 @@
 	"attributes": {
 		"all": "All",
 		"bodyweight": "Bodyweight",
+		"code": "Code",
 		"description": "Description",
 		"email": "Email",
 		"freeweight": "Freeweight",
@@ -44,6 +47,7 @@
 	"error-messages": {
 		"an-error-ocurred-try-again": "It looks like an error occurred, please try again",
 		"an-error-ocurred": "It looks like an error occurred",
+		"cant-be-more-than-3-digits": "Can't be more than 3 digits",
 		"couldnt-fetch-exercises": "We couldn't fetch exercises",
 		"couldnt-fetch-routines": "We couldn't fetch routines",
 		"invalid-email": "Invalid email",
@@ -53,6 +57,8 @@
 		"trouble-getting-exercise": "We had trouble retrieving the exercise",
 		"trouble-getting-progressions": "We had trouble retrieving progressions",
 		"trouble-getting-routine": "We had trouble retrieving the routine",
+		"trouble-getting-routine-day": "We had trouble retrieving the routine day",
+		"too-long": "Too long",
 		"ups-error-ocurred": "Oops! It looks like an error occurred",
 		"ups": "Oops!",
 		"user-not-found": "User not found"
@@ -90,6 +96,7 @@
 		"weak_password": "Password too weak, try a stronger one"
 	},
 	"titles": {
+		"exercises": "Exercises",
 		"exercise-repository": "Exercise repository",
 		"my-routines": "My routines",
 		"progressions": "Progressions"

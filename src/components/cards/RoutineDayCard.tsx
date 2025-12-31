@@ -41,7 +41,10 @@ export default function RoutineDayCard({
 	}
 
 	return (
-		<TouchableOpacity onPress={handlePressCard}>
+		<TouchableOpacity
+			onPress={handlePressCard}
+			activeOpacity={onPressCard ? 0.7 : 1}
+		>
 			<View style={styles.header}>
 				<View style={styles.codeAndTitle}>
 					<RoutineDayCodeBox

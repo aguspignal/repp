@@ -14,3 +14,8 @@ export type RoutineAndDays = {
 	routine: DatabaseRoutine
 	days: DatabaseRoutineDay[]
 }
+
+export type RoutineDayAndExercises = {
+	day: DatabaseRoutineDay
+	exercises: DatabaseRoutineDayExercise[]
+}

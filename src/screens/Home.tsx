@@ -115,7 +115,10 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 					<FlatList
 						data={routines}
 						renderItem={({ item: routine }) => (
-							<RoutineCard routine={routine} />
+							<RoutineCard
+								routine={routine}
+								key={routine.routine.id}
+							/>
 						)}
 						horizontal
 					/>

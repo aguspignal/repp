@@ -1,6 +1,10 @@
+import routinesService, {
+	PostRoutineDayParams,
+	PostRoutineExercisesParamas,
+	PostRoutineParams
+} from "../services/routinesService"
 import { useMutation } from "@tanstack/react-query"
 import { handleOnMutationError } from "../utils/queriesHelpers"
-import routinesService, { PostRoutineParams } from "../services/routinesService"
 
 export default function useRoutineMutation() {
 	const createRoutineMutation = useMutation({
@@ -10,7 +14,23 @@ export default function useRoutineMutation() {
 		onError: handleOnMutationError
 	})
 
+	const createRoutineDayMutation = useMutation({
+		mutationFn: async (params: PostRoutineDayParams) => {
+			return await routinesService.postRoutineDay(params)
+		},
+		onError: handleOnMutationError
+	})
+
+	const createRoutineDayExercisesMutation = useMutation({
+		mutationFn: async (params: PostRoutineExercisesParamas) => {
+			return await routinesService.postRoutineDayExercisesBulk(params)
+		},
+		onError: handleOnMutationError
+	})
+
 	return {
-		createRoutineMutation
+		createRoutineMutation,
+		createRoutineDayMutation,
+		createRoutineDayExercisesMutation
 	}
 }

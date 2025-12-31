@@ -16,6 +16,7 @@ import i18next from "i18next"
 import Loading from "../screens/Loading"
 import Routine from "../screens/Routines/Routine"
 import Settings from "../screens/Settings"
+import EditRoutineDay from "../screens/Routines/EditRoutineDay"
 
 type Props = {
 	uuid: string
@@ -92,6 +93,11 @@ function RootNavigator() {
 				name="Routine"
 				component={Routine}
 				options={{ headerTitle: "" }}
+			/>
+			<RootStack.Screen
+				name="EditRoutineDay"
+				component={EditRoutineDay}
+				options={{ headerTitle: i18next.t("actions.edit-routine-day") }}
 			/>
 		</RootStack.Navigator>
 	)

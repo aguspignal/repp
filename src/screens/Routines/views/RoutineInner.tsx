@@ -1,25 +1,78 @@
-import { RoutineAndDays } from "../../../types/routines"
+import {
+	invalidateQueries,
+	isPostgrestError
+} from "../../../utils/queriesHelpers"
+import { DatabaseRoutineDay, RoutineAndDays } from "../../../types/routines"
+import { GETROUTINEWITHDAYSBYID_KEY } from "../../../hooks/useRoutineQuery"
+import { RootStackNavigationProp } from "../../../navigation/params"
 import { ScrollView } from "react-native-gesture-handler"
 import { StyleSheet } from "react-native"
 import { theme } from "../../../resources/theme"
+import { useNavigation } from "@react-navigation/native"
+import { useState } from "react"
 import { useTranslation } from "react-i18next"
+import { useUserStore } from "../../../stores/useUserStore"
 import Button from "../../../components/buttons/Button"
+import CreateRoutineDayModal from "../../../components/modals/CreateRoutineDayModal"
 import RoutineDayCard from "../../../components/cards/RoutineDayCard"
 import StyledText from "../../../components/texts/StyledText"
+import ToastNotification from "../../../components/notifications/ToastNotification"
+import useRoutineMutation from "../../../hooks/useRoutineMutation"
 
 type Props = {
 	routine: RoutineAndDays
 }
 export default function RoutineInner({ routine: { routine, days } }: Props) {
 	const { t } = useTranslation()
+	const { addRoutineDay } = useUserStore()
+	const { createRoutineDayMutation } = useRoutineMutation()
+	const nav = useNavigation<RootStackNavigationProp>()
+
+	const { mutate: createRoutineDay } = createRoutineDayMutation
+
+	const [routineDayModalVisible, setRoutineDayModalVisible] = useState(false)
 
 	function handleStartWorkout() {}
 
-	function handleAddRoutineDay() {}
+	function handleAddRoutineDay({
+		code,
+		name
+	}: {
+		code: string
+		name: string
+	}) {
+		createRoutineDay(
+			{
+				routineId: routine.id,
+				code,
+				name
+			},
+			{
+				onSuccess: (newDay) => {
+					if (!newDay || isPostgrestError(newDay)) {
+						ToastNotification({
+							title: t(
+								"error-messages.trouble-getting-routine-day"
+							)
+						})
+						return
+					}
 
-	function handleEditDay() {}
+					addRoutineDay(newDay)
+					invalidateQueries(
+						GETROUTINEWITHDAYSBYID_KEY(newDay.routine_id)
+					)
+					nav.navigate("EditRoutineDay", { id: newDay.id })
+				}
+			}
+		)
+	}
 
-	function handleSeeDayHistory() {}
+	function handleEditDay(day: DatabaseRoutineDay) {
+		nav.navigate("EditRoutineDay", { id: day.id })
+	}
+
+	function handleSeeDayHistory(day: DatabaseRoutineDay) {}
 
 	return (
 		<ScrollView
@@ -35,13 +88,14 @@ export default function RoutineInner({ routine: { routine, days } }: Props) {
 					routineDay={day}
 					onPressEdit={handleEditDay}
 					onPressHistory={handleSeeDayHistory}
+					key={day.id}
 				/>
 			))}
 			<RoutineDayCard
 				routineDay={null}
 				title={t("actions.add-day")}
 				color="primary"
-				onPressCard={handleAddRoutineDay}
+				onPressCard={() => setRoutineDayModalVisible(true)}
 			/>
 
 			<Button
@@ -49,6 +103,14 @@ export default function RoutineInner({ routine: { routine, days } }: Props) {
 				onPress={handleStartWorkout}
 				size="l"
 				alignSelf
+			/>
+
+			<CreateRoutineDayModal
+				isVisible={routineDayModalVisible}
+				setIsVisible={setRoutineDayModalVisible}
+				onCreate={handleAddRoutineDay}
+				onCancel={() => setRoutineDayModalVisible(false)}
+				isLoadingCreate={false}
 			/>
 		</ScrollView>
 	)

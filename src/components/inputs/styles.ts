@@ -3,10 +3,10 @@ import { theme } from "../../resources/theme"
 
 export const inputStyles = StyleSheet.create({
 	inputContainer: {
-		marginVertical: theme.spacing.xxs,
+		marginVertical: theme.spacing.xxs
 	},
 	label: {
-		marginBottom: 4,
+		marginBottom: 4
 	},
 	input: {
 		color: theme.colors.textLight,
@@ -15,7 +15,7 @@ export const inputStyles = StyleSheet.create({
 		paddingVertical: theme.spacing.xs,
 		borderRadius: theme.spacing.xxs,
 		borderWidth: 1,
-		borderColor: theme.colors.grayLight,
+		borderColor: theme.colors.grayLight
 	},
 	filledInput: {
 		color: theme.colors.textLight,
@@ -23,44 +23,47 @@ export const inputStyles = StyleSheet.create({
 		paddingHorizontal: theme.spacing.s,
 		paddingVertical: theme.spacing.xs,
 		backgroundColor: theme.colors.backgroundGray,
-		borderRadius: theme.spacing.xxs,
+		borderRadius: theme.spacing.xxs
+	},
+	stretch: {
+		flex: 1
 	},
 	errorMessage: {
-		marginTop: theme.spacing.xxs,
+		marginTop: theme.spacing.xxs
 	},
 	forgotPswBtn: {
-		marginTop: theme.spacing.xxs,
+		marginTop: theme.spacing.xxs
 	},
 	containerWithIcon: {
-		position: "relative",
+		position: "relative"
 	},
 	leftIcon: {
 		position: "absolute",
 		left: theme.spacing.s,
-		top: theme.spacing.xs + 5,
+		top: theme.spacing.xs + 5
 	},
 	leftIconPadding: {
-		paddingLeft: theme.spacing.s + 1.2 * theme.fontSize.xs,
+		paddingLeft: theme.spacing.s + 1.2 * theme.fontSize.xs
 	},
 	rightIconContainer: {
 		position: "absolute",
 		right: theme.spacing.s,
 		top: theme.spacing.xs,
-		zIndex: 1000,
+		zIndex: 1000
 	},
 	rightIcon: {
 		fontSize: theme.fontSize.xl,
-		color: theme.colors.grayDark,
+		color: theme.colors.grayDark
 	},
 	inputAndBtnContainer: {
 		flexDirection: "row",
 		borderRadius: 80,
 		borderWidth: 1,
 		borderColor: theme.colors.grayLight,
-		padding: 4,
+		padding: 4
 	},
 	inputWithBtn: {
 		flex: 1,
-		borderWidth: 0,
-	},
+		borderWidth: 0
+	}
 })

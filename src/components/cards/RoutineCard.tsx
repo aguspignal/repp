@@ -24,12 +24,13 @@ export default function RoutineCard({ routine: { routine, days } }: Props) {
 
 			<View style={styles.daysContainer}>
 				{divideRoutineDayInGroups(days, 3).map((group) => (
-					<View style={styles.daysGroup}>
+					<View style={styles.daysGroup} key={group[0].id}>
 						{group.map((day) => (
 							<RoutineDayCodeBox
 								code={day.code}
 								color="textLight"
 								size="m"
+								key={day.id}
 							/>
 						))}
 					</View>

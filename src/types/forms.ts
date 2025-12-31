@@ -13,3 +13,8 @@ export type CreateExerciseValues = {
 	name: string
 	description: string
 }
+
+export type EditRoutineDayValues = {
+	code: string
+	name: string
+}

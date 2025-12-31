@@ -2,7 +2,10 @@ import useExercisesQuery, {
 	GETUSEREXERCISESLAZY_KEY,
 	GETEXERCISEANDPROGRESSIONSBYID_KEY
 } from "../../hooks/useExercisesQuery"
-import { DraftExerciseAndProgression } from "../../types/exercises"
+import {
+	DatabaseExercise,
+	DraftExerciseAndProgression
+} from "../../types/exercises"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { RootStackScreenProps } from "../../navigation/params"
 import { useTranslation } from "react-i18next"
@@ -144,17 +147,7 @@ export function EditExercise({
 							return
 						}
 
-						invalidateQueries(
-							GETEXERCISEANDPROGRESSIONSBYID_KEY(route.params.id)
-						)
-						invalidateQueries(GETUSEREXERCISESLAZY_KEY(user.id))
-						navigation.reset({
-							index: 0,
-							routes: [
-								{ name: "Home" },
-								{ name: "ExerciseRepository" }
-							]
-						})
+						onMutationSuccess()
 					}
 				}
 			)
@@ -185,21 +178,23 @@ export function EditExercise({
 						return
 					}
 
-					addExercise(newExercise)
-					invalidateQueries(
-						GETEXERCISEANDPROGRESSIONSBYID_KEY(route.params.id)
-					)
-					invalidateQueries(GETUSEREXERCISESLAZY_KEY(user.id))
-					navigation.reset({
-						index: 0,
-						routes: [
-							{ name: "Home" },
-							{ name: "ExerciseRepository" }
-						]
-					})
+					onMutationSuccess(newExercise)
 				}
 			}
 		)
+	}
+
+	function onMutationSuccess(newExercise?: DatabaseExercise) {
+		if (!user) return
+
+		if (newExercise) addExercise(newExercise)
+
+		invalidateQueries(GETEXERCISEANDPROGRESSIONSBYID_KEY(route.params.id))
+		invalidateQueries(GETUSEREXERCISESLAZY_KEY(user.id))
+		navigation.reset({
+			index: 0,
+			routes: [{ name: "Home" }, { name: "ExerciseRepository" }]
+		})
 	}
 
 	if (isPending) return <Loading />
