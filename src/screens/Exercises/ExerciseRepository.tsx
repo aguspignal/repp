@@ -19,7 +19,7 @@ import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
 import DropdownMenu from "../../components/dropdowns/DropdownMenu"
 import IconButton from "../../components/buttons/IconButton"
-import ItemCard from "../../components/cards/ExerciseCard"
+import ExerciseCard from "../../components/cards/ExerciseCard"
 import ListActionCard from "../../components/cards/ListActionCard"
 import StyledText from "../../components/texts/StyledText"
 
@@ -153,7 +153,7 @@ export default function ExerciseRepository({
 			</View>
 
 			{exercisesList.map((exerc) => (
-				<ItemCard
+				<ExerciseCard
 					exercise={exerc}
 					onPress={goToExercise}
 					key={exerc.id}

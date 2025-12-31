@@ -8,7 +8,7 @@ import StyledText from "../texts/StyledText"
 type Props = {
 	progression: DraftProgression
 	onUpdate: (txt: string, progOrder: number) => void
-	onDelete: (progOrder: number) => void
+	onDelete?: (progOrder: number) => void
 }
 export default function DraftProgressionCard({
 	progression,
@@ -32,9 +32,11 @@ export default function DraftProgressionCard({
 				style={styles.input}
 			/>
 
-			<TouchableOpacity onPress={() => onDelete(progression.order)}>
-				<MCIcon name="trash-can" size="xxl" />
-			</TouchableOpacity>
+			{onDelete ? (
+				<TouchableOpacity onPress={() => onDelete(progression.order)}>
+					<MCIcon name="trash-can" size="xxl" />
+				</TouchableOpacity>
+			) : null}
 		</View>
 	)
 }

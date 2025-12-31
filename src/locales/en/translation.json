@@ -2,6 +2,7 @@
 	"actions": {
 		"add": "Add",
 		"add-day": "Add day",
+		"add-exercise-from-repository": "Add exercise from repository",
 		"cancel": "Cancel",
 		"choose-name-code-for-this-day": "Choose a name and code for this day",
 		"confirm-password": "Confirm password",

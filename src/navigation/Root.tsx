@@ -1,14 +1,16 @@
 import useUserQuery, {
 	GETANDUPDATEINITIALDATABYUUID_KEY
 } from "../hooks/useUserQuery"
-import { CreateExercise, EditExercise } from "../screens/Exercises/Exercise"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { invalidateQueries } from "../utils/queriesHelpers"
 import { navigationStyles } from "./styles"
 import { RootStackParams, RootStackScreenProps } from "./params"
 import { theme } from "../resources/theme"
 import { useEffect } from "react"
+import CreateExercise from "../screens/Exercises/CreateExercise"
+import EditExercise from "../screens/Exercises/EditExercise"
 import EditExerciseHeader from "../components/header/EditExerciseHeader"
+import EditRoutineDay from "../screens/Routines/EditRoutineDay"
 import ExerciseRepository from "../screens/Exercises/ExerciseRepository"
 import Home from "../screens/Home"
 import HomeHeader from "../components/header/HomeHeader"
@@ -16,7 +18,6 @@ import i18next from "i18next"
 import Loading from "../screens/Loading"
 import Routine from "../screens/Routines/Routine"
 import Settings from "../screens/Settings"
-import EditRoutineDay from "../screens/Routines/EditRoutineDay"
 
 type Props = {
 	uuid: string

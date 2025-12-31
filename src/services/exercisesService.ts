@@ -77,7 +77,11 @@ const exercisesService = {
 	}: PostProgressionsBulkParams): Promise<number | PostgrestError> {
 		console.log("E-SERVICE: postProgressionsBulk")
 		const { error, count } = await supabase.from("Progressions").insert(
-			progressions.map((p) => ({ ...p, exercise_id: exerciseId })),
+			progressions.map((p) => ({
+				...p,
+				exercise_id: exerciseId,
+				created_at: new Date(Date.now()).toISOString()
+			})),
 			{ count: "exact" }
 		)
 
@@ -97,6 +101,16 @@ const exercisesService = {
 
 		if (error) return error
 		return data[0]
+	},
+
+	async upsertProgressions({ progressions }: UpsertProgressionsParams) {
+		console.log("E-SERVICE: upsertProgressions")
+		const { error, count } = await supabase
+			.from("Progressions")
+			.upsert(progressions, { count: "exact" })
+
+		if (error) return error
+		return count ?? 0
 	},
 
 	async deleteExerciseAndProgressions(
@@ -119,32 +133,18 @@ const exercisesService = {
 		return count ?? 0
 	},
 
-	async deleteAndInsertProgressionsBulk({
+	async deleteProgressionsFromOrder({
 		exerciseId,
-		progressions
-	}: PostProgressionsBulkParams) {
-		console.log("E-SERVICE: deleteAndInsertProgressionsBulk")
-		const { error: deleteError } = await supabase
+		order
+	}: deleteProgressionsFromOrderParams) {
+		console.log("E-SERVICE: deleteProgressionsFromOrder")
+		const { error, count } = await supabase
 			.from("Progressions")
 			.delete({ count: "exact" })
+			.gte('"order"', order)
 			.eq("exercise_id", exerciseId)
 
-		if (deleteError) return deleteError
-
-		const { error, count } = await supabase.from("Progressions").insert(
-			progressions.map((p) => ({
-				...p,
-				exercise_id: exerciseId,
-				created_at: new Date(Date.now()).toISOString()
-			})),
-			{ count: "exact" }
-		)
-
-		if (error) {
-			console.log("insert error")
-			console.log(error)
-			return error
-		}
+		if (error) return error
 		return count ?? 0
 	}
 }
@@ -172,4 +172,13 @@ export type UpdateExerciseParams = {
 type PostProgressionsBulkParams = {
 	exerciseId: number
 	progressions: DraftProgression[]
+}
+
+type deleteProgressionsFromOrderParams = {
+	exerciseId: number
+	order: number
+}
+
+type UpsertProgressionsParams = {
+	progressions: DatabaseProgression[]
 }

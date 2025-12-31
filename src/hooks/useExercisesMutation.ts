@@ -49,7 +49,9 @@ export default function useExercisesMutation() {
 	const updateExerciseAndProgressionsMutation = useMutation({
 		mutationFn: async ({
 			exercise,
-			progressions
+			deleteProgressionsFromOrder,
+			insertProgressions,
+			upsertProgressions
 		}: ExerciseAndProgressions) => {
 			const updatedExercise = await exercisesService.updateExercise(
 				exercise
@@ -58,42 +60,78 @@ export default function useExercisesMutation() {
 			if (!updatedExercise || isPostgrestError(updatedExercise))
 				return updatedExercise
 
-			const progressionsResult =
-				await exercisesService.deleteAndInsertProgressionsBulk({
-					exerciseId: updatedExercise.id,
-					progressions: progressions.map((p) => ({
-						name: p.name,
-						order: p.order,
-						is_weighted: p.is_weighted,
-						weight: p.weight
-					}))
+			if (deleteProgressionsFromOrder)
+				await exercisesService.deleteProgressionsFromOrder({
+					exerciseId: exercise.id,
+					order: deleteProgressionsFromOrder
 				})
 
-			if (isPostgrestError(progressionsResult)) {
-				console.log(progressionsResult.message)
-				ToastNotification({ title: progressionsResult.message })
-				return
-			}
+			if (upsertProgressions.length > 0)
+				await exercisesService.upsertProgressions({
+					progressions: upsertProgressions
+				})
+
+			if (insertProgressions.length > 0)
+				await exercisesService.postProgressionsBulk({
+					exerciseId: exercise.id,
+					progressions: insertProgressions
+				})
 
 			return updatedExercise
 		},
 		onError: handleOnMutationError
 	})
 
-	const updateProgressionsMutation = useMutation({
+	const deleteUpsertInsertProgressionsMutation = useMutation({
 		mutationFn: async ({
 			exerciseId,
-			progressions
-		}: UpdateProgressionsParams) => {
-			return await exercisesService.deleteAndInsertProgressionsBulk({
-				exerciseId: exerciseId,
-				progressions: progressions.map((p) => ({
-					name: p.name,
-					order: p.order,
-					is_weighted: p.is_weighted,
-					weight: p.weight
-				}))
-			})
+			deleteProgressionsFromOrder,
+			insertProgressions,
+			upsertProgressions
+		}: DeleteUpsertInsertProgressionsParams) => {
+			if (
+				!deleteProgressionsFromOrder &&
+				!upsertProgressions.length &&
+				!insertProgressions.length
+			)
+				return 0
+
+			let deleteResult = null
+			if (deleteProgressionsFromOrder)
+				deleteResult =
+					await exercisesService.deleteProgressionsFromOrder({
+						exerciseId,
+						order: deleteProgressionsFromOrder
+					})
+
+			let upsertResult = null
+			if (upsertProgressions.length > 0)
+				upsertResult = await exercisesService.upsertProgressions({
+					progressions: upsertProgressions
+				})
+
+			let insertResult = null
+			if (insertProgressions.length > 0)
+				insertResult = await exercisesService.postProgressionsBulk({
+					exerciseId,
+					progressions: insertProgressions
+				})
+
+			if (isPostgrestError(deleteResult)) {
+				console.log(deleteResult)
+				return deleteResult
+			}
+			if (isPostgrestError(upsertResult)) {
+				console.log(upsertResult)
+				return upsertResult
+			}
+			if (isPostgrestError(insertResult)) {
+				console.log(insertResult)
+				return insertResult
+			}
+			return (
+				(deleteResult ?? 0) + (upsertResult ?? 0) + (insertResult ?? 0)
+			)
 		},
 		onError: handleOnMutationError
 	})
@@ -108,7 +146,7 @@ export default function useExercisesMutation() {
 	return {
 		createExerciseAndProgressionsMutation,
 		updateExerciseAndProgressionsMutation,
-		updateProgressionsMutation,
+		deleteUpsertInsertProgressionsMutation,
 		deleteExerciseMutation
 	}
 }
@@ -120,10 +158,20 @@ type ExerciseDataAndProgressions = {
 
 type ExerciseAndProgressions = {
 	exercise: DatabaseExercise
-	progressions: DatabaseProgression[]
+	// progressions: DatabaseProgression[]
+	upsertProgressions: DatabaseProgression[]
+	insertProgressions: DraftProgression[]
+	deleteProgressionsFromOrder: number | null
 }
 
 type UpdateProgressionsParams = {
 	exerciseId: number
 	progressions: DatabaseProgression[]
+}
+
+type DeleteUpsertInsertProgressionsParams = {
+	exerciseId: number
+	upsertProgressions: DatabaseProgression[]
+	insertProgressions: DraftProgression[]
+	deleteProgressionsFromOrder: number | null
 }

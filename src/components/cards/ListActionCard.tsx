@@ -1,19 +1,21 @@
-import { StyleSheet, View } from "react-native"
-import StyledText from "../texts/StyledText"
-import MCIcon from "../icons/MCIcon"
+import { StyleSheet, TouchableOpacity } from "react-native"
 import { theme } from "../../resources/theme"
+import MCIcon from "../icons/MCIcon"
+import StyledText from "../texts/StyledText"
 
 type Props = {
 	title: string
 }
 
 export default function ListActionCard({ title }: Props) {
+	function handlePressCard() {}
+
 	return (
-		<View style={styles.container}>
+		<TouchableOpacity style={styles.container} onPress={handlePressCard}>
 			<StyledText type="text">{title}</StyledText>
 
 			<MCIcon name="chevron-down" color="grayDark" />
-		</View>
+		</TouchableOpacity>
 	)
 }
 

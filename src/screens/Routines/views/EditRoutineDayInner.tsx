@@ -68,7 +68,7 @@ export default function EditRoutineDayInner({ day, exercises }: Props) {
 						<MCIcon name="plus" color="primary" size="xxl" />
 
 						<StyledText type="boldText" color="primary">
-							Add exercise from repository
+							{t("actions.add-exercise-from-repository")}
 						</StyledText>
 					</TouchableOpacity>
 				</View>

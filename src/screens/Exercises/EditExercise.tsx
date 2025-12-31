@@ -16,75 +16,7 @@ import Loading from "../Loading"
 import ToastNotification from "../../components/notifications/ToastNotification"
 import useExercisesMutation from "../../hooks/useExercisesMutation"
 
-export function CreateExercise({
-	navigation
-}: RootStackScreenProps<"CreateExercise">) {
-	const { t } = useTranslation()
-	const { user, addExercise } = useUserStore()
-	const { createExerciseAndProgressionsMutation } = useExercisesMutation()
-
-	const { mutate: createExerciseAndProgressions, isPending } =
-		createExerciseAndProgressionsMutation
-
-	function onCreateExercise({
-		draftExercise,
-		progressions
-	}: DraftExerciseAndProgression) {
-		if (!user) return
-
-		createExerciseAndProgressions(
-			{
-				exerciseData: {
-					userId: user.id,
-					name: draftExercise.name,
-					description: draftExercise.description ?? "",
-					isBodyweight: draftExercise.is_bodyweight,
-					isFreeweight: draftExercise.is_freeweight,
-					isIsometric: draftExercise.is_isometric
-				},
-				progressions: progressions.map((p) => ({
-					name: p.name,
-					order: p.order,
-					is_weighted: p.is_weighted,
-					weight: p.weight
-				}))
-			},
-			{
-				onSuccess: (newExercise) => {
-					if (!newExercise || isPostgrestError(newExercise)) {
-						ToastNotification({
-							description: t(
-								"error-messages.trouble-getting-exercise"
-							)
-						})
-						return
-					}
-
-					addExercise(newExercise)
-					invalidateQueries(GETUSEREXERCISESLAZY_KEY(user.id))
-					navigation.reset({
-						index: 0,
-						routes: [
-							{ name: "Home" },
-							{ name: "ExerciseRepository" }
-						]
-					})
-				}
-			}
-		)
-	}
-
-	return (
-		<ExerciseInner
-			type="create"
-			exerciseData={null}
-			onSubmit={onCreateExercise}
-			isPendingAction={isPending}
-		/>
-	)
-}
-
-export function EditExercise({
+export default function EditExercise({
 	navigation,
 	route
 }: RootStackScreenProps<"EditExercise">) {
@@ -93,7 +25,7 @@ export function EditExercise({
 	const { getExerciseAndProgressionsById } = useExercisesQuery()
 	const {
 		updateExerciseAndProgressionsMutation,
-		updateProgressionsMutation
+		deleteUpsertInsertProgressionsMutation
 	} = useExercisesMutation()
 
 	const { data, error, isPending } = getExerciseAndProgressionsById(
@@ -102,17 +34,19 @@ export function EditExercise({
 
 	const {
 		mutate: updateExerciseAndProgressions,
-		isPending: isPendingUpdate
+		isPending: isPendingUpdateExerciseAndProgressions
 	} = updateExerciseAndProgressionsMutation
 
 	const {
-		mutate: updateProgressions,
+		mutate: deleteUpsertInsertProgressions,
 		isPending: isPendingUpdateProgressions
-	} = updateProgressionsMutation
+	} = deleteUpsertInsertProgressionsMutation
 
 	function onSaveChanges({
 		draftExercise,
-		progressions
+		deleteProgressionsFromOrder,
+		insertProgressions,
+		upsertProgressions
 	}: DraftExerciseAndProgression) {
 		if (!user || !data || isPostgrestError(data)) return
 
@@ -131,10 +65,12 @@ export function EditExercise({
 			draftExercise.is_freeweight === is_freeweight &&
 			draftExercise.is_isometric === is_isometric
 		) {
-			updateProgressions(
+			deleteUpsertInsertProgressions(
 				{
 					exerciseId: data.exercise.id,
-					progressions
+					deleteProgressionsFromOrder,
+					insertProgressions,
+					upsertProgressions
 				},
 				{
 					onSuccess: (result) => {
@@ -151,7 +87,6 @@ export function EditExercise({
 					}
 				}
 			)
-
 			return
 		}
 
@@ -165,7 +100,9 @@ export function EditExercise({
 					is_freeweight: draftExercise.is_freeweight,
 					is_isometric: draftExercise.is_isometric
 				},
-				progressions
+				deleteProgressionsFromOrder,
+				insertProgressions,
+				upsertProgressions
 			},
 			{
 				onSuccess: (newExercise) => {
@@ -207,7 +144,10 @@ export function EditExercise({
 			type="edit"
 			exerciseData={data}
 			onSubmit={onSaveChanges}
-			isPendingAction={isPendingUpdate || isPendingUpdateProgressions}
+			isPendingAction={
+				isPendingUpdateExerciseAndProgressions ||
+				isPendingUpdateProgressions
+			}
 		/>
 	)
 }

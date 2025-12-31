@@ -7,12 +7,13 @@ import {
 import {
 	DatabaseProgression,
 	DraftExerciseAndProgression,
+	DraftProgression,
 	ExerciseAndProgressions
 } from "../../../types/exercises"
 import { CreateExerciseValidationSchema } from "../../../utils/valdiationSchemas"
 import { CreateExerciseValues } from "../../../types/forms"
 import { theme } from "../../../resources/theme"
-import { useCallback, useState } from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../../stores/useUserStore"
@@ -24,14 +25,12 @@ import ExerciseTypeCard from "../../../components/cards/ExerciseTypeCard"
 import StyledText from "../../../components/texts/StyledText"
 import TextButton from "../../../components/buttons/TextButton"
 import ToastNotification from "../../../components/notifications/ToastNotification"
+import { sortProgressionsByOrderDesc } from "../../../utils/parsing"
 
 type Props = {
 	type: "create" | "edit"
 	exerciseData: ExerciseAndProgressions | null
-	onSubmit: ({
-		draftExercise,
-		progressions
-	}: DraftExerciseAndProgression) => void
+	onSubmit: (params: DraftExerciseAndProgression) => void
 	isPendingAction: boolean
 }
 
@@ -70,7 +69,7 @@ export default function ExerciseInner({
 
 	const [progressions, setProgressions] = useState<DatabaseProgression[]>(
 		exerciseData && exerciseData.progressions.length > 0
-			? exerciseData.progressions
+			? sortProgressionsByOrderDesc(exerciseData.progressions)
 			: [
 					{
 						name: "",
@@ -85,7 +84,7 @@ export default function ExerciseInner({
 	)
 
 	function handleAddProgression() {
-		const sorted = [...progressions].sort((a, b) => b.order - a.order)
+		const sorted = sortProgressionsByOrderDesc(progressions)
 
 		const nextOrder = (sorted[0]?.order ?? 0) + 1
 
@@ -102,16 +101,11 @@ export default function ExerciseInner({
 		setProgressions((prev) => [emptyProgression, ...prev])
 	}
 
-	const onUpdateProgression = useCallback(
-		(txt: string, progOrder: number) => {
-			setProgressions((prev) =>
-				prev.map((p) =>
-					p.order === progOrder ? { ...p, name: txt } : p
-				)
-			)
-		},
-		[]
-	)
+	function handleUpdateProgression(txt: string, progOrder: number) {
+		setProgressions((prev) =>
+			prev.map((p) => (p.order === progOrder ? { ...p, name: txt } : p))
+		)
+	}
 
 	function onDeleteProgression(progOrder: number) {
 		const filtered = progressions.filter((p) => p.order !== progOrder)
@@ -129,7 +123,7 @@ export default function ExerciseInner({
 	}
 
 	async function handleAction() {
-		if (!user) return
+		if (!user || !exerciseData) return
 
 		if (!isBodyweight && !isFreeweight) {
 			ToastNotification({
@@ -137,6 +131,39 @@ export default function ExerciseInner({
 			})
 			return
 		}
+
+		const diff = progressions.length - exerciseData.progressions.length
+		const toCompare =
+			exerciseData.progressions.length === 0
+				? []
+				: diff > 0
+				? progressions.slice(diff)
+				: progressions
+
+		let upsertProgressions: DatabaseProgression[] = []
+		for (let i = 0; i < toCompare.length; i++) {
+			const oldProgInOrder =
+				diff >= 0
+					? exerciseData.progressions[i]
+					: exerciseData.progressions[i - diff]
+			const newProgInOrder = toCompare[i]
+			if (oldProgInOrder?.name !== newProgInOrder?.name) {
+				upsertProgressions.push(newProgInOrder)
+			}
+		}
+
+		const insertProgressions: DraftProgression[] =
+			diff > 0
+				? progressions.slice(0, diff).map((p) => ({
+						name: p.name,
+						order: p.order,
+						is_weighted: p.is_weighted,
+						weight: p.weight
+				  }))
+				: []
+
+		const deleteProgressionsFromOrder =
+			diff < 0 ? progressions.length + 1 : null
 
 		onSubmit({
 			draftExercise: {
@@ -146,7 +173,9 @@ export default function ExerciseInner({
 				is_freeweight: isFreeweight,
 				is_isometric: isIsometric
 			},
-			progressions
+			deleteProgressionsFromOrder,
+			insertProgressions,
+			upsertProgressions
 		})
 	}
 
@@ -216,8 +245,12 @@ export default function ExerciseInner({
 					{progressions.map((prog) => (
 						<DraftProgressionCard
 							progression={prog}
-							onUpdate={onUpdateProgression}
-							onDelete={onDeleteProgression}
+							onUpdate={handleUpdateProgression}
+							onDelete={
+								prog.order === progressions.length
+									? onDeleteProgression
+									: undefined
+							}
 							key={prog.order}
 						/>
 					))}

@@ -17,7 +17,9 @@ export type DraftExercise = Omit<
 
 export type DraftExerciseAndProgression = {
 	draftExercise: DraftExercise
-	progressions: DatabaseProgression[]
+	upsertProgressions: DatabaseProgression[]
+	insertProgressions: DraftProgression[]
+	deleteProgressionsFromOrder: number | null
 }
 
 export type ExerciseAndProgressions = {

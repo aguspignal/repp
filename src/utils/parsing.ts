@@ -1,5 +1,9 @@
 import i18next from "i18next"
-import { ExerciseFilterBy, ExerciseSortBy } from "../types/exercises"
+import {
+	DatabaseProgression,
+	ExerciseFilterBy,
+	ExerciseSortBy
+} from "../types/exercises"
 import { DatabaseRoutineDay } from "../types/routines"
 
 export function parseExerciseSortByToText(sortBy: ExerciseSortBy) {
@@ -30,4 +34,10 @@ export function divideRoutineDayInGroups(
 	groupSize: number
 ): DatabaseRoutineDay[][] {
 	return divideArrayInGroups(days, groupSize) as DatabaseRoutineDay[][]
+}
+
+export function sortProgressionsByOrderDesc(
+	progressions: DatabaseProgression[]
+): DatabaseProgression[] {
+	return progressions.sort((a, b) => b.order - a.order)
 }
