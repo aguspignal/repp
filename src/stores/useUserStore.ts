@@ -1,13 +1,13 @@
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import { DatabaseUser } from "../types/user"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { DatabaseExercise } from "../types/exercises"
 import {
 	DatabaseRoutine,
 	DatabaseRoutineDay,
 	RoutineAndDays
 } from "../types/routines"
+import { DatabaseUser } from "../types/user"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 interface UserState {
 	user: DatabaseUser | null
@@ -17,6 +17,7 @@ interface UserState {
 	loadUser: (u: DatabaseUser | null) => void
 	loadExercises: (exs: DatabaseExercise[]) => void
 	loadRoutines: (rs: RoutineAndDays[]) => void
+	getRoutineByDayId: (dId: number) => DatabaseRoutine
 
 	addExercise: (ex: DatabaseExercise) => void
 	addRoutine: (r: RoutineAndDays) => void
@@ -24,6 +25,7 @@ interface UserState {
 
 	removeExercise: (eId: number) => void
 	removeRoutine: (rId: number) => void
+	removeRoutineDay: (rId: number, dId: number) => void
 	clearUserStore: () => void
 }
 
@@ -37,6 +39,11 @@ export const useUserStore = create<UserState>()(
 			loadUser: (u) => set({ user: u }),
 			loadExercises: (exs) => set({ exercises: exs }),
 			loadRoutines: (rs) => set({ routines: rs }),
+			getRoutineByDayId: (dId) => {
+				return get().routines.filter((r) =>
+					r.days.find((d) => d.id === dId)
+				)[0].routine
+			},
 
 			addExercise: (exerc) =>
 				set({
@@ -72,6 +79,21 @@ export const useUserStore = create<UserState>()(
 				set({
 					routines: get().routines.filter((r) => r.routine.id !== rId)
 				}),
+			removeRoutineDay: (rId, dId) => {
+				const routine = get().routines.filter(
+					(r) => r.routine.id === rId
+				)[0]
+				const days = routine.days.filter((d) => d.id === dId)
+				const routineAndDay: RoutineAndDays = {
+					routine: routine.routine,
+					days
+				}
+				set({
+					routines: get()
+						.routines.filter((r) => r.routine.id === rId)
+						.concat(routineAndDay)
+				})
+			},
 			clearUserStore: () => set({ user: null, exercises: [] })
 		}),
 		{

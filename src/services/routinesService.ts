@@ -1,11 +1,13 @@
 import {
 	DatabaseRoutine,
 	DatabaseRoutineDay,
+	DatabaseRoutineDayExercise,
 	RoutineAndDays,
 	RoutineDayAndExercises
 } from "../types/routines"
 import { PostgrestError } from "@supabase/supabase-js"
 import { supabase } from "../lib/supabase"
+import { isPostgrestError } from "../utils/queriesHelpers"
 
 const routinesService = {
 	async getRoutineWithDaysById(
@@ -61,6 +63,19 @@ const routinesService = {
 		}
 	},
 
+	async countRoutineDayWorkouts(
+		dayId: number
+	): Promise<number | PostgrestError> {
+		console.log("R-SERVICE: countRoutineDayWorkouts")
+		const { error, count } = await supabase
+			.from("Workouts")
+			.select("", { count: "exact" })
+			.eq("routineday_id", dayId)
+
+		if (error) return error
+		return count ?? 0
+	},
+
 	async postRoutine({
 		userId,
 		name,
@@ -96,7 +111,9 @@ const routinesService = {
 	async postRoutineDayExercisesBulk({
 		routineDayId,
 		exercises
-	}: PostRoutineExercisesParamas) {
+	}: PostRoutineExercisesParamas): Promise<
+		DatabaseRoutineDayExercise[] | PostgrestError
+	> {
 		console.log("R-SERVICE: postRoutineDayExercisesBulk")
 		const { error, data } = await supabase
 			.from("RoutineDayExercises")
@@ -115,6 +132,44 @@ const routinesService = {
 
 		if (error) return error
 		return data
+	},
+
+	async deleteRoutineDay(id: number): Promise<number | PostgrestError> {
+		console.log("R-SERVICE: deleteRoutinDay")
+
+		const workoutsCount = await this.countRoutineDayWorkouts(id)
+		if (isPostgrestError(workoutsCount)) return workoutsCount
+
+		if (workoutsCount > 0) {
+			const { error, count } = await supabase
+				.from("RoutineDays")
+				.update({ deleted: true }, { count: "exact" })
+				.eq("id", id)
+
+			if (error) return error
+			return count ?? 0
+		}
+
+		const { error, count } = await supabase
+			.from("RoutineDays")
+			.delete({ count: "exact" })
+			.eq("id", id)
+
+		if (error) return error
+		return count ?? 0
+	},
+
+	async deleteAllRoutineDayExercises(
+		dayId: number
+	): Promise<number | PostgrestError> {
+		console.log("R-SERVICE: deleteRoutineDayExercises")
+		const { error, count } = await supabase
+			.from("RoutineDayExercises")
+			.delete({ count: "exact" })
+			.eq("routineday_id", dayId)
+
+		if (error) return error
+		return count ?? 0
 	}
 }
 

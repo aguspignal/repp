@@ -4,7 +4,10 @@ import routinesService, {
 	PostRoutineParams
 } from "../services/routinesService"
 import { useMutation } from "@tanstack/react-query"
-import { handleOnMutationError } from "../utils/queriesHelpers"
+import {
+	handleOnMutationError,
+	isPostgrestError
+} from "../utils/queriesHelpers"
 
 export default function useRoutineMutation() {
 	const createRoutineMutation = useMutation({
@@ -28,9 +31,22 @@ export default function useRoutineMutation() {
 		onError: handleOnMutationError
 	})
 
+	const deleteRoutineDayMutation = useMutation({
+		mutationFn: async (dayId: number) => {
+			const result = await routinesService.deleteAllRoutineDayExercises(
+				dayId
+			)
+
+			if (isPostgrestError(result)) return 0
+			return await routinesService.deleteRoutineDay(dayId)
+		},
+		onError: handleOnMutationError
+	})
+
 	return {
 		createRoutineMutation,
 		createRoutineDayMutation,
-		createRoutineDayExercisesMutation
+		createRoutineDayExercisesMutation,
+		deleteRoutineDayMutation
 	}
 }

@@ -2,8 +2,6 @@
 
 # To implement
 
-    - routines in home
-    - routineinner
-    - improve update progressions queries efficiency
+    - delete routine day and routine
 
 # To test
