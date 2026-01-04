@@ -15,7 +15,7 @@ export type LoginScreenProps<T extends keyof LoginStackParams> =
 export type RootStackParams = {
 	Home: undefined
 	Settings: undefined
-	ExerciseRepository: undefined
+	ExerciseRepository: { selectionView?: boolean }
 	CreateExercise: undefined
 	EditExercise: { id: number }
 	Routine: { id: number }

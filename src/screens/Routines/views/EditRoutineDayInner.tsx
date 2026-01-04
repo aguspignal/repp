@@ -13,6 +13,8 @@ import Button from "../../../components/buttons/Button"
 import EditRoutineDayInput from "../../../components/inputs/EditRoutineDayInput"
 import MCIcon from "../../../components/icons/MCIcon"
 import StyledText from "../../../components/texts/StyledText"
+import { useNavigation } from "@react-navigation/native"
+import { RootStackNavigationProp } from "../../../navigation/params"
 
 type Props = {
 	day: DatabaseRoutineDay
@@ -20,6 +22,7 @@ type Props = {
 }
 export default function EditRoutineDayInner({ day, exercises }: Props) {
 	const { t } = useTranslation()
+	const nav = useNavigation<RootStackNavigationProp>()
 
 	const {
 		handleSubmit,
@@ -35,7 +38,9 @@ export default function EditRoutineDayInner({ day, exercises }: Props) {
 
 	function handleSaveChanges({ code, name }: EditRoutineDayValues) {}
 
-	function handleAddExercise() {}
+	function handleAddExercise() {
+		nav.navigate("ExerciseRepository", { selectionView: true })
+	}
 
 	return (
 		<View style={styles.container}>

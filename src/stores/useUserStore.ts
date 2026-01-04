@@ -13,6 +13,7 @@ interface UserState {
 	user: DatabaseUser | null
 	exercises: DatabaseExercise[]
 	routines: RoutineAndDays[]
+	draftRoutineDayExercisesIds: number[]
 
 	loadUser: (u: DatabaseUser | null) => void
 	loadExercises: (exs: DatabaseExercise[]) => void
@@ -35,6 +36,7 @@ export const useUserStore = create<UserState>()(
 			user: null,
 			exercises: [],
 			routines: [],
+			draftRoutineDayExercisesIds: [],
 
 			loadUser: (u) => set({ user: u }),
 			loadExercises: (exs) => set({ exercises: exs }),

@@ -24,7 +24,8 @@ import ListActionCard from "../../components/cards/ListActionCard"
 import StyledText from "../../components/texts/StyledText"
 
 export default function ExerciseRepository({
-	navigation
+	navigation,
+	route
 }: RootStackScreenProps<"ExerciseRepository">) {
 	const { t } = useTranslation()
 	const { user, exercises, loadExercises } = useUserStore()
@@ -36,6 +37,8 @@ export default function ExerciseRepository({
 		useState<DatabaseExercise[]>(exercises)
 	const [sortBy, setSortBy] = useState<ExerciseSortBy>("ascending")
 	const [filterBy, setFilterBy] = useState<ExerciseFilterBy>("all")
+
+	const isSelectionView = route.params.selectionView
 
 	function goToCreateExercise() {
 		navigation.navigate("CreateExercise")
@@ -78,6 +81,10 @@ export default function ExerciseRepository({
 				else return e.is_isometric
 			})
 		)
+	}
+
+	function handleSelectExercise(eId: number) {
+		console.log(eId)
 	}
 
 	useEffect(() => {
@@ -155,7 +162,10 @@ export default function ExerciseRepository({
 			{exercisesList.map((exerc) => (
 				<ExerciseCard
 					exercise={exerc}
-					onPress={goToExercise}
+					onPress={
+						isSelectionView ? handleSelectExercise : goToExercise
+					}
+					isSelectable={isSelectionView}
 					key={exerc.id}
 				/>
 			))}

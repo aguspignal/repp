@@ -28,7 +28,7 @@ export default function RoutineInner({ routine: { routine, days } }: Props) {
 	const { createRoutineDayMutation } = useRoutineMutation()
 	const nav = useNavigation<RootStackNavigationProp>()
 
-	const { mutate: createRoutineDay } = createRoutineDayMutation
+	const { mutate: createRoutineDay, isPending } = createRoutineDayMutation
 
 	const [routineDayModalVisible, setRoutineDayModalVisible] = useState(false)
 
@@ -83,14 +83,16 @@ export default function RoutineInner({ routine: { routine, days } }: Props) {
 				{routine.name}
 			</StyledText>
 
-			{days.map((day) => (
-				<RoutineDayCard
-					routineDay={day}
-					onPressEdit={handleEditDay}
-					onPressHistory={handleSeeDayHistory}
-					key={day.id}
-				/>
-			))}
+			{days
+				.filter((d) => !d.deleted)
+				.map((day) => (
+					<RoutineDayCard
+						routineDay={day}
+						onPressEdit={handleEditDay}
+						onPressHistory={handleSeeDayHistory}
+						key={day.id}
+					/>
+				))}
 			<RoutineDayCard
 				routineDay={null}
 				title={t("actions.add-day")}
@@ -110,7 +112,7 @@ export default function RoutineInner({ routine: { routine, days } }: Props) {
 				setIsVisible={setRoutineDayModalVisible}
 				onCreate={handleAddRoutineDay}
 				onCancel={() => setRoutineDayModalVisible(false)}
-				isLoadingCreate={false}
+				isLoadingCreate={isPending}
 			/>
 		</ScrollView>
 	)

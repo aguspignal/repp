@@ -2,6 +2,6 @@
 
 # To implement
 
-    - delete routine day and routine
+    - select exercises and add to state then go back and use state
 
 # To test

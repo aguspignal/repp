@@ -29,6 +29,8 @@ export default function CreateRoutineDayModal({
 	function handleConfirm() {
 		if (!code || code.length === 0 || !name || name.length === 0) return
 		onCreate({ code, name })
+		setCode(undefined)
+		setName(undefined)
 	}
 
 	return (
