@@ -20,6 +20,7 @@ export type RootStackParams = {
 	CreateExercise: undefined
 	EditExercise: { id: number }
 	Routine: { id: number }
+	EditRoutine: { id: number }
 	EditRoutineDay: {
 		id: number
 		selectedExercises?: DatabaseExercise[]

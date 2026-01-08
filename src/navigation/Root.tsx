@@ -19,6 +19,8 @@ import i18next from "i18next"
 import Loading from "../screens/Loading"
 import Routine from "../screens/Routines/Routine"
 import Settings from "../screens/Settings"
+import EditRoutine from "../screens/Routines/EditRoutine"
+import RoutineHeader from "../components/header/RoutineHeader"
 
 type Props = {
 	uuid: string
@@ -94,7 +96,22 @@ function RootNavigator() {
 			<RootStack.Screen
 				name="Routine"
 				component={Routine}
-				options={{ headerTitle: "" }}
+				options={{
+					header: ({ navigation, back, route }) => (
+						<RoutineHeader
+							navigation={navigation}
+							route={
+								route as RootStackScreenProps<"Routine">["route"]
+							}
+							back={back}
+						/>
+					)
+				}}
+			/>
+			<RootStack.Screen
+				name="EditRoutine"
+				component={EditRoutine}
+				options={{ headerTitle: i18next.t("actions.edit-routine") }}
 			/>
 			<RootStack.Screen
 				name="EditRoutineDay"

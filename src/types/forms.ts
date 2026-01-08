@@ -18,3 +18,8 @@ export type EditRoutineDayValues = {
 	code: string
 	name: string
 }
+
+export type EditRoutineValues = {
+	name: string
+	description: string
+}

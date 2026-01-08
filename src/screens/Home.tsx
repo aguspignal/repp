@@ -20,10 +20,11 @@ import StyledText from "../components/texts/StyledText"
 import ToastNotification from "../components/notifications/ToastNotification"
 import useRoutineMutation from "../hooks/useRoutineMutation"
 import useRoutineQuery from "../hooks/useRoutineQuery"
+import TextButton from "../components/buttons/TextButton"
 
 export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 	const { t } = useTranslation()
-	const { user, routines, loadRoutines, addRoutine } = useUserStore()
+	const { user, routines, loadRoutines, addRoutineWithDays } = useUserStore()
 	const { getUserRoutinesWithDaysLazy } = useRoutineQuery()
 	const { createRoutineMutation } = useRoutineMutation()
 
@@ -54,13 +55,15 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 						return
 					}
 
-					addRoutine({ routine, days: [] })
+					addRoutineWithDays({ routine, days: [] })
 					setIsModalVisible(false)
 					navigation.navigate("Routine", { id: routine.id })
 				}
 			}
 		)
 	}
+
+	function handleStartWorkout() {}
 
 	function goToExerciseRepository() {
 		navigation.navigate("ExerciseRepository", {
@@ -97,6 +100,42 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 				/>
 			}
 		>
+			{routines.length > 0 &&
+			routines.some((r) => r.routine.status === "active") ? (
+				<View style={styles.activeRoutineContainer}>
+					<RoutineCard
+						routine={
+							routines.filter(
+								(r) => r.routine.status === "active"
+							)[0]
+						}
+					/>
+					<Button
+						title={t("actions.start-workout")}
+						onPress={handleStartWorkout}
+						alignSelf
+						size="l"
+					/>
+				</View>
+			) : (
+				<StyledText type="boldNote" color="grayDark" align="center">
+					{t(
+						"messages.tip-mark-routine-active-to-start-workingout-faster"
+					)}
+				</StyledText>
+			)}
+
+			<TouchableOpacity
+				onPress={goToExerciseRepository}
+				style={styles.exerciseRepoCard}
+			>
+				<StyledText type="boldText">
+					{t("titles.exercise-repository")}
+				</StyledText>
+
+				<MCIcon name="chevron-right" color="grayDark" />
+			</TouchableOpacity>
+
 			{routines.length === 0 ? (
 				<View style={styles.noRoutinesContainer}>
 					<MCIcon name="dumbbell" size={"h1"} color="grayDark" />
@@ -111,12 +150,24 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 				</View>
 			) : (
 				<View style={styles.myRoutinesContainer}>
-					<StyledText type="subtitle">
-						{t("titles.my-routines")}
-					</StyledText>
+					<View style={styles.myRoutinesAndAddBtn}>
+						<StyledText type="subtitle">
+							{t("titles.my-routines")}
+						</StyledText>
+
+						<TextButton
+							title={t("actions.add")}
+							onPress={() => setIsModalVisible(true)}
+							icon="plus"
+							color="primary"
+							textType="subtitle"
+						/>
+					</View>
 
 					<FlatList
-						data={routines}
+						data={routines.filter(
+							(r) => r.routine.status !== "active"
+						)}
 						renderItem={({ item: routine }) => (
 							<RoutineCard
 								routine={routine}
@@ -128,24 +179,6 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 					/>
 				</View>
 			)}
-
-			<Button
-				title={t("actions.create-new-routine")}
-				onPress={() => setIsModalVisible(true)}
-				size="l"
-				alignSelf
-			/>
-
-			<TouchableOpacity
-				onPress={goToExerciseRepository}
-				style={styles.exerciseRepoCard}
-			>
-				<StyledText type="boldText">
-					{t("titles.exercise-repository")}
-				</StyledText>
-
-				<MCIcon name="chevron-right" color="grayDark" />
-			</TouchableOpacity>
 
 			<CreateRoutineModal
 				isVisible={isModalVisible}
@@ -167,12 +200,20 @@ const styles = StyleSheet.create({
 		gap: theme.spacing.xl,
 		paddingHorizontal: theme.spacing.s
 	},
+	activeRoutineContainer: {
+		gap: theme.spacing.s
+	},
 	noRoutinesContainer: {
 		alignItems: "center",
 		gap: theme.spacing.s
 	},
 	myRoutinesContainer: {
 		gap: theme.spacing.s
+	},
+	myRoutinesAndAddBtn: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between"
 	},
 	routinesList: {
 		gap: theme.spacing.xl

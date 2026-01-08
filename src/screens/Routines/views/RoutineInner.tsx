@@ -6,10 +6,13 @@ import {
 	DatabaseRoutineDay,
 	RoutineWithDaysAndExercises
 } from "../../../types/routines"
-import { GETROUTINEWITHDAYSANDEXERCISESBYID_KEY } from "../../../hooks/useRoutineQuery"
+import {
+	GETROUTINEWITHDAYSANDEXERCISESBYID_KEY,
+	GETUSERROUTINESWITHDAYSLAZY_KEY
+} from "../../../hooks/useRoutineQuery"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { ScrollView } from "react-native-gesture-handler"
-import { StyleSheet } from "react-native"
+import { RefreshControl, StyleSheet, View } from "react-native"
 import { theme } from "../../../resources/theme"
 import { useNavigation } from "@react-navigation/native"
 import { useState } from "react"
@@ -24,12 +27,14 @@ import useRoutineMutation from "../../../hooks/useRoutineMutation"
 
 type Props = {
 	routine: RoutineWithDaysAndExercises
+	isPendingData: boolean
 }
 export default function RoutineInner({
-	routine: { routine, daysAndExercises }
+	routine: { routine, daysAndExercises },
+	isPendingData
 }: Props) {
 	const { t } = useTranslation()
-	const { addRoutineDay } = useUserStore()
+	const { user, addRoutineDay } = useUserStore()
 	const { createRoutineDayMutation } = useRoutineMutation()
 	const nav = useNavigation<RootStackNavigationProp>()
 
@@ -83,14 +88,39 @@ export default function RoutineInner({
 
 	function handleSeeDayHistory(day: DatabaseRoutineDay) {}
 
+	function handleRefresh() {
+		if (!user) return
+		invalidateQueries(GETUSERROUTINESWITHDAYSLAZY_KEY(user.id))
+		invalidateQueries(GETROUTINEWITHDAYSANDEXERCISESBYID_KEY(routine.id))
+	}
+
 	return (
 		<ScrollView
 			style={styles.container}
 			contentContainerStyle={styles.contentContainer}
+			refreshControl={
+				<RefreshControl
+					onRefresh={handleRefresh}
+					refreshing={isPendingData}
+				/>
+			}
 		>
 			<StyledText type="title" align="center">
 				{routine.name}
 			</StyledText>
+
+			{routine.description ? (
+				<View style={styles.description}>
+					<StyledText type="text">{routine.description}</StyledText>
+				</View>
+			) : null}
+
+			<Button
+				title={t("actions.start-workout")}
+				onPress={handleStartWorkout}
+				size="l"
+				alignSelf
+			/>
 
 			{daysAndExercises
 				.filter((de) => !de.day.deleted)
@@ -108,13 +138,6 @@ export default function RoutineInner({
 				title={t("actions.add-day")}
 				color="primary"
 				onPressCard={() => setRoutineDayModalVisible(true)}
-			/>
-
-			<Button
-				title={t("actions.start-workout")}
-				onPress={handleStartWorkout}
-				size="l"
-				alignSelf
 			/>
 
 			<CreateRoutineDayModal
@@ -136,5 +159,10 @@ const styles = StyleSheet.create({
 	},
 	contentContainer: {
 		gap: theme.spacing.l
+	},
+	description: {
+		padding: theme.spacing.xs,
+		backgroundColor: theme.colors.backgroundDark,
+		borderRadius: theme.spacing.xxs
 	}
 })

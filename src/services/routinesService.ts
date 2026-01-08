@@ -12,10 +12,23 @@ import { PostgrestError } from "@supabase/supabase-js"
 import { supabase } from "../lib/supabase"
 
 const routinesService = {
+	async getRoutineById(
+		id: number
+	): Promise<DatabaseRoutine | null | PostgrestError> {
+		console.log("R-SERVICE: getRoutineById")
+		const { error, data } = await supabase
+			.from("Routines")
+			.select("*")
+			.eq("id", id)
+
+		if (error) return error
+		return data[0]
+	},
+
 	async getRoutineWithDaysAndExercisesById(
 		id: number
 	): Promise<RoutineWithDaysAndExercises | null | PostgrestError> {
-		console.log("R-SERVICE: getRoutineWithDaysById")
+		console.log("R-SERVICE: getRoutineWithDaysAndExercisesById")
 		const { error, data } = await supabase
 			.from("Routines")
 			.select("*, days:RoutineDays(*, exercises:RoutineDayExercises(*))")
@@ -142,6 +155,47 @@ const routinesService = {
 		return data
 	},
 
+	async updateRoutine(
+		routine: DatabaseRoutine
+	): Promise<DatabaseRoutine | null | PostgrestError> {
+		console.log("R-SERVICE: updateRoutine")
+		const { error, data } = await supabase
+			.from("Routines")
+			.update(routine)
+			.eq("id", routine.id)
+			.select()
+
+		if (error) return error
+		return data[0]
+	},
+
+	async updateUserActiveRoutinesAsDraft(
+		userId: number
+	): Promise<number | PostgrestError> {
+		console.log("R-SERVICE: updateActiveRoutinesAsDraft")
+		const { error, count } = await supabase
+			.from("Routines")
+			.update({ status: "draft" }, { count: "exact" })
+			.eq("user_id", userId)
+			.eq("status", "active")
+
+		if (error) return error
+		return count ?? 0
+	},
+
+	async updateRoutineAsActive(
+		routineId: number
+	): Promise<number | PostgrestError> {
+		console.log("R-SERVICE: updateRoutineAsActive")
+		const { error, count } = await supabase
+			.from("Routines")
+			.update({ status: "active" }, { count: "exact" })
+			.eq("id", routineId)
+
+		if (error) return error
+		return count ?? 0
+	},
+
 	async updateRoutineDay(
 		day: DatabaseRoutineDay
 	): Promise<DatabaseRoutineDay | null | PostgrestError> {
@@ -245,4 +299,9 @@ export type UpdateRoutineDayParams = {
 	id: number
 	name: string
 	code: string
+}
+
+export type UpdateUserRoutineStatusParams = {
+	userId: number
+	routineId: number
 }

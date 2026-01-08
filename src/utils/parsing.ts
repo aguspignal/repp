@@ -35,7 +35,7 @@ function divideArrayInGroups(array: any[], groupSize: number): any[] {
 export function divideRoutineDayInGroups(
 	days: DatabaseRoutineDay[]
 ): DatabaseRoutineDay[][] {
-	const groupSize = days.length === 3 || days.length === 4 ? 2 : 3
+	const groupSize = days.length === 4 ? 2 : 3
 	return divideArrayInGroups(days, groupSize) as DatabaseRoutineDay[][]
 }
 

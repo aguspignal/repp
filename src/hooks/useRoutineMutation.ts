@@ -1,13 +1,15 @@
 import routinesService, {
 	PostRoutineDayParams,
 	PostRoutineExercisesParamas,
-	PostRoutineParams
+	PostRoutineParams,
+	UpdateUserRoutineStatusParams
 } from "../services/routinesService"
 import {
 	handleOnMutationError,
 	isPostgrestError
 } from "../utils/queriesHelpers"
 import {
+	DatabaseRoutine,
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
 	DraftRoutineDayExercise
@@ -32,6 +34,36 @@ export default function useRoutineMutation() {
 	const createRoutineDayExercisesMutation = useMutation({
 		mutationFn: async (params: PostRoutineExercisesParamas) => {
 			return await routinesService.postRoutineDayExercisesBulk(params)
+		},
+		onError: handleOnMutationError
+	})
+
+	const markRoutineAsActiveMutation = useMutation({
+		mutationFn: async ({
+			userId,
+			routineId
+		}: UpdateUserRoutineStatusParams) => {
+			const result =
+				await routinesService.updateUserActiveRoutinesAsDraft(userId)
+			if (isPostgrestError(result)) return result
+
+			return await routinesService.updateRoutineAsActive(routineId)
+		},
+		onError: handleOnMutationError
+	})
+
+	const markRoutineAsDraftMutation = useMutation({
+		mutationFn: async (routineId: number) => {
+			return await routinesService.updateUserActiveRoutinesAsDraft(
+				routineId
+			)
+		},
+		onError: handleOnMutationError
+	})
+
+	const updateRoutineMutation = useMutation({
+		mutationFn: async (routine: DatabaseRoutine) => {
+			return await routinesService.updateRoutine(routine)
 		},
 		onError: handleOnMutationError
 	})
@@ -86,7 +118,10 @@ export default function useRoutineMutation() {
 		createRoutineDayMutation,
 		createRoutineDayExercisesMutation,
 		deleteRoutineDayMutation,
-		updateRoutineDayAndExercisesMutation
+		updateRoutineMutation,
+		updateRoutineDayAndExercisesMutation,
+		markRoutineAsActiveMutation,
+		markRoutineAsDraftMutation
 	}
 }
 

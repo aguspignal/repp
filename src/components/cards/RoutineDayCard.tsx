@@ -1,5 +1,6 @@
 import {
 	FlatList,
+	ListRenderItem,
 	StyleProp,
 	StyleSheet,
 	TouchableOpacity,
@@ -15,6 +16,7 @@ import { theme } from "../../resources/theme"
 import { useUserStore } from "../../stores/useUserStore"
 import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
+import { useCallback } from "react"
 
 type Props = {
 	routineDay: DatabaseRoutineDay | null
@@ -73,21 +75,19 @@ export default function RoutineDayCard({
 
 			{rdExercises && rdExercises.length > 0 ? (
 				<View style={styles.exercisesContainer}>
-					<FlatList
-						data={rdExercises}
-						renderItem={({ item }) => (
-							<View key={item.id}>
+					<View style={styles.exercisesList}>
+						{rdExercises.map((rde) => (
+							<View key={rde.id}>
 								<StyledText type="text" color="grayDark">
 									{
 										exercises.find(
-											(e) => e.id === item.exercise_id
+											(e) => e.id === rde.exercise_id
 										)?.name
 									}
 								</StyledText>
 							</View>
-						)}
-						contentContainerStyle={styles.exercisesList}
-					/>
+						))}
+					</View>
 				</View>
 			) : null}
 		</TouchableOpacity>

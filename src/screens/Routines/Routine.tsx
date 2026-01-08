@@ -26,5 +26,5 @@ export default function Routine({ route }: RootStackScreenProps<"Routine">) {
 			/>
 		)
 
-	return <RoutineInner routine={data} />
+	return <RoutineInner routine={data} isPendingData={isPending} />
 }

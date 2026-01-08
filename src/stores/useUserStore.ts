@@ -20,14 +20,16 @@ interface UserState {
 	getRoutineByDayId: (dId: number) => DatabaseRoutine
 
 	addExercise: (ex: DatabaseExercise) => void
-	addRoutine: (r: RoutineWithDays) => void
+	addRoutineWithDays: (r: RoutineWithDays) => void
 	addRoutineDay: (rd: DatabaseRoutineDay) => void
+	updateRoutine: (r: DatabaseRoutine) => void
 
 	removeExercise: (eId: number) => void
 	removeRoutine: (rId: number) => void
 	removeRoutineDay: (rId: number, dId: number) => void
 
 	clearUserStore: () => void
+	markActiveRoutinesAsDraft: () => void
 }
 
 export const useUserStore = create<UserState>()(
@@ -45,14 +47,13 @@ export const useUserStore = create<UserState>()(
 					r.days.find((d) => d.id === dId)
 				)[0].routine
 			},
-
 			addExercise: (exerc) =>
 				set({
 					exercises: get()
 						.exercises.filter((e) => e.id !== exerc.id)
 						.concat(exerc)
 				}),
-			addRoutine: (routine) =>
+			addRoutineWithDays: (routine) =>
 				set({
 					routines: get()
 						.routines.filter(
@@ -60,6 +61,16 @@ export const useUserStore = create<UserState>()(
 						)
 						.concat(routine)
 				}),
+			updateRoutine: (routine) => {
+				const days = get().routines.filter(
+					(r) => r.routine.id === routine.id
+				)[0].days
+				set({
+					routines: get()
+						.routines.filter((r) => r.routine.id !== routine.id)
+						.concat({ routine, days })
+				})
+			},
 			addRoutineDay: (rd) =>
 				set({
 					routines: get().routines.map((routine) => {
@@ -95,7 +106,20 @@ export const useUserStore = create<UserState>()(
 						.concat(routineAndDay)
 				})
 			},
-			clearUserStore: () => set({ user: null, exercises: [] })
+			clearUserStore: () => set({ user: null, exercises: [] }),
+			markActiveRoutinesAsDraft: () =>
+				set({
+					routines: get().routines.map((r) => {
+						if (r.routine.status !== "active") return r
+						return {
+							days: r.days,
+							routine: {
+								...r.routine,
+								status: "draft"
+							}
+						}
+					})
+				})
 		}),
 		{
 			name: "user-store",

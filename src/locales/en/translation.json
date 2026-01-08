@@ -16,6 +16,7 @@
 		"create-routine": "Create routine",
 		"delete": "Delete",
 		"edit-exercise": "Edit exercise",
+		"edit-routine": "Edit routine",
 		"edit-routine-day": "Edit routine day",
 		"filter": "Filter",
 		"give-your-routineday-name-code": "Give your routine a name",
@@ -71,8 +72,10 @@
 		"accepting-terms-policies": "By registering with any of these options, you certify that you have read, understood and accepted our",
 		"create-routine-to-start-workingout": "Create a routine to start working out",
 		"notes-for-this-exercise": "Notes for this exercise",
+		"notes-for-this-routine": "Notes for this routine",
 		"terms-and-policies": "Terms of Service and Privacy Policy",
 		"this-will-also-delete-progressions": "This action will delete all data and progressions and cannot be undone",
+		"tip-mark-routine-active-to-start-workingout-faster": "Tip: Mark a routine as active to start working out faster",
 		"workouts-related-to-day-will-be-saved": "Workouts related to this day will be saved",
 		"you-dont-have-routines-yet": "You don't have any routine yet"
 	},
