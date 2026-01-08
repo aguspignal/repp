@@ -1,10 +1,10 @@
 import { isPostgrestError } from "../../utils/queriesHelpers"
 import { RootStackScreenProps } from "../../navigation/params"
+import EditRoutineDayInner from "./views/EditRoutineDayInner"
 import ErrorScreen from "../ErrorScreen"
 import i18next from "i18next"
 import Loading from "../Loading"
 import useRoutineQuery from "../../hooks/useRoutineQuery"
-import EditRoutineDayInner from "./views/EditRoutineDayInner"
 
 export default function EditRoutineDay({
 	route
@@ -28,5 +28,11 @@ export default function EditRoutineDay({
 			/>
 		)
 
-	return <EditRoutineDayInner day={data.day} exercises={data.exercises} />
+	return (
+		<EditRoutineDayInner
+			day={data.day}
+			exercises={data.exercises}
+			selectedExercises={route.params.selectedExercises}
+		/>
+	)
 }

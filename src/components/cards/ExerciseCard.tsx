@@ -1,13 +1,13 @@
 import { DatabaseExercise } from "../../types/exercises"
 import { StyleSheet, TouchableOpacity, View } from "react-native"
 import { theme } from "../../resources/theme"
+import { useState } from "react"
 import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
-import { useState } from "react"
 
 type Props = {
 	exercise: DatabaseExercise
-	onPress: (exerciseId: number) => void
+	onPress: (exercise: DatabaseExercise, isSelected: boolean) => void
 	isSelectable?: boolean
 }
 export default function ExerciseCard({
@@ -18,9 +18,8 @@ export default function ExerciseCard({
 	const [isSelected, setIsSelected] = useState(false)
 
 	function handlePressCard() {
-		if (isSelectable) setIsSelected((prev) => !prev)
-
-		onPress(exercise.id)
+		onPress(exercise, !isSelected)
+		setIsSelected((prev) => !prev)
 	}
 
 	return (
@@ -49,12 +48,6 @@ export default function ExerciseCard({
 				{isSelectable ? null : (
 					<MCIcon name="chevron-right" color="grayDark" />
 				)}
-				{/* {(isSelectable && isSelected) || !isSelectable ? (
-					<MCIcon
-						name={isSelectable ? "check" : "chevron-right"}
-						color={isSelectable ? "textDark" : "grayDark"}
-					/>
-				) : null} */}
 			</View>
 		</TouchableOpacity>
 	)

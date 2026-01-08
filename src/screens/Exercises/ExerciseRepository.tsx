@@ -17,9 +17,10 @@ import { theme } from "../../resources/theme"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
+import Button from "../../components/buttons/Button"
 import DropdownMenu from "../../components/dropdowns/DropdownMenu"
-import IconButton from "../../components/buttons/IconButton"
 import ExerciseCard from "../../components/cards/ExerciseCard"
+import IconButton from "../../components/buttons/IconButton"
 import ListActionCard from "../../components/cards/ListActionCard"
 import StyledText from "../../components/texts/StyledText"
 
@@ -37,15 +38,18 @@ export default function ExerciseRepository({
 		useState<DatabaseExercise[]>(exercises)
 	const [sortBy, setSortBy] = useState<ExerciseSortBy>("ascending")
 	const [filterBy, setFilterBy] = useState<ExerciseFilterBy>("all")
+	const [selectedExercises, setSelectedExercises] = useState<
+		DatabaseExercise[]
+	>([])
 
-	const isSelectionView = route.params.selectionView
+	const isSelectionView = !!route.params.editingRoutineDayId
 
 	function goToCreateExercise() {
 		navigation.navigate("CreateExercise")
 	}
 
-	function goToExercise(id: number) {
-		navigation.navigate("EditExercise", { id })
+	function goToExercise(exercise: DatabaseExercise) {
+		navigation.navigate("EditExercise", { id: exercise.id })
 	}
 
 	function handleRefresh() {
@@ -83,8 +87,25 @@ export default function ExerciseRepository({
 		)
 	}
 
-	function handleSelectExercise(eId: number) {
-		console.log(eId)
+	function handleSelectExercise(
+		selectedExercise: DatabaseExercise,
+		selected: boolean
+	) {
+		if (selected)
+			setSelectedExercises((prev) => prev.concat(selectedExercise))
+		else
+			setSelectedExercises((prev) =>
+				prev.filter((e) => e.id !== selectedExercise.id)
+			)
+	}
+
+	function handleAddSelectedExercises() {
+		if (!route.params.editingRoutineDayId) return
+
+		navigation.popTo("EditRoutineDay", {
+			id: route.params.editingRoutineDayId,
+			selectedExercises
+		})
 	}
 
 	useEffect(() => {
@@ -170,12 +191,30 @@ export default function ExerciseRepository({
 				/>
 			))}
 
-			<IconButton
-				icon="plus"
-				onPress={goToCreateExercise}
-				size="xl"
-				style={styles.createExerciseBtn}
-			/>
+			{isSelectionView ? (
+				<Button
+					title={
+						selectedExercises.length < 2
+							? t("actions.add-exercise")
+							: t("actions.add-exercises-(count)", {
+									count: selectedExercises.length
+							  })
+					}
+					onPress={handleAddSelectedExercises}
+					icon="plus"
+					size="l"
+					isDisabled={selectedExercises.length === 0}
+					alignSelf
+					style={styles.addSelectedExercisesBtn}
+				/>
+			) : (
+				<IconButton
+					icon="plus"
+					onPress={goToCreateExercise}
+					size="xl"
+					style={styles.createExerciseBtn}
+				/>
+			)}
 		</ScrollView>
 	)
 }
@@ -189,7 +228,8 @@ const styles = StyleSheet.create({
 	contentContainer: {
 		flex: 1,
 		gap: theme.spacing.xxs,
-		paddingHorizontal: theme.spacing.s
+		paddingHorizontal: theme.spacing.s,
+		paddingBottom: theme.spacing.x4l
 	},
 	createExerciseBtn: {
 		position: "absolute",
@@ -204,5 +244,9 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between"
+	},
+	addSelectedExercisesBtn: {
+		position: "absolute",
+		bottom: theme.spacing.xl
 	}
 })

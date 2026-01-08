@@ -2,6 +2,7 @@ import {
 	DatabaseRoutine,
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
+	DraftRoutineDayExercise,
 	RoutineAndDays,
 	RoutineDayAndExercises
 } from "../types/routines"
@@ -118,20 +119,46 @@ const routinesService = {
 		const { error, data } = await supabase
 			.from("RoutineDayExercises")
 			.insert(
-				exercises.map((ex) => ({
+				exercises.map((e) => ({
 					routineday_id: routineDayId,
-					exercise_id: ex.id,
-					order: ex.order,
-					set_goal_low: ex.setsGoalLow,
-					set_goal_high: ex.setsGoalHigh,
-					rep_goal_low: ex.repsGoalLow,
-					rep_goal_high: ex.repsGoalHigh
+					exercise_id: e.exerciseId,
+					order: e.order,
+					set_goal_low: e.setsGoalLow,
+					set_goal_high: e.setsGoalHigh,
+					rep_goal_low: e.repsGoalLow,
+					rep_goal_high: e.repsGoalHigh
 				}))
 			)
 			.select()
 
 		if (error) return error
 		return data
+	},
+
+	async updateRoutineDay(
+		day: DatabaseRoutineDay
+	): Promise<DatabaseRoutineDay | null | PostgrestError> {
+		console.log("R-SERVICE: updateRoutineDay")
+		const { error, data } = await supabase
+			.from("RoutineDays")
+			.update(day)
+			.eq("id", day.id)
+			.select()
+
+		if (error) return error
+		return data[0]
+	},
+
+	async upsertRoutineDayExercises(
+		exercises: DatabaseRoutineDayExercise[]
+	): Promise<number | PostgrestError> {
+		console.log("R-SERVICE: upsertRoutineDayExercises")
+		const { error, count } = await supabase
+			.from("RoutineDayExercises")
+			.upsert(exercises, { count: "exact" })
+
+		if (error) return error
+		return count ?? 0
 	},
 
 	async deleteRoutineDay(id: number): Promise<number | PostgrestError> {
@@ -156,6 +183,21 @@ const routinesService = {
 			.eq("id", id)
 
 		if (error) return error
+		return count ?? 0
+	},
+
+	async deleteRoutineDayExercisesByIds(
+		rdeIds: number[]
+	): Promise<number | PostgrestError> {
+		console.log("R-SERVICE: deleteRoutineDayExercises")
+		console.log("del rdeIds: ", rdeIds)
+		const { error, count } = await supabase
+			.from("RoutineDayExercises")
+			.delete({ count: "exact" })
+			.in("exercise_id", rdeIds)
+
+		if (error) return error
+		console.log("del count: ", count)
 		return count ?? 0
 	},
 
@@ -189,12 +231,11 @@ export type PostRoutineDayParams = {
 
 export type PostRoutineExercisesParamas = {
 	routineDayId: number
-	exercises: {
-		id: number
-		order: number
-		setsGoalLow: number | null
-		setsGoalHigh: number | null
-		repsGoalLow: number | null
-		repsGoalHigh: number | null
-	}[]
+	exercises: DraftRoutineDayExercise[]
+}
+
+export type UpdateRoutineDayParams = {
+	id: number
+	name: string
+	code: string
 }

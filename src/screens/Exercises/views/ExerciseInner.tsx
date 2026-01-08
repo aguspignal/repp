@@ -123,7 +123,8 @@ export default function ExerciseInner({
 	}
 
 	async function handleAction() {
-		if (!user || !exerciseData) return
+		if (!user) return
+		if (type === "edit" && !exerciseData) return
 
 		if (!isBodyweight && !isFreeweight) {
 			ToastNotification({
@@ -132,9 +133,10 @@ export default function ExerciseInner({
 			return
 		}
 
-		const diff = progressions.length - exerciseData.progressions.length
+		const diff =
+			progressions.length - (exerciseData?.progressions.length ?? 0)
 		const toCompare =
-			exerciseData.progressions.length === 0
+			exerciseData?.progressions.length === 0
 				? []
 				: diff > 0
 				? progressions.slice(diff)
@@ -144,8 +146,8 @@ export default function ExerciseInner({
 		for (let i = 0; i < toCompare.length; i++) {
 			const oldProgInOrder =
 				diff >= 0
-					? exerciseData.progressions[i]
-					: exerciseData.progressions[i - diff]
+					? exerciseData?.progressions[i]
+					: exerciseData?.progressions[i - diff]
 			const newProgInOrder = toCompare[i]
 			if (oldProgInOrder?.name !== newProgInOrder?.name) {
 				upsertProgressions.push(newProgInOrder)

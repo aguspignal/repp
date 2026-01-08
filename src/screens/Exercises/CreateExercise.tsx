@@ -24,6 +24,7 @@ export default function CreateExercise({
 	}: DraftExerciseAndProgression) {
 		if (!user) return
 
+		console.log("1")
 		createExerciseAndProgressions(
 			{
 				exerciseData: {
@@ -53,7 +54,10 @@ export default function CreateExercise({
 						index: 0,
 						routes: [
 							{ name: "Home" },
-							{ name: "ExerciseRepository" }
+							{
+								name: "ExerciseRepository",
+								params: { editingRoutineDayId: undefined }
+							}
 						]
 					})
 				}

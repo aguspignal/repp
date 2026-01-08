@@ -103,7 +103,9 @@ const exercisesService = {
 		return data[0]
 	},
 
-	async upsertProgressions({ progressions }: UpsertProgressionsParams) {
+	async upsertProgressions({
+		progressions
+	}: UpsertProgressionsParams): Promise<number | PostgrestError> {
 		console.log("E-SERVICE: upsertProgressions")
 		const { error, count } = await supabase
 			.from("Progressions")
@@ -136,7 +138,7 @@ const exercisesService = {
 	async deleteProgressionsFromOrder({
 		exerciseId,
 		order
-	}: deleteProgressionsFromOrderParams) {
+	}: deleteProgressionsFromOrderParams): Promise<number | PostgrestError> {
 		console.log("E-SERVICE: deleteProgressionsFromOrder")
 		const { error, count } = await supabase
 			.from("Progressions")

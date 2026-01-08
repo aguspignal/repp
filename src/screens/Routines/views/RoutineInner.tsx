@@ -68,7 +68,8 @@ export default function RoutineInner({ routine: { routine, days } }: Props) {
 		)
 	}
 
-	function handleEditDay(day: DatabaseRoutineDay) {
+	function handleEditDay(day: DatabaseRoutineDay | null) {
+		if (!day) return
 		nav.navigate("EditRoutineDay", { id: day.id })
 	}
 
@@ -88,7 +89,7 @@ export default function RoutineInner({ routine: { routine, days } }: Props) {
 				.map((day) => (
 					<RoutineDayCard
 						routineDay={day}
-						onPressEdit={handleEditDay}
+						onPressCard={handleEditDay}
 						onPressHistory={handleSeeDayHistory}
 						key={day.id}
 					/>

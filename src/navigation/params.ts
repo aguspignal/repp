@@ -2,6 +2,7 @@ import {
 	NativeStackNavigationProp,
 	NativeStackScreenProps
 } from "@react-navigation/native-stack"
+import { DatabaseExercise } from "../types/exercises"
 
 export type LoginStackParams = {
 	Welcome: undefined
@@ -15,11 +16,14 @@ export type LoginScreenProps<T extends keyof LoginStackParams> =
 export type RootStackParams = {
 	Home: undefined
 	Settings: undefined
-	ExerciseRepository: { selectionView?: boolean }
+	ExerciseRepository: { editingRoutineDayId?: number }
 	CreateExercise: undefined
 	EditExercise: { id: number }
 	Routine: { id: number }
-	EditRoutineDay: { id: number }
+	EditRoutineDay: {
+		id: number
+		selectedExercises?: DatabaseExercise[]
+	}
 }
 
 export type RootStackScreenProps<T extends keyof RootStackParams> =

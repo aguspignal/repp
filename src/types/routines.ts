@@ -19,3 +19,12 @@ export type RoutineDayAndExercises = {
 	day: DatabaseRoutineDay
 	exercises: DatabaseRoutineDayExercise[]
 }
+
+export type DraftRoutineDayExercise = {
+	exerciseId: number
+	order: number
+	setsGoalLow: number | null
+	setsGoalHigh: number | null
+	repsGoalLow: number | null
+	repsGoalHigh: number | null
+}

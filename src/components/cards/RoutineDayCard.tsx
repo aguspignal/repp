@@ -17,7 +17,7 @@ type Props = {
 	title?: string
 	onPressCard?: (rd: DatabaseRoutineDay | null) => void
 	onPressHistory?: (rd: DatabaseRoutineDay) => void
-	onPressEdit?: (rd: DatabaseRoutineDay) => void
+	// onPressEdit?: (rd: DatabaseRoutineDay) => void
 }
 
 export default function RoutineDayCard({
@@ -25,16 +25,16 @@ export default function RoutineDayCard({
 	color = "textLight",
 	title,
 	onPressCard,
-	onPressEdit,
+	// onPressEdit,
 	onPressHistory
 }: Props) {
 	function handlePressCard() {
 		if (onPressCard) onPressCard(routineDay)
 	}
 
-	function handleEdit() {
-		if (onPressEdit && routineDay) onPressEdit(routineDay)
-	}
+	// function handleEdit() {
+	// 	if (onPressEdit && routineDay) onPressEdit(routineDay)
+	// }
 
 	function handleHistory() {
 		if (onPressHistory && routineDay) onPressHistory(routineDay)
@@ -60,11 +60,11 @@ export default function RoutineDayCard({
 				</View>
 
 				<View style={styles.actionContainer}>
-					{onPressEdit ? (
+					{/* {onPressEdit ? (
 						<TouchableOpacity onPress={handleEdit}>
 							<MCIcon name="rename" size="h3" />
 						</TouchableOpacity>
-					) : null}
+					) : null} */}
 					{onPressHistory ? (
 						<TouchableOpacity onPress={handleHistory}>
 							<MCIcon name="history" size="h3" />

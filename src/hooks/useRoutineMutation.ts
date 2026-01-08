@@ -1,13 +1,20 @@
 import routinesService, {
 	PostRoutineDayParams,
 	PostRoutineExercisesParamas,
-	PostRoutineParams
+	PostRoutineParams,
+	UpdateRoutineDayParams
 } from "../services/routinesService"
 import { useMutation } from "@tanstack/react-query"
 import {
 	handleOnMutationError,
 	isPostgrestError
 } from "../utils/queriesHelpers"
+import {
+	DatabaseRoutineDay,
+	DatabaseRoutineDayExercise,
+	DraftRoutineDayExercise
+} from "../types/routines"
+import { DatabaseExercise } from "../types/exercises"
 
 export default function useRoutineMutation() {
 	const createRoutineMutation = useMutation({
@@ -31,6 +38,39 @@ export default function useRoutineMutation() {
 		onError: handleOnMutationError
 	})
 
+	const updateRoutineDayAndExercisesMutation = useMutation({
+		mutationFn: async ({
+			day,
+			deleteRoutineDayExercisesIds,
+			upsertRoutineDayExercises,
+			insertRoutineDayExercises
+		}: UpdateRoutineDayAndExercisesParams) => {
+			const newRoutineDay = await routinesService.updateRoutineDay(day)
+
+			if (!newRoutineDay || isPostgrestError(newRoutineDay))
+				return newRoutineDay
+
+			if (deleteRoutineDayExercisesIds.length > 0)
+				await routinesService.deleteRoutineDayExercisesByIds(
+					deleteRoutineDayExercisesIds
+				)
+
+			if (upsertRoutineDayExercises.length > 0)
+				await routinesService.upsertRoutineDayExercises(
+					upsertRoutineDayExercises
+				)
+
+			if (insertRoutineDayExercises.length > 0)
+				await routinesService.postRoutineDayExercisesBulk({
+					routineDayId: newRoutineDay.id,
+					exercises: insertRoutineDayExercises
+				})
+
+			return newRoutineDay
+		},
+		onError: handleOnMutationError
+	})
+
 	const deleteRoutineDayMutation = useMutation({
 		mutationFn: async (dayId: number) => {
 			const result = await routinesService.deleteAllRoutineDayExercises(
@@ -47,6 +87,14 @@ export default function useRoutineMutation() {
 		createRoutineMutation,
 		createRoutineDayMutation,
 		createRoutineDayExercisesMutation,
-		deleteRoutineDayMutation
+		deleteRoutineDayMutation,
+		updateRoutineDayAndExercisesMutation
 	}
+}
+
+type UpdateRoutineDayAndExercisesParams = {
+	day: DatabaseRoutineDay
+	deleteRoutineDayExercisesIds: number[]
+	upsertRoutineDayExercises: DatabaseRoutineDayExercise[]
+	insertRoutineDayExercises: DraftRoutineDayExercise[]
 }

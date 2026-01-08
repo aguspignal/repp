@@ -23,7 +23,7 @@ export default function RoutineCard({ routine: { routine, days } }: Props) {
 			<StyledText type="subtitle">{routine.name}</StyledText>
 
 			<View style={styles.daysContainer}>
-				{divideRoutineDayInGroups(days, 3).map((group) => (
+				{divideRoutineDayInGroups(days).map((group) => (
 					<View style={styles.daysGroup} key={group[0].id}>
 						{group.map((day) => (
 							<RoutineDayCodeBox
@@ -41,11 +41,17 @@ export default function RoutineCard({ routine: { routine, days } }: Props) {
 }
 
 const styles = StyleSheet.create({
-	container: {},
-	daysContainer: {},
+	container: {
+		alignItems: "center",
+		gap: theme.spacing.xxs
+	},
+	daysContainer: {
+		gap: 4,
+		alignItems: "center"
+	},
 	daysGroup: {
 		flexDirection: "row",
 		alignItems: "center",
-		gap: theme.spacing.xxs
+		gap: 4
 	}
 })

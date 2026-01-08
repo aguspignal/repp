@@ -62,7 +62,9 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 	}
 
 	function goToExerciseRepository() {
-		navigation.navigate("ExerciseRepository")
+		navigation.navigate("ExerciseRepository", {
+			editingRoutineDayId: undefined
+		})
 	}
 
 	function handleRefresh() {

@@ -130,7 +130,13 @@ export default function EditExercise({
 		invalidateQueries(GETUSEREXERCISESLAZY_KEY(user.id))
 		navigation.reset({
 			index: 0,
-			routes: [{ name: "Home" }, { name: "ExerciseRepository" }]
+			routes: [
+				{ name: "Home" },
+				{
+					name: "ExerciseRepository",
+					params: { editingRoutineDayId: undefined }
+				}
+			]
 		})
 	}
 

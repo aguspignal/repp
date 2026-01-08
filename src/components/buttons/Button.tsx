@@ -35,7 +35,7 @@ export default function Button({
 	style
 }: Props) {
 	const textColor: keyof typeof theme.colors = isDisabled
-		? "grayDark"
+		? "backgroundGray"
 		: isBordered
 		? color
 		: "textDark"
@@ -118,7 +118,7 @@ export default function Button({
 			disabled={isDisabled}
 		>
 			{icon === undefined ? null : (
-				<MCIcon name={icon} style={iconStyles} />
+				<MCIcon name={icon} color={textColor} style={iconStyles} />
 			)}
 			<StyledText type={textType} color={textColor}>
 				{title}

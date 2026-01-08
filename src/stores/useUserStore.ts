@@ -1,11 +1,11 @@
-import { create } from "zustand"
-import { createJSONStorage, persist } from "zustand/middleware"
-import { DatabaseExercise } from "../types/exercises"
 import {
 	DatabaseRoutine,
 	DatabaseRoutineDay,
 	RoutineAndDays
 } from "../types/routines"
+import { create } from "zustand"
+import { createJSONStorage, persist } from "zustand/middleware"
+import { DatabaseExercise } from "../types/exercises"
 import { DatabaseUser } from "../types/user"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
@@ -13,7 +13,6 @@ interface UserState {
 	user: DatabaseUser | null
 	exercises: DatabaseExercise[]
 	routines: RoutineAndDays[]
-	draftRoutineDayExercisesIds: number[]
 
 	loadUser: (u: DatabaseUser | null) => void
 	loadExercises: (exs: DatabaseExercise[]) => void
@@ -27,6 +26,7 @@ interface UserState {
 	removeExercise: (eId: number) => void
 	removeRoutine: (rId: number) => void
 	removeRoutineDay: (rId: number, dId: number) => void
+
 	clearUserStore: () => void
 }
 
@@ -36,7 +36,6 @@ export const useUserStore = create<UserState>()(
 			user: null,
 			exercises: [],
 			routines: [],
-			draftRoutineDayExercisesIds: [],
 
 			loadUser: (u) => set({ user: u }),
 			loadExercises: (exs) => set({ exercises: exs }),

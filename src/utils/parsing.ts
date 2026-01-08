@@ -4,7 +4,10 @@ import {
 	ExerciseFilterBy,
 	ExerciseSortBy
 } from "../types/exercises"
-import { DatabaseRoutineDay } from "../types/routines"
+import {
+	DatabaseRoutineDay,
+	DatabaseRoutineDayExercise
+} from "../types/routines"
 
 export function parseExerciseSortByToText(sortBy: ExerciseSortBy) {
 	if (sortBy === "ascending") return "A-Z"
@@ -30,9 +33,9 @@ function divideArrayInGroups(array: any[], groupSize: number): any[] {
 }
 
 export function divideRoutineDayInGroups(
-	days: DatabaseRoutineDay[],
-	groupSize: number
+	days: DatabaseRoutineDay[]
 ): DatabaseRoutineDay[][] {
+	const groupSize = days.length === 3 || days.length === 4 ? 2 : 3
 	return divideArrayInGroups(days, groupSize) as DatabaseRoutineDay[][]
 }
 
@@ -40,4 +43,10 @@ export function sortProgressionsByOrderDesc(
 	progressions: DatabaseProgression[]
 ): DatabaseProgression[] {
 	return progressions.sort((a, b) => b.order - a.order)
+}
+
+export function sortRDExercisesByOrderAsc(
+	exercises: DatabaseRoutineDayExercise[]
+): DatabaseRoutineDayExercise[] {
+	return exercises.sort((a, b) => a.order - b.order)
 }
