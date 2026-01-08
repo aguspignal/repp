@@ -11,6 +11,7 @@ import CreateExercise from "../screens/Exercises/CreateExercise"
 import EditExercise from "../screens/Exercises/EditExercise"
 import EditExerciseHeader from "../components/header/EditExerciseHeader"
 import EditRoutineDay from "../screens/Routines/EditRoutineDay"
+import EditRoutineDayHeader from "../components/header/EditRoutineDayHeader"
 import ExerciseRepository from "../screens/Exercises/ExerciseRepository"
 import Home from "../screens/Home"
 import HomeHeader from "../components/header/HomeHeader"
@@ -18,7 +19,6 @@ import i18next from "i18next"
 import Loading from "../screens/Loading"
 import Routine from "../screens/Routines/Routine"
 import Settings from "../screens/Settings"
-import EditRoutineDayHeader from "../components/header/EditRoutineDayHeader"
 
 type Props = {
 	uuid: string

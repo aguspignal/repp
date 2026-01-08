@@ -1,4 +1,9 @@
-import { KeyboardAvoidingView, ScrollView, StyleSheet, View } from "react-native"
+import {
+	KeyboardAvoidingView,
+	ScrollView,
+	StyleSheet,
+	View
+} from "react-native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { ParamListBase } from "@react-navigation/native"
 import { ReactNode } from "react"
@@ -6,8 +11,8 @@ import { theme } from "../../resources/theme"
 import { useHeaderHeight } from "@react-navigation/elements"
 import { useTranslation } from "react-i18next"
 import Button from "../../components/buttons/Button"
-import TextButton from "../../components/buttons/TextButton"
 import StyledText from "../../components/texts/StyledText"
+import TextButton from "../../components/buttons/TextButton"
 
 type Props = {
 	type: "signin" | "signup" | "recovery" | "updatepsw" | "otpcode"
@@ -22,13 +27,14 @@ export default function LoginLayout({
 	onSubmit = () => {},
 	isLoading,
 	children,
-	navigation,
+	navigation
 }: Props) {
 	const { t } = useTranslation()
 	const headerHeight = useHeaderHeight()
 
 	function handleNavigation() {
-		if (navigation) navigation.popTo(type === "signin" ? "SignUp" : "SignIn")
+		if (navigation)
+			navigation.popTo(type === "signin" ? "SignUp" : "SignIn")
 	}
 
 	return (
@@ -42,12 +48,12 @@ export default function LoginLayout({
 					styles.subcontainer,
 					type === "signin" || type === "signup"
 						? { justifyContent: "space-between" }
-						: null,
+						: null
 				]}
 				showsVerticalScrollIndicator={false}
 			>
 				{type === "otpcode" ? null : (
-					<StyledText type='title' style={styles.title}>
+					<StyledText type="title" style={styles.title}>
 						{type === "signin"
 							? t("actions.signin")
 							: type === "signup"
@@ -80,7 +86,7 @@ export default function LoginLayout({
 
 				{type === "signin" || type === "signup" ? (
 					<View style={styles.goSignupBtnContainer}>
-						<StyledText type='text'>
+						<StyledText type="text">
 							{type === "signin"
 								? t("questions.dont-have-account")
 								: t("questions.already-have-one")}
@@ -89,7 +95,9 @@ export default function LoginLayout({
 						<TextButton
 							onPress={handleNavigation}
 							title={
-								type === "signin" ? t("actions.go-signup") : t("actions.go-signin")
+								type === "signin"
+									? t("actions.go-signup")
+									: t("actions.go-signin")
 							}
 							color="primary"
 							textType="subtitle"
@@ -105,21 +113,21 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: theme.colors.backgroundBlack,
-		paddingHorizontal: theme.spacing.l,
+		paddingHorizontal: theme.spacing.l
 	},
 	subcontainer: {
-		flex: 1,
+		flex: 1
 	},
 	title: {
-		marginVertical: theme.spacing.m,
+		marginVertical: theme.spacing.m
 	},
 	submitBtn: {
-		marginVertical: theme.spacing.l,
+		marginVertical: theme.spacing.l
 	},
 	goSignupBtnContainer: {
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "flex-end",
-		paddingBottom: theme.spacing.x4l,
-	},
+		paddingBottom: theme.spacing.x4l
+	}
 })

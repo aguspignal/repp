@@ -1,5 +1,5 @@
-import { supabase } from "../lib/supabase"
 import { SignInFormValues, SignUpFormValues } from "../types/forms"
+import { supabase } from "../lib/supabase"
 // import * as QueryParams from "expo-auth-session/build/QueryParams"
 
 export default function useSession() {
@@ -26,7 +26,7 @@ export default function useSession() {
 	async function signUpWithEmail({ email, password }: SignUpFormValues) {
 		const { error } = await supabase.auth.signUp({
 			email: email.toLowerCase(),
-			password: password,
+			password: password
 		})
 
 		if (error) {
@@ -39,7 +39,7 @@ export default function useSession() {
 	async function signInWithEmail({ email, password }: SignInFormValues) {
 		const { error } = await supabase.auth.signInWithPassword({
 			email: email.toLowerCase(),
-			password: password,
+			password: password
 		})
 
 		if (error) {
@@ -55,6 +55,6 @@ export default function useSession() {
 		getSessionUser,
 		endSession,
 		signUpWithEmail,
-		signInWithEmail,
+		signInWithEmail
 	}
 }

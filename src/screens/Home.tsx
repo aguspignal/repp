@@ -15,11 +15,11 @@ import { useUserStore } from "../stores/useUserStore"
 import Button from "../components/buttons/Button"
 import CreateRoutineModal from "../components/modals/CreateRoutineModal"
 import MCIcon from "../components/icons/MCIcon"
+import RoutineCard from "../components/cards/RoutineCard"
 import StyledText from "../components/texts/StyledText"
 import ToastNotification from "../components/notifications/ToastNotification"
 import useRoutineMutation from "../hooks/useRoutineMutation"
 import useRoutineQuery from "../hooks/useRoutineQuery"
-import RoutineCard from "../components/cards/RoutineCard"
 
 export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 	const { t } = useTranslation()
@@ -55,6 +55,7 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 					}
 
 					addRoutine({ routine, days: [] })
+					setIsModalVisible(false)
 					navigation.navigate("Routine", { id: routine.id })
 				}
 			}
@@ -122,6 +123,7 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 								key={routine.routine.id}
 							/>
 						)}
+						contentContainerStyle={styles.routinesList}
 						horizontal
 					/>
 				</View>
@@ -171,6 +173,9 @@ const styles = StyleSheet.create({
 	},
 	myRoutinesContainer: {
 		gap: theme.spacing.s
+	},
+	routinesList: {
+		gap: theme.spacing.xl
 	},
 	exerciseRepoCard: {
 		flexDirection: "row",

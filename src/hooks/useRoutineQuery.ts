@@ -1,10 +1,17 @@
+import {
+	RoutineWithDaysAndExercises,
+	RoutineDayAndExercises,
+	RoutineWithDays
+} from "../types/routines"
 import { PostgrestError } from "@supabase/supabase-js"
-import { RoutineAndDays, RoutineDayAndExercises } from "../types/routines"
 import { useQuery } from "@tanstack/react-query"
 import routinesService from "../services/routinesService"
 
 const RQKEY_ROOT = "routinesQueries"
-export const GETROUTINEWITHDAYSBYID_KEY = (id: number) => [RQKEY_ROOT, id]
+export const GETROUTINEWITHDAYSANDEXERCISESBYID_KEY = (id: number) => [
+	RQKEY_ROOT,
+	id
+]
 export const GETUSERROUTINESWITHDAYSLAZY_KEY = (uId: number) => [
 	RQKEY_ROOT,
 	"userRoutines",
@@ -17,18 +24,20 @@ export const GETROUTINEDAYANDEXERCISES_KEY = (rdId: number) => [
 ]
 
 export default function useRoutineQuery() {
-	function getRoutineWithDaysById(id: number | undefined) {
-		return useQuery<RoutineAndDays | null | PostgrestError>({
-			queryKey: GETROUTINEWITHDAYSBYID_KEY(id ?? 0),
+	function getRoutineWithDaysAndExercisesById(id: number | undefined) {
+		return useQuery<RoutineWithDaysAndExercises | null | PostgrestError>({
+			queryKey: GETROUTINEWITHDAYSANDEXERCISESBYID_KEY(id ?? 0),
 			queryFn: async () => {
 				if (!id) return null
-				return await routinesService.getRoutineWithDaysById(id)
+				return await routinesService.getRoutineWithDaysAndExercisesById(
+					id
+				)
 			}
 		})
 	}
 
 	function getUserRoutinesWithDaysLazy(userId: number | undefined) {
-		return useQuery<RoutineAndDays[] | PostgrestError>({
+		return useQuery<RoutineWithDays[] | PostgrestError>({
 			queryKey: GETUSERROUTINESWITHDAYSLAZY_KEY(userId ?? 0),
 			queryFn: async () => {
 				if (!userId) return []
@@ -48,7 +57,7 @@ export default function useRoutineQuery() {
 	}
 
 	return {
-		getRoutineWithDaysById,
+		getRoutineWithDaysAndExercisesById,
 		getUserRoutinesWithDaysLazy,
 		getRoutineDayAndExercises
 	}

@@ -6,13 +6,13 @@ import { navigationStyles } from "../../navigation/styles"
 import { ParamListBase } from "@react-navigation/native"
 import { RootStackScreenProps } from "../../navigation/params"
 import { TouchableOpacity, View } from "react-native"
+import { useState } from "react"
 import { useUserStore } from "../../stores/useUserStore"
+import ConfirmationModal from "../modals/ConfirmationModal"
 import i18next from "i18next"
 import MCIcon from "../icons/MCIcon"
 import ToastNotification from "../notifications/ToastNotification"
 import useExercisesMutation from "../../hooks/useExercisesMutation"
-import { useState } from "react"
-import ConfirmationModal from "../modals/ConfirmationModal"
 
 type Props = {
 	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>

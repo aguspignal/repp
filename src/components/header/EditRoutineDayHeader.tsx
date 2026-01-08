@@ -1,4 +1,4 @@
-import { GETROUTINEWITHDAYSBYID_KEY } from "../../hooks/useRoutineQuery"
+import { GETROUTINEWITHDAYSANDEXERCISESBYID_KEY } from "../../hooks/useRoutineQuery"
 import { Header } from "@react-navigation/elements"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
@@ -71,7 +71,9 @@ function HeaderRight({ navigation, routineDayId }: HeaderRightProps) {
 				}
 
 				const routine = getRoutineByDayId(routineDayId)
-				invalidateQueries(GETROUTINEWITHDAYSBYID_KEY(routine.id))
+				invalidateQueries(
+					GETROUTINEWITHDAYSANDEXERCISESBYID_KEY(routine.id)
+				)
 				navigation.reset({
 					index: 0,
 					routes: [

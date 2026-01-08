@@ -1,10 +1,10 @@
 {
 	"actions": {
-		"add": "Add",
 		"add-day": "Add day",
+		"add-exercise-from-repository": "Add exercise from repository",
 		"add-exercise": "Add exercise",
 		"add-exercises-(count)": "Add {{count}} exercises",
-		"add-exercise-from-repository": "Add exercise from repository",
+		"add": "Add",
 		"cancel": "Cancel",
 		"choose-name-code-for-this-day": "Choose a name and code for this day",
 		"confirm-password": "Confirm password",
@@ -56,13 +56,13 @@
 		"invalid-email": "Invalid email",
 		"please-select-type-for-exercise": "Please select a type for this exercise",
 		"required": "Required",
+		"too-long": "Too long",
 		"trouble-deleting-exercise": "We had trouble deleting this exercise",
 		"trouble-deleting-routine-day": "We had trouble deleting this routine day",
 		"trouble-getting-exercise": "We had trouble retrieving thiss exercise",
 		"trouble-getting-progressions": "We had trouble retrieving progressions",
-		"trouble-getting-routine": "We had trouble retrieving thiss routine",
 		"trouble-getting-routine-day": "We had trouble retrieving thiss routine day",
-		"too-long": "Too long",
+		"trouble-getting-routine": "We had trouble retrieving thiss routine",
 		"ups-error-ocurred": "Oops! It looks like an error occurred",
 		"ups": "Oops!",
 		"user-not-found": "User not found"
@@ -80,8 +80,8 @@
 		"already-have-one": "Already have one?",
 		"dont-have-account": "Don't have an account?",
 		"forgot-password": "Forgot your password?",
-		"sure-want-to-delete-exercise": "Are you sure you want to delete this exercise?",
-		"sure-want-to-delete-day": "Are you sure you want to delete this day?"
+		"sure-want-to-delete-day": "Are you sure you want to delete this day?",
+		"sure-want-to-delete-exercise": "Are you sure you want to delete this exercise?"
 	},
 	"supabase-error-codes": {
 		"email_address_invalid": "The entered email is invalid, please try again",
@@ -102,8 +102,8 @@
 		"weak_password": "Password too weak, try a stronger one"
 	},
 	"titles": {
-		"exercises": "Exercises",
 		"exercise-repository": "Exercise repository",
+		"exercises": "Exercises",
 		"my-routines": "My routines",
 		"progressions": "Progressions"
 	}

@@ -3,31 +3,38 @@ import {
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
 	DraftRoutineDayExercise,
-	RoutineAndDays,
-	RoutineDayAndExercises
+	RoutineWithDays,
+	RoutineDayAndExercises,
+	RoutineWithDaysAndExercises
 } from "../types/routines"
+import { isPostgrestError } from "../utils/queriesHelpers"
 import { PostgrestError } from "@supabase/supabase-js"
 import { supabase } from "../lib/supabase"
-import { isPostgrestError } from "../utils/queriesHelpers"
 
 const routinesService = {
-	async getRoutineWithDaysById(
+	async getRoutineWithDaysAndExercisesById(
 		id: number
-	): Promise<RoutineAndDays | null | PostgrestError> {
+	): Promise<RoutineWithDaysAndExercises | null | PostgrestError> {
 		console.log("R-SERVICE: getRoutineWithDaysById")
 		const { error, data } = await supabase
 			.from("Routines")
-			.select("*, days:RoutineDays(*)")
+			.select("*, days:RoutineDays(*, exercises:RoutineDayExercises(*))")
 			.eq("id", id)
 
 		if (error) return error
 		const { days, ...routine } = data[0]
-		return { routine, days }
+		return {
+			routine,
+			daysAndExercises: days.map((d) => {
+				const { exercises, ...day } = d
+				return { day, exercises }
+			})
+		}
 	},
 
 	async getRoutinesWithDaysByUserId(
 		userId: number
-	): Promise<RoutineAndDays[] | PostgrestError> {
+	): Promise<RoutineWithDays[] | PostgrestError> {
 		console.log("R-SERVICE: getRoutinesWithDaysByUserId")
 		const { error, data } = await supabase
 			.from("Routines")

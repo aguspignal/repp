@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native"
+import { StyleSheet, View } from "react-native"
 import { theme } from "../../resources/theme"
 import Button from "../buttons/Button"
 import i18next from "../../lib/i18n"

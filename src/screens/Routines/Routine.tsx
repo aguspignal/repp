@@ -7,9 +7,11 @@ import RoutineInner from "./views/RoutineInner"
 import useRoutineQuery from "../../hooks/useRoutineQuery"
 
 export default function Routine({ route }: RootStackScreenProps<"Routine">) {
-	const { getRoutineWithDaysById } = useRoutineQuery()
+	const { getRoutineWithDaysAndExercisesById } = useRoutineQuery()
 
-	const { error, data, isPending } = getRoutineWithDaysById(route.params.id)
+	const { error, data, isPending } = getRoutineWithDaysAndExercisesById(
+		route.params.id
+	)
 
 	if (isPending) return <Loading />
 	if (error) return <ErrorScreen errorMessage={error.message} />

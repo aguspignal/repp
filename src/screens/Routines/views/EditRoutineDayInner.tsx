@@ -7,13 +7,13 @@ import {
 	invalidateQueries,
 	isPostgrestError
 } from "../../../utils/queriesHelpers"
+import {
+	GETROUTINEDAYANDEXERCISES_KEY,
+	GETROUTINEWITHDAYSANDEXERCISESBYID_KEY
+} from "../../../hooks/useRoutineQuery"
 import { DatabaseExercise } from "../../../types/exercises"
 import { EditRoutineDayValidationSchema } from "../../../utils/valdiationSchemas"
 import { EditRoutineDayValues } from "../../../types/forms"
-import {
-	GETROUTINEDAYANDEXERCISES_KEY,
-	GETROUTINEWITHDAYSBYID_KEY
-} from "../../../hooks/useRoutineQuery"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
 import { theme } from "../../../resources/theme"
@@ -130,7 +130,9 @@ export default function EditRoutineDayInner({
 
 					addRoutineDay(newRoutineDay)
 					invalidateQueries(
-						GETROUTINEWITHDAYSBYID_KEY(newRoutineDay.routine_id)
+						GETROUTINEWITHDAYSANDEXERCISESBYID_KEY(
+							newRoutineDay.routine_id
+						)
 					)
 					invalidateQueries(GETROUTINEDAYANDEXERCISES_KEY(user?.id))
 					nav.reset({

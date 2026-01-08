@@ -1,40 +1,43 @@
 import {
+	FlatList,
 	StyleProp,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 	ViewStyle
 } from "react-native"
-import { DatabaseRoutineDay } from "../../types/routines"
+import {
+	DatabaseRoutineDay,
+	DatabaseRoutineDayExercise
+} from "../../types/routines"
 import { TextType } from "../../types/misc"
 import { theme } from "../../resources/theme"
+import { useUserStore } from "../../stores/useUserStore"
 import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
 
 type Props = {
 	routineDay: DatabaseRoutineDay | null
+	rdExercises?: DatabaseRoutineDayExercise[]
 	color?: keyof typeof theme.colors
 	title?: string
 	onPressCard?: (rd: DatabaseRoutineDay | null) => void
 	onPressHistory?: (rd: DatabaseRoutineDay) => void
-	// onPressEdit?: (rd: DatabaseRoutineDay) => void
 }
 
 export default function RoutineDayCard({
 	routineDay,
+	rdExercises,
 	color = "textLight",
 	title,
 	onPressCard,
-	// onPressEdit,
 	onPressHistory
 }: Props) {
+	const { exercises } = useUserStore()
+
 	function handlePressCard() {
 		if (onPressCard) onPressCard(routineDay)
 	}
-
-	// function handleEdit() {
-	// 	if (onPressEdit && routineDay) onPressEdit(routineDay)
-	// }
 
 	function handleHistory() {
 		if (onPressHistory && routineDay) onPressHistory(routineDay)
@@ -60,11 +63,6 @@ export default function RoutineDayCard({
 				</View>
 
 				<View style={styles.actionContainer}>
-					{/* {onPressEdit ? (
-						<TouchableOpacity onPress={handleEdit}>
-							<MCIcon name="rename" size="h3" />
-						</TouchableOpacity>
-					) : null} */}
 					{onPressHistory ? (
 						<TouchableOpacity onPress={handleHistory}>
 							<MCIcon name="history" size="h3" />
@@ -73,7 +71,25 @@ export default function RoutineDayCard({
 				</View>
 			</View>
 
-			<View style={styles.exercisesContainer}></View>
+			{rdExercises && rdExercises.length > 0 ? (
+				<View style={styles.exercisesContainer}>
+					<FlatList
+						data={rdExercises}
+						renderItem={({ item }) => (
+							<View key={item.id}>
+								<StyledText type="text" color="grayDark">
+									{
+										exercises.find(
+											(e) => e.id === item.exercise_id
+										)?.name
+									}
+								</StyledText>
+							</View>
+						)}
+						contentContainerStyle={styles.exercisesList}
+					/>
+				</View>
+			) : null}
 		</TouchableOpacity>
 	)
 }
@@ -134,5 +150,15 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		gap: theme.spacing.xs
 	},
-	exercisesContainer: {}
+	exercisesContainer: {
+		paddingLeft: 28
+	},
+	exercisesList: {
+		paddingLeft: theme.spacing.xs,
+		paddingTop: theme.spacing.xxs,
+		paddingBottom: theme.spacing.x3s,
+		borderLeftWidth: 1,
+		borderLeftColor: theme.colors.grayDark,
+		gap: theme.spacing.xxs
+	}
 })

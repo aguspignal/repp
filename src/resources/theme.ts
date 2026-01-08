@@ -10,7 +10,7 @@ const pallete = {
 	gray2: "#EAEAEA",
 	orange: "#F8961E",
 	paleblue: "#577590",
-	red: "#F94144",
+	red: "#F94144"
 }
 
 export const theme = {
@@ -29,10 +29,11 @@ export const theme = {
 
 		primary: pallete.orange,
 		secondary: pallete.paleblue,
-		danger: pallete.red,
+		danger: pallete.red
 	},
 
 	spacing: {
+		x3s: 4,
 		xxs: 8,
 		xs: 12,
 		s: 16,
@@ -42,7 +43,7 @@ export const theme = {
 		xxl: 40,
 		x3l: 48,
 		x4l: 64,
-		x5l: 80,
+		x5l: 80
 	},
 
 	fontSize: {
@@ -55,6 +56,6 @@ export const theme = {
 		xxl: 24,
 		h1: 48,
 		h2: 40,
-		h3: 32,
-	},
+		h3: 32
+	}
 }

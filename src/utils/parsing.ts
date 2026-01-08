@@ -1,4 +1,3 @@
-import i18next from "i18next"
 import {
 	DatabaseProgression,
 	ExerciseFilterBy,
@@ -8,6 +7,7 @@ import {
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise
 } from "../types/routines"
+import i18next from "i18next"
 
 export function parseExerciseSortByToText(sortBy: ExerciseSortBy) {
 	if (sortBy === "ascending") return "A-Z"

@@ -1,7 +1,7 @@
 import {
 	DatabaseRoutine,
 	DatabaseRoutineDay,
-	RoutineAndDays
+	RoutineWithDays
 } from "../types/routines"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
@@ -12,15 +12,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 interface UserState {
 	user: DatabaseUser | null
 	exercises: DatabaseExercise[]
-	routines: RoutineAndDays[]
+	routines: RoutineWithDays[]
 
 	loadUser: (u: DatabaseUser | null) => void
 	loadExercises: (exs: DatabaseExercise[]) => void
-	loadRoutines: (rs: RoutineAndDays[]) => void
+	loadRoutines: (rs: RoutineWithDays[]) => void
 	getRoutineByDayId: (dId: number) => DatabaseRoutine
 
 	addExercise: (ex: DatabaseExercise) => void
-	addRoutine: (r: RoutineAndDays) => void
+	addRoutine: (r: RoutineWithDays) => void
 	addRoutineDay: (rd: DatabaseRoutineDay) => void
 
 	removeExercise: (eId: number) => void
@@ -85,7 +85,7 @@ export const useUserStore = create<UserState>()(
 					(r) => r.routine.id === rId
 				)[0]
 				const days = routine.days.filter((d) => d.id === dId)
-				const routineAndDay: RoutineAndDays = {
+				const routineAndDay: RoutineWithDays = {
 					routine: routine.routine,
 					days
 				}

@@ -1,11 +1,11 @@
-import i18next from "i18next"
-import * as yup from "yup"
 import {
 	MAX_CODE_LENGTH,
 	MAX_DESCRIPTION_LENGTH,
 	MAX_NAME_LENGTH,
 	MIN_PASSWORD_LENGTH
 } from "../resources/constants"
+import * as yup from "yup"
+import i18next from "i18next"
 
 export const SignInValidationSchema = yup.object().shape({
 	email: yup

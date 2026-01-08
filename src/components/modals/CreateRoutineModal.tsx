@@ -37,7 +37,7 @@ export default function CreateRoutineModal({
 		>
 			<View style={styles.container}>
 				<StyledText type="boldText" align="center" style={styles.title}>
-					{i18next.t("actions.give-your-routine-name")}
+					{i18next.t("actions.give-your-routineday-name-code")}
 				</StyledText>
 
 				<View style={styles.actionsContainer}>

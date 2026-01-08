@@ -2,8 +2,11 @@ import {
 	invalidateQueries,
 	isPostgrestError
 } from "../../../utils/queriesHelpers"
-import { DatabaseRoutineDay, RoutineAndDays } from "../../../types/routines"
-import { GETROUTINEWITHDAYSBYID_KEY } from "../../../hooks/useRoutineQuery"
+import {
+	DatabaseRoutineDay,
+	RoutineWithDaysAndExercises
+} from "../../../types/routines"
+import { GETROUTINEWITHDAYSANDEXERCISESBYID_KEY } from "../../../hooks/useRoutineQuery"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { ScrollView } from "react-native-gesture-handler"
 import { StyleSheet } from "react-native"
@@ -20,9 +23,11 @@ import ToastNotification from "../../../components/notifications/ToastNotificati
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
 
 type Props = {
-	routine: RoutineAndDays
+	routine: RoutineWithDaysAndExercises
 }
-export default function RoutineInner({ routine: { routine, days } }: Props) {
+export default function RoutineInner({
+	routine: { routine, daysAndExercises }
+}: Props) {
 	const { t } = useTranslation()
 	const { addRoutineDay } = useUserStore()
 	const { createRoutineDayMutation } = useRoutineMutation()
@@ -60,8 +65,11 @@ export default function RoutineInner({ routine: { routine, days } }: Props) {
 
 					addRoutineDay(newDay)
 					invalidateQueries(
-						GETROUTINEWITHDAYSBYID_KEY(newDay.routine_id)
+						GETROUTINEWITHDAYSANDEXERCISESBYID_KEY(
+							newDay.routine_id
+						)
 					)
+					setRoutineDayModalVisible(false)
 					nav.navigate("EditRoutineDay", { id: newDay.id })
 				}
 			}
@@ -84,14 +92,15 @@ export default function RoutineInner({ routine: { routine, days } }: Props) {
 				{routine.name}
 			</StyledText>
 
-			{days
-				.filter((d) => !d.deleted)
-				.map((day) => (
+			{daysAndExercises
+				.filter((de) => !de.day.deleted)
+				.map((de) => (
 					<RoutineDayCard
-						routineDay={day}
+						routineDay={de.day}
+						rdExercises={de.exercises}
 						onPressCard={handleEditDay}
 						onPressHistory={handleSeeDayHistory}
-						key={day.id}
+						key={de.day.id}
 					/>
 				))}
 			<RoutineDayCard

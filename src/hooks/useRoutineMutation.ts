@@ -1,10 +1,8 @@
 import routinesService, {
 	PostRoutineDayParams,
 	PostRoutineExercisesParamas,
-	PostRoutineParams,
-	UpdateRoutineDayParams
+	PostRoutineParams
 } from "../services/routinesService"
-import { useMutation } from "@tanstack/react-query"
 import {
 	handleOnMutationError,
 	isPostgrestError
@@ -14,7 +12,7 @@ import {
 	DatabaseRoutineDayExercise,
 	DraftRoutineDayExercise
 } from "../types/routines"
-import { DatabaseExercise } from "../types/exercises"
+import { useMutation } from "@tanstack/react-query"
 
 export default function useRoutineMutation() {
 	const createRoutineMutation = useMutation({

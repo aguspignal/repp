@@ -10,9 +10,14 @@ export type DatabaseRoutineDayExercise =
 
 export type RoutineStatus = Database["public"]["Enums"]["RoutineStatus"]
 
-export type RoutineAndDays = {
+export type RoutineWithDays = {
 	routine: DatabaseRoutine
 	days: DatabaseRoutineDay[]
+}
+
+export type RoutineWithDaysAndExercises = {
+	routine: DatabaseRoutine
+	daysAndExercises: RoutineDayAndExercises[]
 }
 
 export type RoutineDayAndExercises = {
