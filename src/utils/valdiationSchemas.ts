@@ -2,69 +2,98 @@ import {
 	MAX_CODE_LENGTH,
 	MAX_DESCRIPTION_LENGTH,
 	MAX_NAME_LENGTH,
+	MAX_PASSWORD_LENGTH,
 	MIN_PASSWORD_LENGTH
 } from "../resources/constants"
-import * as yup from "yup"
+import * as z from "zod"
 import i18next from "i18next"
 
-export const SignInValidationSchema = yup.object().shape({
-	email: yup
-		.string()
-		.trim()
-		.matches(
-			/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-			i18next.t("error-messages.invalid-email")
-		)
-		.required(i18next.t("error-messages.required")),
-	password: yup.string().required(i18next.t("error-messages.required"))
-})
-
-export const SignUpValidationSchema = yup.object().shape({
-	email: yup
-		.string()
-		.trim()
-		.matches(
-			/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-			i18next.t("error-messages.invalid-email")
-		)
-		.required(i18next.t("error-messages.required")),
-	password: yup
+export const SignInSchema = z.object({
+	email: z.email(),
+	password: z
 		.string()
 		.min(
 			MIN_PASSWORD_LENGTH,
-			({ min }) => `La contraseña debe tener al menos ${min} caracteres`
+			i18next.t(
+				"error-messages.password-must-have-at-least-(minCharacters)-charactes",
+				{ minCharacters: MIN_PASSWORD_LENGTH }
+			)
 		)
-		.required(i18next.t("error-messages.required")),
-	confirmPassword: yup
-		.string()
-		.oneOf([yup.ref("password")], "Las contraseñas no coinciden")
-		.required(i18next.t("error-messages.required"))
+		.max(MAX_PASSWORD_LENGTH, i18next.t("error-messages.too-long"))
 })
+export type SignInValues = z.infer<typeof SignInSchema>
 
-export const CreateExerciseValidationSchema = yup.object().shape({
-	name: yup
+export const SignUpSchema = z
+	.object({
+		email: z
+			.string()
+			.trim()
+			.regex(
+				/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+				i18next.t("error-messages.invalid-email")
+			),
+		password: z
+			.string()
+			.min(
+				MIN_PASSWORD_LENGTH,
+				i18next.t(
+					"error-messages.password-must-have-at-least-(minCharacters)-charactes",
+					{ minCharacters: MIN_PASSWORD_LENGTH }
+				)
+			)
+			.max(MAX_PASSWORD_LENGTH, i18next.t("error-messages.too-long")),
+		confirmPassword: z.string()
+	})
+	.refine((data) => data.password === data.confirmPassword, {
+		error: i18next.t("error-messages.passwords-dont-match")
+	})
+export type SignUpValues = z.infer<typeof SignUpSchema>
+
+export const CreateExerciseSchema = z.object({
+	name: z
 		.string()
 		.trim()
-		.max(MAX_NAME_LENGTH, i18next.t("error-messages.too-long"))
-		.required(i18next.t("error-messages.required")),
-	description: yup
+		.max(MAX_NAME_LENGTH, i18next.t("error-messages.too-long")),
+	description: z
 		.string()
 		.trim()
 		.max(MAX_DESCRIPTION_LENGTH, i18next.t("error-messages.too-long"))
 })
+export type CreateExerciseValues = z.infer<typeof CreateExerciseSchema>
 
-export const EditRoutineDayValidationSchema = yup.object().shape({
-	code: yup
+export const EditRoutineDaySchema = z.object({
+	code: z
 		.string()
 		.trim()
 		.max(
 			MAX_CODE_LENGTH,
 			i18next.t("error-messages.cant-be-more-than-3-digits")
-		)
-		.required(i18next.t("error-messages.required")),
-	name: yup
+		),
+	name: z
 		.string()
 		.trim()
 		.max(MAX_NAME_LENGTH, i18next.t("error-messages.too-long"))
-		.required(i18next.t("error-messages.required"))
 })
+export type EditRoutineDayValues = z.infer<typeof EditRoutineDaySchema>
+
+export const EditRoutineSchema = z.object({
+	name: z
+		.string()
+		.trim()
+		.min(1, i18next.t("error-messages.required"))
+		.max(MAX_NAME_LENGTH, i18next.t("error-messages.too-long"))
+		.regex(/^[\p{L}0-9][\p{L}0-9 \-\/()]*$/u),
+	description: z
+		.string()
+		.trim()
+		.max(MAX_DESCRIPTION_LENGTH, i18next.t("error-messages.too-long"))
+})
+export type EditRoutineValues = z.infer<typeof EditRoutineSchema>
+
+export const WorkoutSchema = z.object({
+	description: z
+		.string()
+		.trim()
+		.max(MAX_DESCRIPTION_LENGTH, i18next.t("error-messages.too-long"))
+})
+export type WorkoutValues = z.infer<typeof WorkoutSchema>

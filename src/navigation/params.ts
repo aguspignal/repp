@@ -25,6 +25,8 @@ export type RootStackParams = {
 		id: number
 		selectedExercises?: DatabaseExercise[]
 	}
+	Workout: { dayId: number }
+	RoutineDayHistory: { id: number }
 }
 
 export type RootStackScreenProps<T extends keyof RootStackParams> =

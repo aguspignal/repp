@@ -12,8 +12,6 @@ import {
 	GETROUTINEWITHDAYSANDEXERCISESBYID_KEY
 } from "../../../hooks/useRoutineQuery"
 import { DatabaseExercise } from "../../../types/exercises"
-import { EditRoutineDayValidationSchema } from "../../../utils/valdiationSchemas"
-import { EditRoutineDayValues } from "../../../types/forms"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
 import { theme } from "../../../resources/theme"
@@ -30,6 +28,10 @@ import Sortables, { SortableGridRenderItem } from "react-native-sortables"
 import StyledText from "../../../components/texts/StyledText"
 import ToastNotification from "../../../components/notifications/ToastNotification"
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
+import {
+	EditRoutineDaySchema,
+	EditRoutineDayValues
+} from "../../../utils/valdiationSchemas"
 
 type Props = {
 	day: DatabaseRoutineDay
@@ -58,7 +60,7 @@ export default function EditRoutineDayInner({
 			code: day.code ?? "",
 			name: day.name ?? ""
 		},
-		resolver: yupResolver(EditRoutineDayValidationSchema)
+		resolver: yupResolver(EditRoutineDaySchema)
 	})
 
 	const [exercisesList, setExercisesList] = useState<DatabaseExercise[]>(

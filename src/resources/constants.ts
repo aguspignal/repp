@@ -35,7 +35,8 @@ export const SUPABASE_PROJECT_API_KEY =
 // VALUES
 // =============================================================================
 
-export const MAX_CODE_LENGTH = 3
 export const MIN_PASSWORD_LENGTH = 6
+export const MAX_PASSWORD_LENGTH = 256
+export const MAX_CODE_LENGTH = 3
 export const MAX_NAME_LENGTH = 64
 export const MAX_DESCRIPTION_LENGTH = 255

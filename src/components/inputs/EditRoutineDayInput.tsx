@@ -1,5 +1,5 @@
 import { Control, Controller, useController } from "react-hook-form"
-import { EditRoutineDayValues } from "../../types/forms"
+import { EditRoutineDayValues } from "../../utils/valdiationSchemas"
 import { inputStyles } from "./styles"
 import { MAX_CODE_LENGTH, MAX_NAME_LENGTH } from "../../resources/constants"
 import { TextInput, View } from "react-native"

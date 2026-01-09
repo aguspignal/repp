@@ -1,6 +1,6 @@
 import { Control, Controller, useController } from "react-hook-form"
 import { inputStyles } from "./styles"
-import { SignUpFormValues } from "../../types/forms"
+import { SignUpValues } from "../../utils/valdiationSchemas"
 import { TextInput, TouchableOpacity, View } from "react-native"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -8,8 +8,8 @@ import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
 
 type Props = {
-	name: keyof SignUpFormValues
-	control: Control<SignUpFormValues>
+	name: keyof SignUpValues
+	control: Control<SignUpValues>
 }
 
 export default function SignUpInput({ name, control }: Props) {
@@ -32,16 +32,22 @@ export default function SignUpInput({ name, control }: Props) {
 		required: true,
 		maxLength: name === "email" ? 64 : 257,
 		minLength: name === "password" || name === "confirmPassword" ? 6 : 1,
-		pattern: name === "email" ? /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i : /.+/,
+		pattern:
+			name === "email"
+				? /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i
+				: /.+/
 	}
 
 	function handleShowPassword() {
-		if (name === "password" || name === "confirmPassword") setPasswordVisible((prev) => !prev)
+		if (name === "password" || name === "confirmPassword")
+			setPasswordVisible((prev) => !prev)
 	}
 
 	return (
 		<View style={inputStyles.inputContainer}>
-			<StyledText type='boldNote' style={inputStyles.label}>{label}</StyledText>
+			<StyledText type="boldNote" style={inputStyles.label}>
+				{label}
+			</StyledText>
 
 			<Controller
 				name={name}
@@ -53,9 +59,12 @@ export default function SignUpInput({ name, control }: Props) {
 							onChangeText={field.onChange}
 							onBlur={field.onBlur}
 							value={field.value}
-							keyboardType={name === "email" ? "email-address" : "default"}
+							keyboardType={
+								name === "email" ? "email-address" : "default"
+							}
 							secureTextEntry={
-								(name === "password" || name === "confirmPassword") &&
+								(name === "password" ||
+									name === "confirmPassword") &&
 								!passwordVisible
 							}
 							style={inputStyles.input}
@@ -66,14 +75,21 @@ export default function SignUpInput({ name, control }: Props) {
 							activeOpacity={1}
 							style={inputStyles.rightIconContainer}
 						>
-							<MCIcon name={iconName} style={inputStyles.rightIcon} />
+							<MCIcon
+								name={iconName}
+								style={inputStyles.rightIcon}
+							/>
 						</TouchableOpacity>
 					</View>
 				)}
 			/>
 
 			{fieldState.error ? (
-				<StyledText type='boldNote' color="danger" style={inputStyles.errorMessage}>
+				<StyledText
+					type="boldNote"
+					color="danger"
+					style={inputStyles.errorMessage}
+				>
 					{fieldState.error.message}
 				</StyledText>
 			) : null}

@@ -1,10 +1,11 @@
 import useRoutineQuery, {
-	GETROUTINEDAYANDEXERCISES_KEY,
-	GETUSERROUTINESWITHDAYSLAZY_KEY,
 	GETROUTINEWITHDAYSANDEXERCISESBYID_KEY
 } from "../../hooks/useRoutineQuery"
+import {
+	EditRoutineSchema,
+	EditRoutineValues
+} from "../../utils/valdiationSchemas"
 import { DatabaseRoutine } from "../../types/routines"
-import { EditRoutineValues } from "../../types/forms"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { RootStackScreenProps } from "../../navigation/params"
 import { StyleSheet, View } from "react-native"
@@ -13,6 +14,7 @@ import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
+import { zodResolver } from "@hookform/resolvers/zod"
 import Button from "../../components/buttons/Button"
 import EditRoutineInput from "../../components/inputs/EditRoutineInput"
 import ToastNotification from "../../components/notifications/ToastNotification"
@@ -38,7 +40,8 @@ export default function EditRoutine({
 		defaultValues: {
 			name: routine?.name ?? "",
 			description: routine?.description ?? ""
-		}
+		},
+		resolver: zodResolver(EditRoutineSchema)
 	})
 
 	function handleSaveChanges({ name, description }: EditRoutineValues) {

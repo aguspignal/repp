@@ -1,7 +1,6 @@
 import { LoginScreenProps } from "../../navigation/params"
 import { parseSupabaseErrorToTranslation } from "../../utils/queriesHelpers"
-import { SignInFormValues } from "../../types/forms"
-import { SignInValidationSchema } from "../../utils/valdiationSchemas"
+import { SignInSchema, SignInValues } from "../../utils/valdiationSchemas"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -17,13 +16,13 @@ export default function SignIn({ navigation }: LoginScreenProps<"SignIn">) {
 	const {
 		handleSubmit,
 		control,
-		formState: { isLoading, isSubmitting },
-	} = useForm<SignInFormValues>({
+		formState: { isLoading, isSubmitting }
+	} = useForm<SignInValues>({
 		defaultValues: { email: "", password: "" },
-		resolver: yupResolver(SignInValidationSchema),
+		resolver: yupResolver(SignInSchema)
 	})
 
-	async function handleSignIn(values: SignInFormValues) {
+	async function handleSignIn(values: SignInValues) {
 		const error = await signInWithEmail(values)
 
 		if (error) {
@@ -31,7 +30,9 @@ export default function SignIn({ navigation }: LoginScreenProps<"SignIn">) {
 				// navigation.navigate("EmailVerification", { email: values.email })
 				return
 			}
-			ToastNotification({ title: t(parseSupabaseErrorToTranslation(error.code)) })
+			ToastNotification({
+				title: t(parseSupabaseErrorToTranslation(error.code))
+			})
 		}
 	}
 

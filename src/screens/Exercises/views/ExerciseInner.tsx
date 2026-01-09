@@ -10,8 +10,6 @@ import {
 	DraftProgression,
 	ExerciseAndProgressions
 } from "../../../types/exercises"
-import { CreateExerciseValidationSchema } from "../../../utils/valdiationSchemas"
-import { CreateExerciseValues } from "../../../types/forms"
 import { sortProgressionsByOrderDesc } from "../../../utils/parsing"
 import { theme } from "../../../resources/theme"
 import { useForm } from "react-hook-form"
@@ -26,6 +24,10 @@ import ExerciseTypeCard from "../../../components/cards/ExerciseTypeCard"
 import StyledText from "../../../components/texts/StyledText"
 import TextButton from "../../../components/buttons/TextButton"
 import ToastNotification from "../../../components/notifications/ToastNotification"
+import {
+	CreateExerciseSchema,
+	CreateExerciseValues
+} from "../../../utils/valdiationSchemas"
 
 type Props = {
 	type: "create" | "edit"
@@ -46,15 +48,13 @@ export default function ExerciseInner({
 	const {
 		handleSubmit,
 		control,
-		getValues,
 		formState: { isLoading, isSubmitting }
 	} = useForm<CreateExerciseValues>({
 		defaultValues: {
 			name: exerciseData?.exercise.name ?? "",
 			description: exerciseData?.exercise.description ?? ""
 		},
-		// @ts-ignore
-		resolver: yupResolver(CreateExerciseValidationSchema)
+		resolver: yupResolver(CreateExerciseSchema)
 	})
 
 	const [isBodyweight, setIsBodyweight] = useState(
@@ -122,7 +122,7 @@ export default function ExerciseInner({
 		setProgressions(reordered)
 	}
 
-	async function handleAction() {
+	async function handleAction({ description, name }: CreateExerciseValues) {
 		if (!user) return
 		if (type === "edit" && !exerciseData) return
 
@@ -169,8 +169,8 @@ export default function ExerciseInner({
 
 		onSubmit({
 			draftExercise: {
-				name: getValues().name,
-				description: getValues().description,
+				name,
+				description,
 				is_bodyweight: isBodyweight,
 				is_freeweight: isFreeweight,
 				is_isometric: isIsometric
@@ -188,9 +188,7 @@ export default function ExerciseInner({
 				contentContainerStyle={styles.contentContainer}
 			>
 				<View>
-					{/* @ts-ignore */}
 					<CreateExerciseInput name="name" control={control} />
-					{/* @ts-ignore */}
 					<CreateExerciseInput name="description" control={control} />
 				</View>
 

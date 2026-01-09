@@ -19,6 +19,7 @@
 		"edit-routine": "Edit routine",
 		"edit-routine-day": "Edit routine day",
 		"filter": "Filter",
+		"finish-workout": "Finish workout",
 		"give-your-routineday-name-code": "Give your routine a name",
 		"go-signin": "Sign in!",
 		"go-signup": "Create one now!",
@@ -42,6 +43,7 @@
 		"freeweight": "Freeweight",
 		"isometric": "Isometric",
 		"name": "Name",
+		"new": "New",
 		"password": "Password",
 		"progression-name": "Progression name",
 		"properties": "Properties",
@@ -56,6 +58,8 @@
 		"couldnt-fetch-routines": "We couldn't fetch routines",
 		"invalid-email": "Invalid email",
 		"please-select-type-for-exercise": "Please select a type for this exercise",
+		"passwords-dont-match": "Passwords don't match",
+		"password-must-have-at-least-(minCharacters)-charactes": "Password must have at least {{minCharacters}} characters",
 		"required": "Required",
 		"too-long": "Too long",
 		"trouble-deleting-exercise": "We had trouble deleting this exercise",
@@ -108,6 +112,7 @@
 		"exercise-repository": "Exercise repository",
 		"exercises": "Exercises",
 		"my-routines": "My routines",
-		"progressions": "Progressions"
+		"progressions": "Progressions",
+		"(dayName)-workout": "{{dayName}} workout"
 	}
 }
