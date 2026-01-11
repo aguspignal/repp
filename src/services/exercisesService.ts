@@ -46,6 +46,19 @@ const exercisesService = {
 		return data
 	},
 
+	async getProgressionsByExercisesIds(
+		ids: number[]
+	): Promise<DatabaseProgression[] | PostgrestError> {
+		console.log("E-SERVICE: getProgressionsByExercisesIds")
+		const { error, data } = await supabase
+			.from("Progressions")
+			.select("*")
+			.in("exercise_id", ids)
+
+		if (error) return error
+		return data
+	},
+
 	async postExercise({
 		userId,
 		name,

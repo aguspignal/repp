@@ -53,10 +53,12 @@ export default function RoutineDayCard({
 			<View style={styles.header}>
 				<View style={styles.codeAndTitle}>
 					<RoutineDayCodeBox
+						dayId={routineDay?.id}
 						code={routineDay?.code}
 						color={color}
 						plusIcon={!routineDay}
 						size="m"
+						onPress={() => {}}
 					/>
 
 					<StyledText type="subtitle" color={color}>
@@ -95,17 +97,21 @@ export default function RoutineDayCard({
 }
 
 type CodeBoxProps = {
+	dayId: number | undefined
 	code: string | undefined
 	plusIcon?: boolean
 	color: keyof typeof theme.colors
 	size: "s" | "m"
+	onPress?: (dayId: number | undefined) => void
 }
 
 export function RoutineDayCodeBox({
+	dayId,
 	code,
 	plusIcon = false,
 	color,
-	size
+	size,
+	onPress
 }: CodeBoxProps) {
 	const boxStyles: StyleProp<ViewStyle> = {
 		borderWidth: 1,
@@ -120,8 +126,17 @@ export function RoutineDayCodeBox({
 	const textType: TextType = size === "s" ? "boldText" : "subtitle"
 	const plusIconSize: keyof typeof theme.fontSize = size === "s" ? "h3" : "h2"
 
+	function handlePress() {
+		if (!onPress || !dayId) return
+		onPress(dayId)
+	}
+
 	return (
-		<View style={boxStyles}>
+		<TouchableOpacity
+			onPress={handlePress}
+			disabled={!onPress || !dayId}
+			style={boxStyles}
+		>
 			{plusIcon ? (
 				<MCIcon name="plus" color={color} size={plusIconSize} />
 			) : (
@@ -129,7 +144,7 @@ export function RoutineDayCodeBox({
 					{code ?? "ABC"}
 				</StyledText>
 			)}
-		</View>
+		</TouchableOpacity>
 	)
 }
 

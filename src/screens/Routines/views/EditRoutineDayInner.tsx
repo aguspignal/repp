@@ -11,6 +11,10 @@ import {
 	GETROUTINEDAYANDEXERCISES_KEY,
 	GETROUTINEWITHDAYSANDEXERCISESBYID_KEY
 } from "../../../hooks/useRoutineQuery"
+import {
+	EditRoutineDaySchema,
+	EditRoutineDayValues
+} from "../../../utils/valdiationSchemas"
 import { DatabaseExercise } from "../../../types/exercises"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
@@ -20,7 +24,7 @@ import { useForm } from "react-hook-form"
 import { useNavigation } from "@react-navigation/native"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../../stores/useUserStore"
-import { yupResolver } from "@hookform/resolvers/yup"
+import { zodResolver } from "@hookform/resolvers/zod"
 import Button from "../../../components/buttons/Button"
 import EditRoutineDayInput from "../../../components/inputs/EditRoutineDayInput"
 import MCIcon from "../../../components/icons/MCIcon"
@@ -28,10 +32,6 @@ import Sortables, { SortableGridRenderItem } from "react-native-sortables"
 import StyledText from "../../../components/texts/StyledText"
 import ToastNotification from "../../../components/notifications/ToastNotification"
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
-import {
-	EditRoutineDaySchema,
-	EditRoutineDayValues
-} from "../../../utils/valdiationSchemas"
 
 type Props = {
 	day: DatabaseRoutineDay
@@ -60,7 +60,7 @@ export default function EditRoutineDayInner({
 			code: day.code ?? "",
 			name: day.name ?? ""
 		},
-		resolver: yupResolver(EditRoutineDaySchema)
+		resolver: zodResolver(EditRoutineDaySchema)
 	})
 
 	const [exercisesList, setExercisesList] = useState<DatabaseExercise[]>(

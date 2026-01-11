@@ -65,5 +65,15 @@ export const inputStyles = StyleSheet.create({
 	inputWithBtn: {
 		flex: 1,
 		borderWidth: 0
+	},
+	labelWithIconContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: theme.spacing.xxs
+	},
+	labelAndActionContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between"
 	}
 })

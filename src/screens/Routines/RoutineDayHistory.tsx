@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native"
-import StyledText from "../../components/texts/StyledText"
 import { theme } from "../../resources/theme"
+import StyledText from "../../components/texts/StyledText"
 
 export default function RoutineDayHistory() {
 	return (

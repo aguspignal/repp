@@ -1,12 +1,5 @@
-import {
-	DatabaseProgression,
-	ExerciseFilterBy,
-	ExerciseSortBy
-} from "../types/exercises"
-import {
-	DatabaseRoutineDay,
-	DatabaseRoutineDayExercise
-} from "../types/routines"
+import { DatabaseRoutineDay } from "../types/routines"
+import { ExerciseFilterBy, ExerciseSortBy } from "../types/exercises"
 import i18next from "i18next"
 
 export function parseExerciseSortByToText(sortBy: ExerciseSortBy) {
@@ -39,14 +32,10 @@ export function divideRoutineDayInGroups(
 	return divideArrayInGroups(days, groupSize) as DatabaseRoutineDay[][]
 }
 
-export function sortProgressionsByOrderDesc(
-	progressions: DatabaseProgression[]
-): DatabaseProgression[] {
-	return progressions.sort((a, b) => b.order - a.order)
-}
-
-export function sortRDExercisesByOrderAsc(
-	exercises: DatabaseRoutineDayExercise[]
-): DatabaseRoutineDayExercise[] {
-	return exercises.sort((a, b) => a.order - b.order)
+export function parseDateToWeekdayMonthDay(date: Date): string {
+	return date.toLocaleDateString("en-US", {
+		weekday: "short",
+		month: "long",
+		day: "numeric"
+	})
 }

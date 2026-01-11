@@ -58,6 +58,7 @@ export const CreateExerciseSchema = z.object({
 		.string()
 		.trim()
 		.max(MAX_DESCRIPTION_LENGTH, i18next.t("error-messages.too-long"))
+		.optional()
 })
 export type CreateExerciseValues = z.infer<typeof CreateExerciseSchema>
 
@@ -87,13 +88,15 @@ export const EditRoutineSchema = z.object({
 		.string()
 		.trim()
 		.max(MAX_DESCRIPTION_LENGTH, i18next.t("error-messages.too-long"))
+		.optional()
 })
 export type EditRoutineValues = z.infer<typeof EditRoutineSchema>
 
 export const WorkoutSchema = z.object({
-	description: z
+	note: z
 		.string()
 		.trim()
 		.max(MAX_DESCRIPTION_LENGTH, i18next.t("error-messages.too-long"))
+		.optional()
 })
 export type WorkoutValues = z.infer<typeof WorkoutSchema>

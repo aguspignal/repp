@@ -1,1 +1,7 @@
-export type TextType = "note" | "boldNote" | "text" | "boldText" | "subtitle" | "title"
+export type TextType =
+	| "note"
+	| "boldNote"
+	| "text"
+	| "boldText"
+	| "subtitle"
+	| "title"

@@ -1,4 +1,8 @@
-import { DatabaseExercise, ExerciseAndProgressions } from "../types/exercises"
+import {
+	DatabaseExercise,
+	DatabaseProgression,
+	ExerciseAndProgressions
+} from "../types/exercises"
 import { isPostgrestError } from "../utils/queriesHelpers"
 import { PostgrestError } from "@supabase/supabase-js"
 import { useQuery } from "@tanstack/react-query"
@@ -13,6 +17,11 @@ export const GETUSEREXERCISESLAZY_KEY = (uId: number) => [
 	RQKEY_ROOT,
 	"user",
 	uId
+]
+export const GETPROGRESSIONSBYEXERCISESIDS_KEY = (eIds: number[]) => [
+	RQKEY_ROOT,
+	"progressionsByExercisesIds",
+	...eIds
 ]
 
 export default function useExercisesQuery() {
@@ -46,8 +55,21 @@ export default function useExercisesQuery() {
 		})
 	}
 
+	function getProgressionsByExercisesIds(exercisesIds: number[]) {
+		return useQuery<DatabaseProgression[] | PostgrestError>({
+			queryKey: GETPROGRESSIONSBYEXERCISESIDS_KEY(exercisesIds),
+			queryFn: async () => {
+				if (exercisesIds.length === 0) return []
+				return await exercisesService.getProgressionsByExercisesIds(
+					exercisesIds
+				)
+			}
+		})
+	}
+
 	return {
 		getExerciseAndProgressionsById,
-		getUserExercisesLazy
+		getUserExercisesLazy,
+		getProgressionsByExercisesIds
 	}
 }

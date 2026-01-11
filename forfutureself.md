@@ -2,6 +2,6 @@
 
 # To implement
 
-    - workouts
+    - finish and save workout
 
 # To test

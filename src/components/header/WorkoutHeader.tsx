@@ -39,6 +39,7 @@ export default function WorkoutHeader({ navigation, route, back }: Props) {
 			)}
 			headerStyle={navigationStyles.headerBackground}
 			headerShadowVisible={false}
+			headerTintColor={navigationStyles.headerTextColor.color}
 			back={back}
 		/>
 	)

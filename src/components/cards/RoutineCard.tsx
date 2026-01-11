@@ -27,6 +27,7 @@ export default function RoutineCard({ routine: { routine, days } }: Props) {
 					<View style={styles.daysGroup} key={group[0].id}>
 						{group.map((day) => (
 							<RoutineDayCodeBox
+								dayId={day.id}
 								code={day.code}
 								color="textLight"
 								size="m"

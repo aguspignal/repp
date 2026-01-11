@@ -55,7 +55,7 @@ export default function EditRoutine({
 		}
 
 		updateDatabaseRoutine(
-			{ ...routine, name, description },
+			{ ...routine, name, description: description ?? null },
 			{
 				onSuccess: (newRoutine) => {
 					if (!newRoutine || isPostgrestError(newRoutine)) {

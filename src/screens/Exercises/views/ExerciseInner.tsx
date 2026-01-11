@@ -10,13 +10,17 @@ import {
 	DraftProgression,
 	ExerciseAndProgressions
 } from "../../../types/exercises"
-import { sortProgressionsByOrderDesc } from "../../../utils/parsing"
+import {
+	CreateExerciseSchema,
+	CreateExerciseValues
+} from "../../../utils/valdiationSchemas"
+import { sortProgressionsByOrderDesc } from "../../../utils/sorting"
 import { theme } from "../../../resources/theme"
 import { useForm } from "react-hook-form"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../../stores/useUserStore"
-import { yupResolver } from "@hookform/resolvers/yup"
+import { zodResolver } from "@hookform/resolvers/zod"
 import Button from "../../../components/buttons/Button"
 import CreateExerciseInput from "../../../components/inputs/CreateExerciseInput"
 import DraftProgressionCard from "../../../components/cards/DraftProgressionCard"
@@ -24,10 +28,6 @@ import ExerciseTypeCard from "../../../components/cards/ExerciseTypeCard"
 import StyledText from "../../../components/texts/StyledText"
 import TextButton from "../../../components/buttons/TextButton"
 import ToastNotification from "../../../components/notifications/ToastNotification"
-import {
-	CreateExerciseSchema,
-	CreateExerciseValues
-} from "../../../utils/valdiationSchemas"
 
 type Props = {
 	type: "create" | "edit"
@@ -54,7 +54,7 @@ export default function ExerciseInner({
 			name: exerciseData?.exercise.name ?? "",
 			description: exerciseData?.exercise.description ?? ""
 		},
-		resolver: yupResolver(CreateExerciseSchema)
+		resolver: zodResolver(CreateExerciseSchema)
 	})
 
 	const [isBodyweight, setIsBodyweight] = useState(
@@ -170,7 +170,7 @@ export default function ExerciseInner({
 		onSubmit({
 			draftExercise: {
 				name,
-				description,
+				description: description ?? null,
 				is_bodyweight: isBodyweight,
 				is_freeweight: isFreeweight,
 				is_isometric: isIsometric

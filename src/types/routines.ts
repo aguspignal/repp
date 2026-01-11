@@ -8,6 +8,11 @@ export type DatabaseRoutineDay =
 export type DatabaseRoutineDayExercise =
 	Database["public"]["Tables"]["RoutineDayExercises"]["Row"]
 
+export type DatabaseWorkout = Database["public"]["Tables"]["Workouts"]["Row"]
+
+export type DatabaseWorkoutSet =
+	Database["public"]["Tables"]["WorkoutSets"]["Row"]
+
 export type RoutineStatus = Database["public"]["Enums"]["RoutineStatus"]
 
 export type RoutineWithDays = {
@@ -32,4 +37,15 @@ export type DraftRoutineDayExercise = {
 	setsGoalHigh: number | null
 	repsGoalLow: number | null
 	repsGoalHigh: number | null
+}
+
+export type DraftWorkoutSet = {
+	order: number
+	progressionId: number | undefined
+	reps: number | undefined
+}
+
+export type ExercisesSets = {
+	exerciseId: number
+	sets: DraftWorkoutSet[]
 }

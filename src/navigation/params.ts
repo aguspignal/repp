@@ -18,7 +18,7 @@ export type RootStackParams = {
 	Settings: undefined
 	ExerciseRepository: { editingRoutineDayId?: number }
 	CreateExercise: undefined
-	EditExercise: { id: number }
+	EditExercise: { id: number; comingFromWorkout?: number[] }
 	Routine: { id: number }
 	EditRoutine: { id: number }
 	EditRoutineDay: {

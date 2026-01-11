@@ -1,6 +1,7 @@
 import useExercisesQuery, {
 	GETUSEREXERCISESLAZY_KEY,
-	GETEXERCISEANDPROGRESSIONSBYID_KEY
+	GETEXERCISEANDPROGRESSIONSBYID_KEY,
+	GETPROGRESSIONSBYEXERCISESIDS_KEY
 } from "../../hooks/useExercisesQuery"
 import {
 	DatabaseExercise,
@@ -128,16 +129,25 @@ export default function EditExercise({
 
 		invalidateQueries(GETEXERCISEANDPROGRESSIONSBYID_KEY(route.params.id))
 		invalidateQueries(GETUSEREXERCISESLAZY_KEY(user.id))
-		navigation.reset({
-			index: 0,
-			routes: [
-				{ name: "Home" },
-				{
-					name: "ExerciseRepository",
-					params: { editingRoutineDayId: undefined }
-				}
-			]
-		})
+
+		if (route.params.comingFromWorkout) {
+			invalidateQueries(
+				GETPROGRESSIONSBYEXERCISESIDS_KEY(
+					route.params.comingFromWorkout
+				)
+			)
+			navigation.goBack()
+		} else
+			navigation.reset({
+				index: 0,
+				routes: [
+					{ name: "Home" },
+					{
+						name: "ExerciseRepository",
+						params: { editingRoutineDayId: undefined }
+					}
+				]
+			})
 	}
 
 	if (isPending) return <Loading />

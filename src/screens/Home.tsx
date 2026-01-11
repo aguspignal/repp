@@ -21,6 +21,7 @@ import ToastNotification from "../components/notifications/ToastNotification"
 import useRoutineMutation from "../hooks/useRoutineMutation"
 import useRoutineQuery from "../hooks/useRoutineQuery"
 import TextButton from "../components/buttons/TextButton"
+import StartWorkoutModal from "../components/modals/StartWorkoutModal"
 
 export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 	const { t } = useTranslation()
@@ -38,7 +39,10 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 	const { mutate: createRoutine, isPending: isPendingCreate } =
 		createRoutineMutation
 
-	const [isModalVisible, setIsModalVisible] = useState(false)
+	const [createRoutineModalVisible, setCreateRoutineModalVisible] =
+		useState(false)
+	const [startWorkoutModalVisible, setStartWorkoutModalVisible] =
+		useState(false)
 	const [isRefreshing, setIsRefreshing] = useState(false)
 
 	function handleCreateRoutine(routineName: string) {
@@ -56,14 +60,17 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 					}
 
 					addRoutineWithDays({ routine, days: [] })
-					setIsModalVisible(false)
+					setCreateRoutineModalVisible(false)
 					navigation.navigate("Routine", { id: routine.id })
 				}
 			}
 		)
 	}
 
-	function handleStartWorkout() {}
+	function handleStartWorkout(dayId: number) {
+		setStartWorkoutModalVisible(false)
+		navigation.navigate("Workout", { dayId })
+	}
 
 	function goToExerciseRepository() {
 		navigation.navigate("ExerciseRepository", {
@@ -112,7 +119,7 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 					/>
 					<Button
 						title={t("actions.start-workout")}
-						onPress={handleStartWorkout}
+						onPress={() => setStartWorkoutModalVisible(true)}
 						alignSelf
 						size="l"
 					/>
@@ -157,7 +164,7 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 
 						<TextButton
 							title={t("actions.add")}
-							onPress={() => setIsModalVisible(true)}
+							onPress={() => setCreateRoutineModalVisible(true)}
 							icon="plus"
 							color="primary"
 							textType="subtitle"
@@ -181,11 +188,22 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 			)}
 
 			<CreateRoutineModal
-				isVisible={isModalVisible}
-				setIsVisible={setIsModalVisible}
+				isVisible={createRoutineModalVisible}
+				setIsVisible={setCreateRoutineModalVisible}
 				onCreate={handleCreateRoutine}
-				onCancel={() => setIsModalVisible(false)}
+				onCancel={() => setCreateRoutineModalVisible(false)}
 				isLoadingCreate={isPendingCreate}
+			/>
+
+			<StartWorkoutModal
+				isVisible={startWorkoutModalVisible}
+				setIsVisible={setStartWorkoutModalVisible}
+				onStart={handleStartWorkout}
+				onCancel={() => setStartWorkoutModalVisible(false)}
+				routineId={
+					routines.find((r) => r.routine.status === "active")?.routine
+						.id
+				}
 			/>
 		</ScrollView>
 	)

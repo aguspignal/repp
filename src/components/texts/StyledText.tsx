@@ -14,7 +14,7 @@ export default function StyledText({
 	color = "textLight",
 	align = "left",
 	style,
-	children,
+	children
 }: Props) {
 	const fontSize =
 		type === "note" || type === "boldNote"
@@ -31,7 +31,7 @@ export default function StyledText({
 		fontSize,
 		fontWeight,
 		textAlign: align,
-		color: theme.colors[color as keyof typeof theme.colors],
+		color: theme.colors[color as keyof typeof theme.colors]
 	}
 
 	return <Text style={[textStyle, style]}>{children}</Text>
