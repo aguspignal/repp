@@ -1,6 +1,6 @@
 import { Control, Controller, useController } from "react-hook-form"
 import { inputStyles } from "./styles"
-import { SignUpValues } from "../../utils/valdiationSchemas"
+import { SignUpValues } from "../../utils/zodSchemas"
 import { TextInput, TouchableOpacity, View } from "react-native"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"

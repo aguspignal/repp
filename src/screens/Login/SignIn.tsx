@@ -1,6 +1,6 @@
 import { LoginScreenProps } from "../../navigation/params"
 import { parseSupabaseErrorToTranslation } from "../../utils/queriesHelpers"
-import { SignInSchema, SignInValues } from "../../utils/valdiationSchemas"
+import { SignInSchema, SignInValues } from "../../utils/zodSchemas"
 import { useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { yupResolver } from "@hookform/resolvers/yup"

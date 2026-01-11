@@ -3,7 +3,7 @@ import {
 	MAX_NAME_LENGTH
 } from "../../resources/constants"
 import { Control, Controller, useController } from "react-hook-form"
-import { EditRoutineValues } from "../../utils/valdiationSchemas"
+import { EditRoutineValues } from "../../utils/zodSchemas"
 import { inputStyles } from "./styles"
 import { TextInput, View } from "react-native"
 import { useTranslation } from "react-i18next"

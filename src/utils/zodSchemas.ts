@@ -25,13 +25,7 @@ export type SignInValues = z.infer<typeof SignInSchema>
 
 export const SignUpSchema = z
 	.object({
-		email: z
-			.string()
-			.trim()
-			.regex(
-				/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-				i18next.t("error-messages.invalid-email")
-			),
+		email: z.email(),
 		password: z
 			.string()
 			.min(
@@ -53,6 +47,7 @@ export const CreateExerciseSchema = z.object({
 	name: z
 		.string()
 		.trim()
+		.min(1, i18next.t("error-messages.required"))
 		.max(MAX_NAME_LENGTH, i18next.t("error-messages.too-long")),
 	description: z
 		.string()
@@ -66,6 +61,7 @@ export const EditRoutineDaySchema = z.object({
 	code: z
 		.string()
 		.trim()
+		.min(1, i18next.t("error-messages.required"))
 		.max(
 			MAX_CODE_LENGTH,
 			i18next.t("error-messages.cant-be-more-than-3-digits")
@@ -73,6 +69,7 @@ export const EditRoutineDaySchema = z.object({
 	name: z
 		.string()
 		.trim()
+		.min(1, i18next.t("error-messages.required"))
 		.max(MAX_NAME_LENGTH, i18next.t("error-messages.too-long"))
 })
 export type EditRoutineDayValues = z.infer<typeof EditRoutineDaySchema>

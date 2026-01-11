@@ -1,10 +1,7 @@
 import useRoutineQuery, {
 	GETROUTINEWITHDAYSANDEXERCISESBYID_KEY
 } from "../../hooks/useRoutineQuery"
-import {
-	EditRoutineSchema,
-	EditRoutineValues
-} from "../../utils/valdiationSchemas"
+import { EditRoutineSchema, EditRoutineValues } from "../../utils/zodSchemas"
 import { DatabaseRoutine } from "../../types/routines"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { RootStackScreenProps } from "../../navigation/params"

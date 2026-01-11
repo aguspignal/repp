@@ -42,7 +42,7 @@ export default function ExerciseRepository({
 		DatabaseExercise[]
 	>([])
 
-	const isSelectionView = !!route.params.editingRoutineDayId
+	const isSelectionView = !!route?.params?.editingRoutineDayId
 
 	function goToCreateExercise() {
 		navigation.navigate("CreateExercise")

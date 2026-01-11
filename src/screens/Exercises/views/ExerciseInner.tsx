@@ -13,7 +13,7 @@ import {
 import {
 	CreateExerciseSchema,
 	CreateExerciseValues
-} from "../../../utils/valdiationSchemas"
+} from "../../../utils/zodSchemas"
 import { sortProgressionsByOrderDesc } from "../../../utils/sorting"
 import { theme } from "../../../resources/theme"
 import { useForm } from "react-hook-form"
@@ -238,7 +238,7 @@ export default function ExerciseInner({
 							onPress={handleAddProgression}
 							icon="plus"
 							color="primary"
-							textType="subtitle"
+							textType="boldText"
 						/>
 					</View>
 

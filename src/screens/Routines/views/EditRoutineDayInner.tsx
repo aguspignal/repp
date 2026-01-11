@@ -14,7 +14,7 @@ import {
 import {
 	EditRoutineDaySchema,
 	EditRoutineDayValues
-} from "../../../utils/valdiationSchemas"
+} from "../../../utils/zodSchemas"
 import { DatabaseExercise } from "../../../types/exercises"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"

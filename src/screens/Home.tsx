@@ -132,17 +132,6 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 				</StyledText>
 			)}
 
-			<TouchableOpacity
-				onPress={goToExerciseRepository}
-				style={styles.exerciseRepoCard}
-			>
-				<StyledText type="boldText">
-					{t("titles.exercise-repository")}
-				</StyledText>
-
-				<MCIcon name="chevron-right" color="grayDark" />
-			</TouchableOpacity>
-
 			{routines.length === 0 ? (
 				<View style={styles.noRoutinesContainer}>
 					<MCIcon name="dumbbell" size={"h1"} color="grayDark" />
@@ -187,6 +176,17 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 				</View>
 			)}
 
+			<TouchableOpacity
+				onPress={goToExerciseRepository}
+				style={styles.exerciseRepoCard}
+			>
+				<StyledText type="boldText">
+					{t("titles.exercise-repository")}
+				</StyledText>
+
+				<MCIcon name="chevron-right" color="grayDark" />
+			</TouchableOpacity>
+
 			<CreateRoutineModal
 				isVisible={createRoutineModalVisible}
 				setIsVisible={setCreateRoutineModalVisible}
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
 		backgroundColor: theme.colors.backgroundBlack
 	},
 	contentContainer: {
-		gap: theme.spacing.xl,
+		gap: theme.spacing.xxl,
 		paddingHorizontal: theme.spacing.s
 	},
 	activeRoutineContainer: {
