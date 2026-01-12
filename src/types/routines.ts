@@ -49,3 +49,8 @@ export type ExercisesSets = {
 	exerciseId: number
 	sets: DraftWorkoutSet[]
 }
+
+export type WorkoutAndSets = {
+	workout: DatabaseWorkout
+	sets: DatabaseWorkoutSet[]
+}

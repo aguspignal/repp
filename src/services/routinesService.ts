@@ -5,7 +5,10 @@ import {
 	DraftRoutineDayExercise,
 	RoutineWithDays,
 	RoutineDayAndExercises,
-	RoutineWithDaysAndExercises
+	RoutineWithDaysAndExercises,
+	DatabaseWorkout,
+	DatabaseWorkoutSet,
+	DraftWorkoutSet
 } from "../types/routines"
 import { isPostgrestError } from "../utils/queriesHelpers"
 import { PostgrestError } from "@supabase/supabase-js"
@@ -147,6 +150,44 @@ const routinesService = {
 					set_goal_high: e.setsGoalHigh,
 					rep_goal_low: e.repsGoalLow,
 					rep_goal_high: e.repsGoalHigh
+				}))
+			)
+			.select()
+
+		if (error) return error
+		return data
+	},
+
+	async postWorkout({
+		routineDayId,
+		date,
+		note
+	}: PostWorkoutParams): Promise<DatabaseWorkout | null | PostgrestError> {
+		console.log("R-SERVICE: postWorkout")
+		const { error, data } = await supabase
+			.from("Workouts")
+			.insert({ routineday_id: routineDayId, date, note })
+			.select()
+
+		if (error) return error
+		return data[0]
+	},
+
+	async postWorkoutSetsBulk({
+		draftSets,
+		workoutId
+	}: PostWorkoutSetsBulkParams): Promise<
+		DatabaseWorkoutSet[] | PostgrestError
+	> {
+		console.log("R-SERVICE: postWorkoutSetsBulk")
+		const { error, data } = await supabase
+			.from("WorkoutSets")
+			.insert(
+				draftSets.map((ds) => ({
+					workout_id: workoutId,
+					progression_id: ds.progressionId ?? -1,
+					order: ds.order,
+					reps: ds.reps ?? -1
 				}))
 			)
 			.select()
@@ -304,4 +345,15 @@ export type UpdateRoutineDayParams = {
 export type UpdateUserRoutineStatusParams = {
 	userId: number
 	routineId: number
+}
+
+export type PostWorkoutParams = {
+	routineDayId: number
+	date: string
+	note: string | null
+}
+
+export type PostWorkoutSetsBulkParams = {
+	workoutId: number
+	draftSets: DraftWorkoutSet[]
 }

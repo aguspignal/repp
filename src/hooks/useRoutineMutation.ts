@@ -2,6 +2,7 @@ import routinesService, {
 	PostRoutineDayParams,
 	PostRoutineExercisesParamas,
 	PostRoutineParams,
+	PostWorkoutParams,
 	UpdateUserRoutineStatusParams
 } from "../services/routinesService"
 import {
@@ -12,7 +13,8 @@ import {
 	DatabaseRoutine,
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
-	DraftRoutineDayExercise
+	DraftRoutineDayExercise,
+	DraftWorkoutSet
 } from "../types/routines"
 import { useMutation } from "@tanstack/react-query"
 
@@ -34,6 +36,32 @@ export default function useRoutineMutation() {
 	const createRoutineDayExercisesMutation = useMutation({
 		mutationFn: async (params: PostRoutineExercisesParamas) => {
 			return await routinesService.postRoutineDayExercisesBulk(params)
+		},
+		onError: handleOnMutationError
+	})
+
+	const createWorkoutAndSetsMutation = useMutation({
+		mutationFn: async ({
+			date,
+			draftSets,
+			note,
+			routineDayId
+		}: PostWorkoutAndSetsParams) => {
+			const workout = await routinesService.postWorkout({
+				date,
+				note,
+				routineDayId
+			})
+
+			if (!workout || isPostgrestError(workout)) return workout
+
+			const sets = await routinesService.postWorkoutSetsBulk({
+				workoutId: workout.id,
+				draftSets
+			})
+
+			if (!sets || isPostgrestError(sets)) return sets
+			return { workout, sets }
 		},
 		onError: handleOnMutationError
 	})
@@ -117,6 +145,7 @@ export default function useRoutineMutation() {
 		createRoutineMutation,
 		createRoutineDayMutation,
 		createRoutineDayExercisesMutation,
+		createWorkoutAndSetsMutation,
 		deleteRoutineDayMutation,
 		updateRoutineMutation,
 		updateRoutineDayAndExercisesMutation,
@@ -130,4 +159,11 @@ type UpdateRoutineDayAndExercisesParams = {
 	deleteRoutineDayExercisesIds: number[]
 	upsertRoutineDayExercises: DatabaseRoutineDayExercise[]
 	insertRoutineDayExercises: DraftRoutineDayExercise[]
+}
+
+type PostWorkoutAndSetsParams = {
+	routineDayId: number
+	date: string
+	note: string | null
+	draftSets: DraftWorkoutSet[]
 }

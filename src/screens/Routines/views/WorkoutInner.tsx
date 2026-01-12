@@ -1,15 +1,18 @@
 import {
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
+	DraftWorkoutSet,
 	ExercisesSets
 } from "../../../types/routines"
 import { DatabaseProgression } from "../../../types/exercises"
-import { FlatList, RefreshControl, StyleSheet, View } from "react-native"
+import { FlatList, StyleSheet, View } from "react-native"
 import { isPostgrestError } from "../../../utils/queriesHelpers"
+import { RootStackNavigationProp } from "../../../navigation/params"
 import { sortRDExercisesByOrderAsc } from "../../../utils/sorting"
 import { theme } from "../../../resources/theme"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
+import { useNavigation } from "@react-navigation/native"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../../stores/useUserStore"
 import { WorkoutSchema, WorkoutValues } from "../../../utils/zodSchemas"
@@ -18,8 +21,8 @@ import Button from "../../../components/buttons/Button"
 import useExercisesQuery from "../../../hooks/useExercisesQuery"
 import WorkoutExerciseCard from "../../../components/cards/WorkoutExerciseCard"
 import WorkoutInput from "../../../components/inputs/WorkoutInput"
-import { useNavigation } from "@react-navigation/native"
-import { RootStackNavigationProp } from "../../../navigation/params"
+import useRoutineMutation from "../../../hooks/useRoutineMutation"
+import ToastNotification from "../../../components/notifications/ToastNotification"
 
 type Props = {
 	routineDay: DatabaseRoutineDay
@@ -30,13 +33,21 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 	const { t } = useTranslation()
 	const { exercises } = useUserStore()
 	const { getProgressionsByExercisesIds } = useExercisesQuery()
+	const { createWorkoutAndSetsMutation } = useRoutineMutation()
 	const nav = useNavigation<RootStackNavigationProp>()
+
+	const { mutate: createWorkoutAndSets, isPending } =
+		createWorkoutAndSetsMutation
 
 	const { data: fetchedProgressions } = getProgressionsByExercisesIds(
 		dayExercises.map((de) => de.exercise_id)
 	)
 
-	const { handleSubmit, control } = useForm<WorkoutValues>({
+	const {
+		handleSubmit,
+		control,
+		formState: { isSubmitting, isValidating }
+	} = useForm<WorkoutValues>({
 		resolver: zodResolver(WorkoutSchema)
 	})
 
@@ -60,6 +71,29 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 		if (exercisesSets.every((es) => es.sets.every((s) => !s.progressionId)))
 			return
 
+		let draftSets: DraftWorkoutSet[] = []
+
+		for (let i = 0; i < exercisesSets.length; i++) {
+			draftSets.concat(exercisesSets[i].sets)
+		}
+
+		createWorkoutAndSets(
+			{
+				date: date.toISOString(),
+				note: note ?? null,
+				draftSets,
+				routineDayId: routineDay.id
+			},
+			{
+				onSuccess: (workoutAndSets) => {
+					if (!workoutAndSets || isPostgrestError(workoutAndSets)) {
+						ToastNotification({ title: workoutAndSets?.message })
+						return
+					}
+					nav.reset({ index: 0, routes: [{ name: "Home" }] })
+				}
+			}
+		)
 		// for (let i = 0; i < exercisesSets.length; i++) {
 		// 	console.log("EXERCISE: " + exercisesSets[i].exerciseId)
 		// 	for (let j = 0; j < exercisesSets[i].sets.length; j++) {
@@ -81,11 +115,17 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 				<Button
 					title={t("actions.finish-workout")}
 					onPress={handleSubmit(handleFinishWorkout)}
+					isLoading={isPending || isSubmitting || isValidating}
 				/>
 			</View>
 
 			<View style={styles.paddingHorizontal}>
-				<WorkoutInput name="note" control={control} date={date} />
+				<WorkoutInput
+					name="note"
+					control={control}
+					date={date}
+					setDate={setDate}
+				/>
 			</View>
 
 			<FlatList

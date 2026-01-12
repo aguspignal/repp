@@ -1,19 +1,17 @@
-import { DatabaseExercise, DatabaseProgression } from "../../types/exercises"
-import { Dispatch, SetStateAction, useState } from "react"
-import { DraftWorkoutSet, ExercisesSets } from "../../types/routines"
-import { SheetManager } from "react-native-actions-sheet"
 import {
 	sortDraftWorkoutSetsByOrderAsc,
 	sortProgressionsByOrderDesc
 } from "../../utils/sorting"
+import { DatabaseExercise, DatabaseProgression } from "../../types/exercises"
+import { Dispatch, SetStateAction, useState } from "react"
+import { DraftWorkoutSet, ExercisesSets } from "../../types/routines"
+import { SheetManager } from "react-native-actions-sheet"
+import { SheetOption } from "../../lib/sheets"
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native"
 import { theme } from "../../resources/theme"
 import { useTranslation } from "react-i18next"
 import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
-import { useNavigation } from "@react-navigation/native"
-import { RootStackNavigationProp } from "../../navigation/params"
-import { SheetOption } from "../../lib/sheets"
 
 type Props = {
 	exercise: DatabaseExercise | undefined
@@ -31,7 +29,6 @@ export default function WorkoutExerciseCard({
 	onCreateProgression
 }: Props) {
 	const { t } = useTranslation()
-	const nav = useNavigation<RootStackNavigationProp>()
 
 	const [showDescription, setShowDescription] = useState(true)
 

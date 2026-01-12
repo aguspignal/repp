@@ -7,15 +7,19 @@ import { useTranslation } from "react-i18next"
 import { WorkoutValues } from "../../utils/zodSchemas"
 import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
-import { useState } from "react"
+import { Dispatch, SetStateAction, useState } from "react"
+import RNDateTimePicker, {
+	DateTimePickerAndroid
+} from "@react-native-community/datetimepicker"
 
 type Props = {
 	name: keyof WorkoutValues
 	control: Control<WorkoutValues>
 	date: Date
+	setDate: Dispatch<SetStateAction<Date>>
 }
 
-export default function WorkoutInput({ name, control, date }: Props) {
+export default function WorkoutInput({ name, control, date, setDate }: Props) {
 	const { t } = useTranslation()
 	const { field, fieldState } = useController({ name, control })
 
@@ -27,16 +31,28 @@ export default function WorkoutInput({ name, control, date }: Props) {
 
 	const [hideDescription, setHideDescription] = useState(false)
 
+	const showMode = (currentMode: "date" | "time") => {
+		DateTimePickerAndroid.open({
+			value: date,
+			onChange: (_, selectedDate) => setDate(selectedDate ?? date),
+			mode: currentMode,
+			is24Hour: true
+		})
+	}
+
 	return (
 		<View style={inputStyles.inputContainer}>
 			<View style={inputStyles.labelAndActionContainer}>
-				<View style={inputStyles.labelWithIconContainer}>
+				<TouchableOpacity
+					onPress={() => showMode("date")}
+					style={inputStyles.labelWithIconContainer}
+				>
 					<MCIcon name="calendar" size="xxl" />
 
 					<StyledText type="subtitle" style={inputStyles.label}>
 						{label}
 					</StyledText>
-				</View>
+				</TouchableOpacity>
 
 				<TouchableOpacity
 					onPress={() => setHideDescription((prev) => !prev)}
