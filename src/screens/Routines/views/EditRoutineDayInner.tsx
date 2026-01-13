@@ -1,7 +1,8 @@
 import {
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
-	DraftRoutineDayExercise
+	DraftRoutineDayExercise,
+	RDEGoalType
 } from "../../../types/routines"
 import {
 	invalidateQueries,
@@ -17,7 +18,13 @@ import {
 } from "../../../utils/zodSchemas"
 import { DatabaseExercise } from "../../../types/exercises"
 import { RootStackNavigationProp } from "../../../navigation/params"
-import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
+import {
+	KeyboardAvoidingView,
+	ScrollView,
+	StyleSheet,
+	TouchableOpacity,
+	View
+} from "react-native"
 import { theme } from "../../../resources/theme"
 import { useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -28,10 +35,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import Button from "../../../components/buttons/Button"
 import EditRoutineDayInput from "../../../components/inputs/EditRoutineDayInput"
 import MCIcon from "../../../components/icons/MCIcon"
+import RoutineDayExerciseCard from "../../../components/cards/RoutineDayExerciseCard"
 import Sortables, { SortableGridRenderItem } from "react-native-sortables"
 import StyledText from "../../../components/texts/StyledText"
 import ToastNotification from "../../../components/notifications/ToastNotification"
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
+import ConfirmationModal from "../../../components/modals/ConfirmationModal"
 
 type Props = {
 	day: DatabaseRoutineDay
@@ -44,7 +53,7 @@ export default function EditRoutineDayInner({
 	selectedExercises
 }: Props) {
 	const { t } = useTranslation()
-	const { user, exercises, addRoutineDay } = useUserStore()
+	const { user, addRoutineDay } = useUserStore()
 	const { updateRoutineDayAndExercisesMutation } = useRoutineMutation()
 	const nav = useNavigation<RootStackNavigationProp>()
 
@@ -63,41 +72,60 @@ export default function EditRoutineDayInner({
 		resolver: zodResolver(EditRoutineDaySchema)
 	})
 
-	const [exercisesList, setExercisesList] = useState<DatabaseExercise[]>(
-		prevExercises
-			.map((pe) => exercises.filter((e) => e.id === pe.exercise_id)[0])
-			.filter((e) => e !== undefined)
+	const [confirmationModalVisible, setConfirmationModalVisible] =
+		useState(false)
+	const [draftRDExercises, setDraftRDExercises] = useState<
+		DraftRoutineDayExercise[]
+	>(
+		prevExercises.map(
+			({ id, routineday_id, created_at, ...draftFields }) => draftFields
+		)
 	)
 
 	function handleSaveChanges({ code, name }: EditRoutineDayValues) {
 		if (!user) return
 
-		const upsertExercises: DatabaseRoutineDayExercise[] = exercisesList
-			.filter((e) => prevExercises.some((pe) => pe.exercise_id === e.id))
-			.map((e) => {
-				const rde = prevExercises.find((pe) => pe.exercise_id === e.id)!
+		const upsertExercises: DatabaseRoutineDayExercise[] = draftRDExercises
+			.filter((drde) =>
+				prevExercises.some((pe) => pe.exercise_id === drde.exercise_id)
+			)
+			.map((drde) => {
+				const rde = prevExercises.find(
+					(pe) => pe.exercise_id === drde.exercise_id
+				)!
+
 				return {
 					...rde,
+					...drde,
 					order:
-						exercisesList.findIndex(
-							(ie) => ie.id === rde?.exercise_id
+						draftRDExercises.findIndex(
+							(e) => e.exercise_id === rde.exercise_id
 						) + 1
 				}
 			})
 
-		const insertExercises: DraftRoutineDayExercise[] = exercisesList
-			.filter((e) => !prevExercises.some((pe) => pe.exercise_id === e.id))
-			.map((e) => ({
-				exerciseId: e.id,
-				order: exercisesList.findIndex((ie) => ie.id === e.id) + 1,
-				repsGoalHigh: null,
-				repsGoalLow: null,
-				setsGoalHigh: null,
-				setsGoalLow: null
+		const insertExercises: DraftRoutineDayExercise[] = draftRDExercises
+			.filter(
+				(drde) =>
+					!prevExercises.some(
+						(pe) => pe.exercise_id === drde.exercise_id
+					)
+			)
+			.map((drde) => ({
+				...drde,
+				order:
+					draftRDExercises.findIndex(
+						(e) => e.exercise_id === drde.exercise_id
+					) + 1
 			}))
 
 		const deleteExercisesIds: number[] = prevExercises
-			.filter((pe) => !exercisesList.some((e) => e.id === pe.exercise_id))
+			.filter(
+				(pe) =>
+					!draftRDExercises.some(
+						(drde) => drde.exercise_id === pe.exercise_id
+					)
+			)
 			.map((pe) => pe.exercise_id)
 
 		console.log("upsert: ", upsertExercises)
@@ -137,6 +165,7 @@ export default function EditRoutineDayInner({
 						)
 					)
 					invalidateQueries(GETROUTINEDAYANDEXERCISES_KEY(user?.id))
+					setConfirmationModalVisible(false)
 					nav.reset({
 						index: 0,
 						routes: [
@@ -156,68 +185,112 @@ export default function EditRoutineDayInner({
 		nav.navigate("ExerciseRepository", { editingRoutineDayId: day.id })
 	}
 
-	function handleDeleteExercise(exercise: DatabaseExercise) {
-		setExercisesList((prev) => prev.filter((e) => e.id !== exercise.id))
+	function handleDeleteExercise(draftRDE: DraftRoutineDayExercise) {
+		setDraftRDExercises((prev) =>
+			prev.filter((de) => de.exercise_id !== draftRDE.exercise_id)
+		)
+	}
+
+	function handleUpdateNote(draftRDE: DraftRoutineDayExercise, note: string) {
+		setDraftRDExercises((prev) =>
+			prev.map((drde) => {
+				if (drde.exercise_id !== draftRDE.exercise_id) return drde
+
+				return {
+					...drde,
+					note
+				}
+			})
+		)
+	}
+
+	function handleUpdateGoal(
+		draftRDE: DraftRoutineDayExercise,
+		goal: number | null,
+		goalType: RDEGoalType
+	) {
+		setDraftRDExercises((prev) =>
+			prev.map((drde) => {
+				if (drde.exercise_id !== draftRDE.exercise_id) return drde
+
+				return {
+					...drde,
+					set_goal_high:
+						goalType === "setsHigh" ? goal : drde.set_goal_high,
+					set_goal_low:
+						goalType === "setsLow" ? goal : drde.set_goal_low,
+					rep_goal_high:
+						goalType === "repsHigh" ? goal : drde.rep_goal_high,
+					rep_goal_low:
+						goalType === "repsLow" ? goal : drde.rep_goal_low
+				}
+			})
+		)
 	}
 
 	useEffect(() => {
 		if (!selectedExercises) return
 
-		const notIncluded = selectedExercises?.filter(
-			(se) => !exercisesList.some((e) => e.id === se.id)
-		)
+		const notIncluded: DraftRoutineDayExercise[] = selectedExercises
+			.filter(
+				(se) => !draftRDExercises.some((de) => de.exercise_id === se.id)
+			)
+			.map((se) => ({
+				exercise_id: se.id,
+				order: -1,
+				note: null,
+				set_goal_high: null,
+				set_goal_low: null,
+				rep_goal_high: null,
+				rep_goal_low: null
+			}))
 
-		setExercisesList((prev) => prev.concat(notIncluded))
+		setDraftRDExercises((prev) => prev.concat(notIncluded))
 	}, [selectedExercises])
 
 	const exerciseRenderItem = useCallback<
-		SortableGridRenderItem<DatabaseExercise>
+		SortableGridRenderItem<DraftRoutineDayExercise>
 	>(
-		({ item: e, index }) => (
-			<View key={e.id} style={styles.draggableExercise}>
-				<View style={styles.draggableSubcontainer}>
-					<StyledText type="boldText">{index + 1}</StyledText>
-					<StyledText type="boldText">{e.name}</StyledText>
-					<StyledText type="note">{e.id}</StyledText>
-				</View>
-
-				<View style={styles.draggableSubcontainer}>
-					<TouchableOpacity onPress={() => handleDeleteExercise(e)}>
-						<MCIcon name="trash-can" />
-					</TouchableOpacity>
-
-					<Sortables.Handle>
-						<MCIcon name="drag-vertical" />
-					</Sortables.Handle>
-				</View>
-			</View>
+		({ item, index }) => (
+			<RoutineDayExerciseCard
+				draftRDExercise={item}
+				index={index}
+				onDelete={handleDeleteExercise}
+				onUpdateNote={handleUpdateNote}
+				onUpdateGoal={handleUpdateGoal}
+			/>
 		),
 		[]
 	)
 
 	return (
-		<ScrollView
-			style={styles.container}
-			contentContainerStyle={styles.contentContainer}
-		>
-			<View style={styles.codeAndName}>
-				<EditRoutineDayInput name="code" control={control} />
-				<EditRoutineDayInput name="name" control={control} />
-			</View>
+		<KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+			<ScrollView
+				style={styles.container}
+				contentContainerStyle={styles.contentContainer}
+			>
+				<View style={styles.codeAndName}>
+					<EditRoutineDayInput name="code" control={control} />
+					<EditRoutineDayInput name="name" control={control} />
+				</View>
 
-			<View style={styles.exercisesContainer}>
-				<StyledText type="subtitle">{t("titles.exercises")}</StyledText>
+				<View style={styles.exercisesContainer}>
+					<StyledText type="subtitle">
+						{t("titles.exercises")}
+					</StyledText>
 
-				<Sortables.Grid
-					data={exercisesList}
-					renderItem={exerciseRenderItem}
-					onDragEnd={({ data }) => setExercisesList(data)}
-					columns={1}
-					rowGap={theme.spacing.xxs}
-					overDrag="vertical"
-					activeItemScale={1.05}
-					customHandle
-				/>
+					<Sortables.Grid
+						data={draftRDExercises}
+						keyExtractor={(item) => item.exercise_id.toString()}
+						renderItem={exerciseRenderItem}
+						onDragEnd={({ data }) => setDraftRDExercises(data)}
+						columns={1}
+						rowGap={theme.spacing.xxs}
+						overDrag="vertical"
+						activeItemScale={1.05}
+						customHandle
+					/>
+				</View>
 
 				<TouchableOpacity
 					onPress={handleAddExercise}
@@ -226,17 +299,26 @@ export default function EditRoutineDayInner({
 					<MCIcon name="plus" color="primary" size="xxl" />
 
 					<StyledText type="boldText" color="primary">
-						{t("actions.add-exercise-from-repository")}
+						{t("actions.add-exercises-from-repository")}
 					</StyledText>
 				</TouchableOpacity>
-			</View>
 
-			<Button
-				title={t("actions.save-changes")}
-				onPress={handleSubmit(handleSaveChanges)}
-				isLoading={isLoading || isSubmitting || isPending}
+				<Button
+					title={t("actions.save-changes")}
+					onPress={() => setConfirmationModalVisible(true)}
+					isLoading={isLoading || isSubmitting || isPending}
+				/>
+			</ScrollView>
+
+			<ConfirmationModal
+				isVisible={confirmationModalVisible}
+				setIsVisible={setConfirmationModalVisible}
+				title={t("questions.sure-want-to-save-changes")}
+				confirmText={t("actions.save")}
+				onConfirm={handleSubmit(handleSaveChanges)}
+				isLoadingConfirm={isPending}
 			/>
-		</ScrollView>
+		</KeyboardAvoidingView>
 	)
 }
 
@@ -249,7 +331,7 @@ const styles = StyleSheet.create({
 	contentContainer: {
 		justifyContent: "space-between",
 		paddingBottom: theme.spacing.x4l,
-		gap: theme.spacing.xl
+		gap: theme.spacing.l
 	},
 	codeAndName: {
 		flexDirection: "row",
@@ -257,23 +339,11 @@ const styles = StyleSheet.create({
 		gap: theme.spacing.xs
 	},
 	exercisesContainer: {
-		gap: theme.spacing.s
+		gap: theme.spacing.xxs
 	},
 	addExerciseBtn: {
 		flexDirection: "row",
 		alignItems: "center",
 		gap: theme.spacing.xxs
-	},
-	draggableExercise: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-		paddingLeft: theme.spacing.xxs,
-		paddingVertical: theme.spacing.xxs
-	},
-	draggableSubcontainer: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: theme.spacing.s
 	}
 })

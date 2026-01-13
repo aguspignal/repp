@@ -1,4 +1,5 @@
-import { DatabaseRoutineDay } from "../types/routines"
+import { DatabaseRoutineDay, RDEGoals } from "../types/routines"
+import { Dispatch, SetStateAction } from "react"
 import { ExerciseFilterBy, ExerciseSortBy } from "../types/exercises"
 import i18next from "i18next"
 
@@ -38,4 +39,49 @@ export function parseDateToWeekdayMonthDay(date: Date): string {
 		month: "long",
 		day: "numeric"
 	})
+}
+
+export function parseNumericInput(
+	txt: string,
+	setState: Dispatch<SetStateAction<string>>
+): number | null {
+	const clean = txt.replace(/[^0-9]/g, "")
+	setState(clean)
+
+	if (clean === "" || isNaN(Number(clean))) return null
+	return Number(clean)
+}
+
+export function parseGoalsToText(
+	goals: RDEGoals,
+	inSeconds?: boolean,
+	hideGoalText?: boolean
+): string | null {
+	if (!goals.rep_goal_low && !goals.set_goal_low) return null
+
+	const goalStr: string = hideGoalText
+		? ""
+		: `${i18next.t("attributes.goal")}: `
+
+	const setsStr = goals.set_goal_high
+		? `${goals.set_goal_low}-${goals.set_goal_high}`
+		: `${goals.set_goal_low}`
+
+	if (!goals.rep_goal_low && goals.set_goal_low) {
+		return `${goalStr}${setsStr} ${i18next.t("attributes.sets")}`
+	}
+
+	const repsStr = goals.rep_goal_high
+		? `${goals.rep_goal_low}-${goals.rep_goal_high}`
+		: `${goals.rep_goal_low}`
+
+	if (goals.rep_goal_low && !goals.set_goal_low) {
+		return `${goalStr}${repsStr} ${
+			inSeconds
+				? i18next.t("attributes.seconds")
+				: i18next.t("attributes.reps")
+		}`
+	}
+
+	return `${goalStr}${setsStr}x${repsStr}`
 }

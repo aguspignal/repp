@@ -3,8 +3,9 @@ import {
 	sortProgressionsByOrderDesc
 } from "../../utils/sorting"
 import { DatabaseExercise, DatabaseProgression } from "../../types/exercises"
-import { Dispatch, SetStateAction, useState } from "react"
-import { DraftWorkoutSet, ExercisesSets } from "../../types/routines"
+import { Dispatch, SetStateAction, useMemo, useState } from "react"
+import { DraftWorkoutSet, ExercisesSets, RDEGoals } from "../../types/routines"
+import { parseGoalsToText, parseNumericInput } from "../../utils/parsing"
 import { SheetManager } from "react-native-actions-sheet"
 import { SheetOption } from "../../lib/sheets"
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native"
@@ -15,6 +16,8 @@ import StyledText from "../texts/StyledText"
 
 type Props = {
 	exercise: DatabaseExercise | undefined
+	exerciseNote: string | null
+	goals: RDEGoals
 	progressions: DatabaseProgression[]
 	exercisesSets: ExercisesSets[]
 	setExercisesSets: Dispatch<SetStateAction<ExercisesSets[]>>
@@ -23,6 +26,8 @@ type Props = {
 
 export default function WorkoutExerciseCard({
 	exercise,
+	exerciseNote,
+	goals,
 	progressions,
 	exercisesSets,
 	setExercisesSets,
@@ -30,7 +35,12 @@ export default function WorkoutExerciseCard({
 }: Props) {
 	const { t } = useTranslation()
 
-	const [showDescription, setShowDescription] = useState(true)
+	const goalsText = useMemo(
+		() => parseGoalsToText(goals, exercise?.is_isometric),
+		[goals]
+	)
+
+	const [showNote, setShowNote] = useState(true)
 
 	function handleDeleteSet(set: DraftWorkoutSet) {
 		if (!exercise) return
@@ -123,7 +133,7 @@ export default function WorkoutExerciseCard({
 							order: nextOrder,
 							progressionId:
 								sorted[sorted.length - 1]?.progressionId,
-							reps: undefined
+							reps: null
 						}
 					]
 				}
@@ -138,10 +148,27 @@ export default function WorkoutExerciseCard({
 		onCreateProgression(exercise.id)
 	}
 
+	function handleUpdateReps(draftSet: DraftWorkoutSet, reps: number | null) {
+		if (!exercise) return
+
+		setExercisesSets((prev) =>
+			prev.map((es) => {
+				if (es.exerciseId !== exercise.id) return es
+
+				return {
+					...es,
+					sets: es.sets.map((s) =>
+						s.order === draftSet.order ? { ...s, reps } : s
+					)
+				}
+			})
+		)
+	}
+
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity
-				onPress={() => setShowDescription((prev) => !prev)}
+				onPress={() => setShowNote((prev) => !prev)}
 				activeOpacity={0.7}
 				style={styles.nameAndNote}
 			>
@@ -149,9 +176,15 @@ export default function WorkoutExerciseCard({
 					{exercise?.name ?? t("attributes.exercise-name")}
 				</StyledText>
 
-				{exercise?.description && showDescription ? (
+				{exerciseNote && showNote ? (
 					<StyledText type="note" color="grayDark">
-						{exercise.description}
+						{exerciseNote}
+					</StyledText>
+				) : null}
+
+				{goalsText ? (
+					<StyledText type="boldNote" color="grayDark">
+						{goalsText}
 					</StyledText>
 				) : null}
 			</TouchableOpacity>
@@ -169,6 +202,7 @@ export default function WorkoutExerciseCard({
 						)}
 						onDelete={handleDeleteSet}
 						onChooseProgression={handleChooseProgression}
+						onUpdateReps={handleUpdateReps}
 					/>
 				))}
 
@@ -250,18 +284,23 @@ type SetRowProps = {
 	progression: DatabaseProgression | undefined
 	onDelete: (set: DraftWorkoutSet) => void
 	onChooseProgression: (set: DraftWorkoutSet) => void
+	onUpdateReps: (draftSet: DraftWorkoutSet, reps: number | null) => void
 }
 function SetRow({
 	draftSet,
 	progression,
 	onDelete,
-	onChooseProgression
+	onChooseProgression,
+	onUpdateReps
 }: SetRowProps) {
 	const { t } = useTranslation()
 
-	const [reps, setReps] = useState<string | undefined>(
-		draftSet.reps?.toString() ?? undefined
-	)
+	const [reps, setReps] = useState<string>(draftSet.reps?.toString() ?? "")
+
+	function handleChange(txt: string) {
+		const num = parseNumericInput(txt, setReps)
+		onUpdateReps(draftSet, num)
+	}
 
 	return (
 		<View style={styles.row}>
@@ -286,7 +325,7 @@ function SetRow({
 			<View style={[styles.rowText]}>
 				<TextInput
 					value={reps}
-					onChangeText={(txt) => setReps(txt)}
+					onChangeText={(txt) => handleChange(txt)}
 					placeholder="-"
 					keyboardType="numeric"
 					style={styles.repsInput}

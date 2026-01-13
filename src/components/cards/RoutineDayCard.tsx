@@ -1,6 +1,4 @@
 import {
-	FlatList,
-	ListRenderItem,
 	StyleProp,
 	StyleSheet,
 	TouchableOpacity,
@@ -16,7 +14,7 @@ import { theme } from "../../resources/theme"
 import { useUserStore } from "../../stores/useUserStore"
 import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
-import { useCallback } from "react"
+import { parseGoalsToText } from "../../utils/parsing"
 
 type Props = {
 	routineDay: DatabaseRoutineDay | null
@@ -24,7 +22,7 @@ type Props = {
 	color?: keyof typeof theme.colors
 	title?: string
 	onPressCard?: (rd: DatabaseRoutineDay | null) => void
-	onPressHistory?: (rd: DatabaseRoutineDay) => void
+	onPressHistory?: (dayId: number) => void
 }
 
 export default function RoutineDayCard({
@@ -42,7 +40,7 @@ export default function RoutineDayCard({
 	}
 
 	function handleHistory() {
-		if (onPressHistory && routineDay) onPressHistory(routineDay)
+		if (onPressHistory && routineDay) onPressHistory(routineDay.id)
 	}
 
 	return (
@@ -78,17 +76,39 @@ export default function RoutineDayCard({
 			{rdExercises && rdExercises.length > 0 ? (
 				<View style={styles.exercisesContainer}>
 					<View style={styles.exercisesList}>
-						{rdExercises.map((rde) => (
-							<View key={rde.id}>
-								<StyledText type="text" color="grayDark">
-									{
-										exercises.find(
-											(e) => e.id === rde.exercise_id
-										)?.name
-									}
-								</StyledText>
-							</View>
-						))}
+						{rdExercises.map(
+							({
+								id,
+								exercise_id,
+								rep_goal_low,
+								rep_goal_high,
+								set_goal_low,
+								set_goal_high
+							}) => (
+								<View key={id} style={styles.header}>
+									<StyledText type="text" color="grayDark">
+										{
+											exercises.find(
+												(e) => e.id === exercise_id
+											)?.name
+										}
+									</StyledText>
+
+									<StyledText type="text" color="secondary">
+										{parseGoalsToText(
+											{
+												rep_goal_high,
+												rep_goal_low,
+												set_goal_high,
+												set_goal_low
+											},
+											false,
+											true
+										)}
+									</StyledText>
+								</View>
+							)
+						)}
 					</View>
 				</View>
 			) : null}

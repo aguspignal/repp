@@ -143,13 +143,8 @@ const routinesService = {
 			.from("RoutineDayExercises")
 			.insert(
 				exercises.map((e) => ({
-					routineday_id: routineDayId,
-					exercise_id: e.exerciseId,
-					order: e.order,
-					set_goal_low: e.setsGoalLow,
-					set_goal_high: e.setsGoalHigh,
-					rep_goal_low: e.repsGoalLow,
-					rep_goal_high: e.repsGoalHigh
+					...e,
+					routineday_id: routineDayId
 				}))
 			)
 			.select()

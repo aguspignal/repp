@@ -123,6 +123,7 @@ export type Database = {
           created_at: string
           exercise_id: number
           id: number
+          note: string | null
           order: number
           rep_goal_high: number | null
           rep_goal_low: number | null
@@ -134,6 +135,7 @@ export type Database = {
           created_at?: string
           exercise_id: number
           id?: number
+          note?: string | null
           order: number
           rep_goal_high?: number | null
           rep_goal_low?: number | null
@@ -145,6 +147,7 @@ export type Database = {
           created_at?: string
           exercise_id?: number
           id?: number
+          note?: string | null
           order?: number
           rep_goal_high?: number | null
           rep_goal_low?: number | null

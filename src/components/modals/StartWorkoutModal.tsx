@@ -11,7 +11,6 @@ type Props = {
 	isVisible: boolean
 	setIsVisible: (b: boolean) => void
 	onStart: (dayId: number) => void
-	onCancel: () => void
 	routineId: number | undefined
 }
 
@@ -19,7 +18,6 @@ export default function StartWorkoutModal({
 	isVisible,
 	setIsVisible,
 	onStart,
-	onCancel,
 	routineId
 }: Props) {
 	const { routines } = useUserStore()

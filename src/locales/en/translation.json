@@ -1,9 +1,10 @@
 {
 	"actions": {
 		"add-day": "Add day",
-		"add-exercise-from-repository": "Add exercise from repository",
+		"add-exercises-from-repository": "Add exercises from repository",
 		"add-exercise": "Add exercise",
 		"add-exercises-(count)": "Add {{count}} exercises",
+		"add-notes-for-this-exercise-here": "Add notes for this exercise here",
 		"add-progression": "+ Add progression",
 		"add-set": "Add set",
 		"add": "Add",
@@ -30,6 +31,7 @@
 		"login": "Login",
 		"logout": "Log out",
 		"recover-password": "Recover password",
+		"save": "Save",
 		"save-changes": "Save changes",
 		"signin": "Sign in",
 		"sort": "Sort",
@@ -46,6 +48,7 @@
 		"email": "Email",
 		"exercise-name": "Exercise name",
 		"freeweight": "Freeweight",
+		"goal": "Goal",
 		"isometric": "Isometric",
 		"name": "Name",
 		"new": "New",
@@ -54,9 +57,12 @@
 		"progression-name": "Progression name",
 		"properties": "Properties",
 		"REPS": "REPS",
+		"reps": "reps",
 		"type": "Type",
 		"SET": "SET",
+		"sets": "sets",
 		"SECS": "SECS",
+		"seconds": "seconds",
 		"weighted": "Weighted"
 	},
 	"error-messages": {
@@ -86,10 +92,14 @@
 		"create-routine-to-start-workingout": "Create a routine to start working out",
 		"notes-for-this-exercise": "Notes for this exercise",
 		"notes-for-this-routine": "Notes for this routine",
+		"reps-goal": "Reps goal",
+		"sets-goal": "Sets goal",
+		"seconds-goal": "Seconds goal",
 		"terms-and-policies": "Terms of Service and Privacy Policy",
 		"this-exercise-doesnt-have-any-progressions": "This exercise doesn't have any progressions",
 		"this-will-also-delete-progressions": "This action will delete all data and progressions and cannot be undone",
 		"tip-mark-routine-active-to-start-workingout-faster": "Tip: Mark a routine as active to start working out faster",
+		"to": "to",
 		"workouts-related-to-day-will-be-saved": "Workouts related to this day will be saved",
 		"you-dont-have-routines-yet": "You don't have any routine yet"
 	},
@@ -98,7 +108,9 @@
 		"dont-have-account": "Don't have an account?",
 		"forgot-password": "Forgot your password?",
 		"sure-want-to-delete-day": "Are you sure you want to delete this day?",
-		"sure-want-to-delete-exercise": "Are you sure you want to delete this exercise?"
+		"sure-want-to-delete-exercise": "Are you sure you want to delete this exercise?",
+		"sure-want-to-finish-workout": "Are you sure you want to finish this workout?",
+		"sure-want-to-save-changes": "Are you sure you want to save changes?"
 	},
 	"supabase-error-codes": {
 		"email_address_invalid": "The entered email is invalid, please try again",

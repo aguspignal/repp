@@ -10,9 +10,10 @@ import {
 	GETROUTINEWITHDAYSANDEXERCISESBYID_KEY,
 	GETUSERROUTINESWITHDAYSLAZY_KEY
 } from "../../../hooks/useRoutineQuery"
+import { RefreshControl, StyleSheet, View } from "react-native"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { ScrollView } from "react-native-gesture-handler"
-import { RefreshControl, StyleSheet, View } from "react-native"
+import { sortRoutineDaysAndExercisesByName } from "../../../utils/sorting"
 import { theme } from "../../../resources/theme"
 import { useNavigation } from "@react-navigation/native"
 import { useState } from "react"
@@ -21,6 +22,7 @@ import { useUserStore } from "../../../stores/useUserStore"
 import Button from "../../../components/buttons/Button"
 import CreateRoutineDayModal from "../../../components/modals/CreateRoutineDayModal"
 import RoutineDayCard from "../../../components/cards/RoutineDayCard"
+import StartWorkoutModal from "../../../components/modals/StartWorkoutModal"
 import StyledText from "../../../components/texts/StyledText"
 import ToastNotification from "../../../components/notifications/ToastNotification"
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
@@ -40,9 +42,14 @@ export default function RoutineInner({
 
 	const { mutate: createRoutineDay, isPending } = createRoutineDayMutation
 
+	const [refreshing, setRefreshing] = useState(false)
 	const [routineDayModalVisible, setRoutineDayModalVisible] = useState(false)
+	const [startWorkoutModalVisible, setStartWorkoutModalVisible] =
+		useState(false)
 
-	function handleStartWorkout() {}
+	function handleStartWorkout(dayId: number) {
+		nav.navigate("Workout", { dayId })
+	}
 
 	function handleAddRoutineDay({
 		code,
@@ -86,22 +93,34 @@ export default function RoutineInner({
 		nav.navigate("EditRoutineDay", { id: day.id })
 	}
 
-	function handleSeeDayHistory(day: DatabaseRoutineDay) {}
+	function handleSeeDayHistory(id: number) {
+		nav.navigate("RoutineDayHistory", { id })
+	}
 
 	function handleRefresh() {
 		if (!user) return
-		invalidateQueries(GETUSERROUTINESWITHDAYSLAZY_KEY(user.id))
-		invalidateQueries(GETROUTINEWITHDAYSANDEXERCISESBYID_KEY(routine.id))
+		try {
+			setRefreshing(true)
+			invalidateQueries(GETUSERROUTINESWITHDAYSLAZY_KEY(user.id))
+			invalidateQueries(
+				GETROUTINEWITHDAYSANDEXERCISESBYID_KEY(routine.id)
+			)
+		} catch (error) {
+			console.log(error)
+		} finally {
+			setRefreshing(false)
+		}
 	}
 
 	return (
 		<ScrollView
 			style={styles.container}
 			contentContainerStyle={styles.contentContainer}
+			showsVerticalScrollIndicator={false}
 			refreshControl={
 				<RefreshControl
 					onRefresh={handleRefresh}
-					refreshing={isPendingData}
+					refreshing={refreshing || isPendingData}
 				/>
 			}
 		>
@@ -117,12 +136,12 @@ export default function RoutineInner({
 
 			<Button
 				title={t("actions.start-workout")}
-				onPress={handleStartWorkout}
+				onPress={() => setStartWorkoutModalVisible(true)}
 				size="l"
 				alignSelf
 			/>
 
-			{daysAndExercises
+			{sortRoutineDaysAndExercisesByName(daysAndExercises)
 				.filter((de) => !de.day.deleted)
 				.map((de) => (
 					<RoutineDayCard
@@ -147,6 +166,13 @@ export default function RoutineInner({
 				onCancel={() => setRoutineDayModalVisible(false)}
 				isLoadingCreate={isPending}
 			/>
+
+			<StartWorkoutModal
+				isVisible={startWorkoutModalVisible}
+				setIsVisible={setStartWorkoutModalVisible}
+				onStart={handleStartWorkout}
+				routineId={routine.id}
+			/>
 		</ScrollView>
 	)
 }
@@ -158,7 +184,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: theme.spacing.s
 	},
 	contentContainer: {
-		gap: theme.spacing.l
+		gap: theme.spacing.l,
+		paddingBottom: theme.spacing.x3l
 	},
 	description: {
 		padding: theme.spacing.xs,

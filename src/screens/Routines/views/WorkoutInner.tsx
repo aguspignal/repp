@@ -18,11 +18,12 @@ import { useUserStore } from "../../../stores/useUserStore"
 import { WorkoutSchema, WorkoutValues } from "../../../utils/zodSchemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Button from "../../../components/buttons/Button"
+import ConfirmationModal from "../../../components/modals/ConfirmationModal"
+import ToastNotification from "../../../components/notifications/ToastNotification"
 import useExercisesQuery from "../../../hooks/useExercisesQuery"
+import useRoutineMutation from "../../../hooks/useRoutineMutation"
 import WorkoutExerciseCard from "../../../components/cards/WorkoutExerciseCard"
 import WorkoutInput from "../../../components/inputs/WorkoutInput"
-import useRoutineMutation from "../../../hooks/useRoutineMutation"
-import ToastNotification from "../../../components/notifications/ToastNotification"
 
 type Props = {
 	routineDay: DatabaseRoutineDay
@@ -51,12 +52,14 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 		resolver: zodResolver(WorkoutSchema)
 	})
 
+	const [confirmationModalVisible, setConfirmationModalVisible] =
+		useState(false)
 	const [date, setDate] = useState(new Date())
 	const [progressions, setProgressions] = useState<DatabaseProgression[]>([])
 	const [exercisesSets, setExercisesSets] = useState<ExercisesSets[]>(
 		dayExercises.map((de) => ({
 			exerciseId: de.exercise_id,
-			sets: [{ order: 1, progressionId: undefined, reps: undefined }]
+			sets: [{ order: 1, progressionId: null, reps: null }]
 		}))
 	)
 
@@ -72,10 +75,11 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 			return
 
 		let draftSets: DraftWorkoutSet[] = []
+		exercisesSets.forEach((se) => draftSets.concat(se.sets))
 
-		for (let i = 0; i < exercisesSets.length; i++) {
-			draftSets.concat(exercisesSets[i].sets)
-		}
+		// for (let i = 0; i < exercisesSets.length; i++) {
+		// 	draftSets.concat(exercisesSets[i].sets)
+		// }
 
 		createWorkoutAndSets(
 			{
@@ -114,7 +118,7 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 			<View style={styles.paddingHorizontal}>
 				<Button
 					title={t("actions.finish-workout")}
-					onPress={handleSubmit(handleFinishWorkout)}
+					onPress={() => setConfirmationModalVisible(true)}
 					isLoading={isPending || isSubmitting || isValidating}
 				/>
 			</View>
@@ -130,13 +134,27 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 
 			<FlatList
 				data={sortRDExercisesByOrderAsc(dayExercises)}
-				renderItem={({ item }) => (
+				renderItem={({
+					item: {
+						exercise_id,
+						note,
+						rep_goal_high,
+						rep_goal_low,
+						set_goal_high,
+						set_goal_low
+					}
+				}) => (
 					<WorkoutExerciseCard
-						exercise={exercises.find(
-							(e) => e.id === item.exercise_id
-						)}
+						exercise={exercises.find((e) => e.id === exercise_id)}
+						exerciseNote={note}
+						goals={{
+							rep_goal_high,
+							rep_goal_low,
+							set_goal_low,
+							set_goal_high
+						}}
 						progressions={progressions.filter(
-							(p) => p.exercise_id === item.exercise_id
+							(p) => p.exercise_id === exercise_id
 						)}
 						exercisesSets={exercisesSets}
 						setExercisesSets={setExercisesSets}
@@ -144,6 +162,14 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 					/>
 				)}
 				contentContainerStyle={styles.exercisesList}
+			/>
+
+			<ConfirmationModal
+				isVisible={confirmationModalVisible}
+				setIsVisible={setConfirmationModalVisible}
+				title={t("questions.sure-want-to-finish-workout")}
+				onConfirm={handleSubmit(handleFinishWorkout)}
+				onCancel={() => setConfirmationModalVisible(false)}
 			/>
 		</View>
 	)

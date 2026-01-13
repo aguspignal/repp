@@ -1,5 +1,10 @@
 import { DatabaseProgression } from "../types/exercises"
-import { DatabaseRoutineDayExercise, DraftWorkoutSet } from "../types/routines"
+import {
+	DatabaseRoutineDay,
+	DatabaseRoutineDayExercise,
+	DraftWorkoutSet,
+	RoutineDayAndExercises
+} from "../types/routines"
 
 export function sortProgressionsByOrderDesc(
 	progressions: DatabaseProgression[]
@@ -17,4 +22,10 @@ export function sortRDExercisesByOrderAsc(
 	exercises: DatabaseRoutineDayExercise[]
 ): DatabaseRoutineDayExercise[] {
 	return exercises.sort((a, b) => a.order - b.order)
+}
+
+export function sortRoutineDaysAndExercisesByName(
+	days: RoutineDayAndExercises[]
+): RoutineDayAndExercises[] {
+	return days.sort((a, b) => a.day.name.localeCompare(b.day.name))
 }

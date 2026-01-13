@@ -30,19 +30,15 @@ export type RoutineDayAndExercises = {
 	exercises: DatabaseRoutineDayExercise[]
 }
 
-export type DraftRoutineDayExercise = {
-	exerciseId: number
-	order: number
-	setsGoalLow: number | null
-	setsGoalHigh: number | null
-	repsGoalLow: number | null
-	repsGoalHigh: number | null
-}
+export type DraftRoutineDayExercise = Omit<
+	DatabaseRoutineDayExercise,
+	"id" | "routineday_id" | "created_at"
+>
 
 export type DraftWorkoutSet = {
 	order: number
-	progressionId: number | undefined
-	reps: number | undefined
+	progressionId: number | null
+	reps: number | null
 }
 
 export type ExercisesSets = {
@@ -54,3 +50,10 @@ export type WorkoutAndSets = {
 	workout: DatabaseWorkout
 	sets: DatabaseWorkoutSet[]
 }
+
+export type RDEGoals = Pick<
+	DatabaseRoutineDayExercise,
+	"set_goal_low" | "set_goal_high" | "rep_goal_low" | "rep_goal_high"
+>
+
+export type RDEGoalType = "setsHigh" | "setsLow" | "repsHigh" | "repsLow"

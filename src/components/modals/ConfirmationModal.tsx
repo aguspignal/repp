@@ -48,21 +48,23 @@ export default function ConfirmationModal({
 				) : null}
 
 				<View style={styles.actionsContainer}>
-					<Button
-						onPress={
-							onCancel ? onCancel : () => setIsVisible(false)
-						}
-						title={
-							cancelText
-								? cancelText
-								: i18next.t("actions.cancel")
-						}
-						size="s"
-						isBordered
-						isDisabled={isLoadingConfirm}
-						color="textLight"
-						style={{ flex: 1 }}
-					/>
+					{isLoadingConfirm ? null : (
+						<Button
+							onPress={
+								onCancel ? onCancel : () => setIsVisible(false)
+							}
+							title={
+								cancelText
+									? cancelText
+									: i18next.t("actions.cancel")
+							}
+							size="s"
+							isBordered
+							isDisabled={isLoadingConfirm}
+							color="textLight"
+							style={{ flex: 1 }}
+						/>
+					)}
 
 					<Button
 						onPress={onConfirm}

@@ -9,7 +9,7 @@ const pallete = {
 	gray1: "#DADADA",
 	gray2: "#EAEAEA",
 	orange: "#F8961E",
-	paleblue: "#577590",
+	paleblue: "#5a7fa0",
 	red: "#F94144"
 }
 

@@ -1,4 +1,6 @@
 import { Control, Controller, useController } from "react-hook-form"
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker"
+import { Dispatch, SetStateAction, useState } from "react"
 import { inputStyles } from "./styles"
 import { MAX_DESCRIPTION_LENGTH } from "../../resources/constants"
 import { parseDateToWeekdayMonthDay } from "../../utils/parsing"
@@ -7,10 +9,6 @@ import { useTranslation } from "react-i18next"
 import { WorkoutValues } from "../../utils/zodSchemas"
 import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
-import { Dispatch, SetStateAction, useState } from "react"
-import RNDateTimePicker, {
-	DateTimePickerAndroid
-} from "@react-native-community/datetimepicker"
 
 type Props = {
 	name: keyof WorkoutValues
@@ -36,7 +34,8 @@ export default function WorkoutInput({ name, control, date, setDate }: Props) {
 			value: date,
 			onChange: (_, selectedDate) => setDate(selectedDate ?? date),
 			mode: currentMode,
-			is24Hour: true
+			is24Hour: true,
+			firstDayOfWeek: 1
 		})
 	}
 
