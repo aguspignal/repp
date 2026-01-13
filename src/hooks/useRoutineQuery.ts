@@ -2,11 +2,15 @@ import {
 	RoutineWithDaysAndExercises,
 	RoutineDayAndExercises,
 	RoutineWithDays,
-	DatabaseRoutine
+	DatabaseRoutine,
+	DatabaseWorkout,
+	WorkoutAndSets
 } from "../types/routines"
 import { PostgrestError } from "@supabase/supabase-js"
 import { useQuery } from "@tanstack/react-query"
-import routinesService from "../services/routinesService"
+import routinesService, {
+	GetRoutineDayWorkoutsAndSetsInRangeParams
+} from "../services/routinesService"
 
 const RQKEY_ROOT = "routinesQueries"
 
@@ -25,6 +29,17 @@ export const GETROUTINEDAYANDEXERCISES_KEY = (rdId: number) => [
 	RQKEY_ROOT,
 	"dayAndExercises",
 	rdId
+]
+export const GETROUTINEDAYWORKOUTSANDSETSINRANGE_KEY = (
+	dId: number,
+	rf: number,
+	rt: number
+) => [RQKEY_ROOT, "dayWorkoutsAndSetsInRange", dId, rf, rt]
+
+export const GETROUTINEDAYALLTIMEWORKOUTSCOUNT_KEY = (dId: number) => [
+	RQKEY_ROOT,
+	"dayAllTimeWorkoutsCount",
+	dId
 ]
 
 export default function useRoutineQuery() {
@@ -70,10 +85,40 @@ export default function useRoutineQuery() {
 		})
 	}
 
+	function getRoutineDayWorkoutsAndSetsInRange(
+		params: GetRoutineDayWorkoutsAndSetsInRangeParams
+	) {
+		return useQuery<WorkoutAndSets[] | PostgrestError>({
+			queryKey: GETROUTINEDAYWORKOUTSANDSETSINRANGE_KEY(
+				params.dayId,
+				params.rangeFrom,
+				params.rangeTo
+			),
+			queryFn: async () => {
+				return await routinesService.getRoutineDayWorkoutsAndSetsInRange(
+					params
+				)
+			}
+		})
+	}
+
+	function getRoutineDayAllTimeWorkoutsCount(dayId: number) {
+		return useQuery<number | PostgrestError>({
+			queryKey: GETROUTINEDAYALLTIMEWORKOUTSCOUNT_KEY(dayId),
+			queryFn: async () => {
+				return await routinesService.countRoutineDayAllTimeWorkouts(
+					dayId
+				)
+			}
+		})
+	}
+
 	return {
 		getRoutineById,
 		getRoutineWithDaysAndExercisesById,
 		getUserRoutinesWithDaysLazy,
-		getRoutineDayAndExercises
+		getRoutineDayAndExercises,
+		getRoutineDayWorkoutsAndSetsInRange,
+		getRoutineDayAllTimeWorkoutsCount
 	}
 }

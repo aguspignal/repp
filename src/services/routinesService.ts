@@ -8,7 +8,8 @@ import {
 	RoutineWithDaysAndExercises,
 	DatabaseWorkout,
 	DatabaseWorkoutSet,
-	DraftWorkoutSet
+	DraftWorkoutSet,
+	WorkoutAndSets
 } from "../types/routines"
 import { isPostgrestError } from "../utils/queriesHelpers"
 import { PostgrestError } from "@supabase/supabase-js"
@@ -87,13 +88,59 @@ const routinesService = {
 		}
 	},
 
+	async getRoutineDayWorkoutsAndSetsInRange({
+		dayId,
+		rangeFrom,
+		rangeTo
+	}: GetRoutineDayWorkoutsAndSetsInRangeParams): Promise<
+		WorkoutAndSets[] | PostgrestError
+	> {
+		console.log("R-SERVICE: getRoutineDayWorkoutsAndSetsInRange")
+		const { error, data: workouts } = await supabase
+			.from("Workouts")
+			.select("*")
+			.eq("routineday_id", dayId)
+			.order("created_at", { ascending: false })
+			.range(rangeFrom, rangeTo)
+
+		if (error) return error
+
+		const { error: setsError, data: sets } = await supabase
+			.from("WorkoutSets")
+			.select("*")
+			.in(
+				"workout_id",
+				workouts.map((w) => w.id)
+			)
+
+		if (setsError) return setsError
+
+		return workouts.map((w) => {
+			const workoutSets = sets.filter((s) => s.workout_id === w.id)
+			return { workout: w, sets: workoutSets }
+		})
+	},
+
+	async countRoutineDayAllTimeWorkouts(
+		id: number
+	): Promise<number | PostgrestError> {
+		console.log("-SERVICE: getRoutineDayAllTimeWorkoutsCount")
+		const { error, count } = await supabase
+			.from("Workouts")
+			.select("*", { count: "exact", head: true })
+			.eq("routineday_id", id)
+
+		if (error) return error
+		return count ?? 0
+	},
+
 	async countRoutineDayWorkouts(
 		dayId: number
 	): Promise<number | PostgrestError> {
 		console.log("R-SERVICE: countRoutineDayWorkouts")
 		const { error, count } = await supabase
 			.from("Workouts")
-			.select("", { count: "exact" })
+			.select("", { count: "exact", head: true })
 			.eq("routineday_id", dayId)
 
 		if (error) return error
@@ -356,4 +403,10 @@ export type PostWorkoutParams = {
 export type PostWorkoutSetsBulkParams = {
 	workoutId: number
 	draftSets: DraftWorkoutSet[]
+}
+
+export type GetRoutineDayWorkoutsAndSetsInRangeParams = {
+	dayId: number
+	rangeFrom: number
+	rangeTo: number
 }
