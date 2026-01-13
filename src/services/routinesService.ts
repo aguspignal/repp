@@ -175,18 +175,23 @@ const routinesService = {
 		DatabaseWorkoutSet[] | PostgrestError
 	> {
 		console.log("R-SERVICE: postWorkoutSetsBulk")
+		console.log("serv: ", draftSets)
+
 		const { error, data } = await supabase
 			.from("WorkoutSets")
 			.insert(
-				draftSets.map((ds) => ({
-					workout_id: workoutId,
-					progression_id: ds.progressionId ?? -1,
-					order: ds.order,
-					reps: ds.reps ?? -1
-				}))
+				draftSets
+					.filter((ds) => ds.progressionId && ds.progressionId > 0)
+					.map((ds) => ({
+						workout_id: workoutId,
+						progression_id: ds.progressionId!,
+						order: ds.order,
+						reps: ds.reps ?? 0
+					}))
 			)
 			.select()
 
+		console.log(error)
 		if (error) return error
 		return data
 	},

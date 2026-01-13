@@ -328,6 +328,7 @@ function SetRow({
 					onChangeText={(txt) => handleChange(txt)}
 					placeholder="-"
 					keyboardType="numeric"
+					maxLength={3}
 					style={styles.repsInput}
 				/>
 			</View>

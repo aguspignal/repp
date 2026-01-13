@@ -5,7 +5,7 @@ import {
 	ExercisesSets
 } from "../../../types/routines"
 import { DatabaseProgression } from "../../../types/exercises"
-import { FlatList, StyleSheet, View } from "react-native"
+import { FlatList, KeyboardAvoidingView, StyleSheet, View } from "react-native"
 import { isPostgrestError } from "../../../utils/queriesHelpers"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { sortRDExercisesByOrderAsc } from "../../../utils/sorting"
@@ -71,16 +71,40 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 	}
 
 	function handleFinishWorkout({ note }: WorkoutValues) {
-		if (exercisesSets.every((es) => es.sets.every((s) => !s.progressionId)))
+		if (
+			exercisesSets.some((es) =>
+				es.sets.some((s) => !s.progressionId || s.progressionId < 0)
+			)
+		) {
+			setConfirmationModalVisible(false)
+			ToastNotification({
+				title: t("error-messages.progressions-cant-be-empty")
+			})
 			return
+		}
+
+		if (
+			exercisesSets.every((es) => es.sets.every((s) => !s.progressionId))
+		) {
+			setConfirmationModalVisible(false)
+			nav.goBack()
+			return
+		}
 
 		let draftSets: DraftWorkoutSet[] = []
-		exercisesSets.forEach((se) => draftSets.concat(se.sets))
 
-		// for (let i = 0; i < exercisesSets.length; i++) {
-		// 	draftSets.concat(exercisesSets[i].sets)
-		// }
+		console.log("1")
+		for (let i = 0; i < exercisesSets.length; i++) {
+			const es = exercisesSets[i].sets
+			draftSets.push(...es)
+			for (let j = 0; j < es.length; j++) {
+				console.log(
+					`${es[j].order} - ${es[j].progressionId} ${es[j].reps}`
+				)
+			}
+		}
 
+		console.log("2 draftsets: ", draftSets)
 		createWorkoutAndSets(
 			{
 				date: date.toISOString(),
@@ -90,10 +114,13 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 			},
 			{
 				onSuccess: (workoutAndSets) => {
+					console.log("3")
 					if (!workoutAndSets || isPostgrestError(workoutAndSets)) {
 						ToastNotification({ title: workoutAndSets?.message })
 						return
 					}
+					console.log("4")
+					setConfirmationModalVisible(false)
 					nav.reset({ index: 0, routes: [{ name: "Home" }] })
 				}
 			}
@@ -114,64 +141,70 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 	}, [fetchedProgressions])
 
 	return (
-		<View style={styles.container}>
-			<View style={styles.paddingHorizontal}>
-				<Button
-					title={t("actions.finish-workout")}
-					onPress={() => setConfirmationModalVisible(true)}
-					isLoading={isPending || isSubmitting || isValidating}
-				/>
-			</View>
+		<KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+			<View style={styles.container}>
+				<View style={styles.paddingHorizontal}>
+					<Button
+						title={t("actions.finish-workout")}
+						onPress={() => setConfirmationModalVisible(true)}
+						isLoading={isPending || isSubmitting || isValidating}
+					/>
+				</View>
 
-			<View style={styles.paddingHorizontal}>
-				<WorkoutInput
-					name="note"
-					control={control}
-					date={date}
-					setDate={setDate}
-				/>
-			</View>
+				<View style={styles.paddingHorizontal}>
+					<WorkoutInput
+						name="note"
+						control={control}
+						date={date}
+						setDate={setDate}
+					/>
+				</View>
 
-			<FlatList
-				data={sortRDExercisesByOrderAsc(dayExercises)}
-				renderItem={({
-					item: {
-						exercise_id,
-						note,
-						rep_goal_high,
-						rep_goal_low,
-						set_goal_high,
-						set_goal_low
-					}
-				}) => (
-					<WorkoutExerciseCard
-						exercise={exercises.find((e) => e.id === exercise_id)}
-						exerciseNote={note}
-						goals={{
+				<FlatList
+					data={sortRDExercisesByOrderAsc(dayExercises)}
+					renderItem={({
+						item: {
+							exercise_id,
+							note,
 							rep_goal_high,
 							rep_goal_low,
-							set_goal_low,
-							set_goal_high
-						}}
-						progressions={progressions.filter(
-							(p) => p.exercise_id === exercise_id
-						)}
-						exercisesSets={exercisesSets}
-						setExercisesSets={setExercisesSets}
-						onCreateProgression={handleGoCreateProgression}
-					/>
-				)}
-				contentContainerStyle={styles.exercisesList}
-			/>
+							set_goal_high,
+							set_goal_low
+						}
+					}) => (
+						<WorkoutExerciseCard
+							exercise={exercises.find(
+								(e) => e.id === exercise_id
+							)}
+							exerciseNote={note}
+							goals={{
+								rep_goal_high,
+								rep_goal_low,
+								set_goal_low,
+								set_goal_high
+							}}
+							progressions={progressions.filter(
+								(p) => p.exercise_id === exercise_id
+							)}
+							exercisesSets={exercisesSets}
+							setExercisesSets={setExercisesSets}
+							onCreateProgression={handleGoCreateProgression}
+						/>
+					)}
+					contentContainerStyle={styles.exercisesList}
+				/>
 
-			<ConfirmationModal
-				isVisible={confirmationModalVisible}
-				setIsVisible={setConfirmationModalVisible}
-				title={t("questions.sure-want-to-finish-workout")}
-				onConfirm={handleSubmit(handleFinishWorkout)}
-				onCancel={() => setConfirmationModalVisible(false)}
-			/>
-		</View>
+				<ConfirmationModal
+					isVisible={confirmationModalVisible}
+					setIsVisible={setConfirmationModalVisible}
+					title={t("questions.sure-want-to-finish-workout")}
+					confirmText={t("actions.finish-workout")}
+					onConfirm={handleSubmit(handleFinishWorkout)}
+					onCancel={() => setConfirmationModalVisible(false)}
+					isLoadingConfirm={isPending}
+				/>
+			</View>
+		</KeyboardAvoidingView>
 	)
 }
 

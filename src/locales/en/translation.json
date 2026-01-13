@@ -75,6 +75,7 @@
 		"please-select-type-for-exercise": "Please select a type for this exercise",
 		"passwords-dont-match": "Passwords don't match",
 		"password-must-have-at-least-(minCharacters)-charactes": "Password must have at least {{minCharacters}} characters",
+		"progressions-cant-be-empty": "Progressions can't be empty",
 		"required": "Required",
 		"too-long": "Too long",
 		"trouble-deleting-exercise": "We had trouble deleting this exercise",

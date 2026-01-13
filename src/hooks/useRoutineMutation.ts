@@ -47,6 +47,7 @@ export default function useRoutineMutation() {
 			note,
 			routineDayId
 		}: PostWorkoutAndSetsParams) => {
+			console.log("Mut")
 			const workout = await routinesService.postWorkout({
 				date,
 				note,
@@ -55,6 +56,7 @@ export default function useRoutineMutation() {
 
 			if (!workout || isPostgrestError(workout)) return workout
 
+			console.log(workout)
 			const sets = await routinesService.postWorkoutSetsBulk({
 				workoutId: workout.id,
 				draftSets
