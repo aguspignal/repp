@@ -1,6 +1,5 @@
 import { FlatList, StyleSheet, View } from "react-native"
 import { isPostgrestError } from "../../utils/queriesHelpers"
-import { parseDateToWeekdayMonthDay } from "../../utils/parsing"
 import { RootStackScreenProps } from "../../navigation/params"
 import { theme } from "../../resources/theme"
 import { useMemo, useState } from "react"
@@ -9,6 +8,7 @@ import Button from "../../components/buttons/Button"
 import Loading from "../Loading"
 import StyledText from "../../components/texts/StyledText"
 import useRoutineQuery from "../../hooks/useRoutineQuery"
+import RoutineDayHistoryCard from "../../components/cards/RoutineDayHistoryCard"
 
 export default function RoutineDayHistory({
 	navigation,
@@ -48,25 +48,19 @@ export default function RoutineDayHistory({
 
 	return (
 		<View style={styles.container}>
-			<StyledText type="subtitle">
-				{`${routineDay?.name} history`}
-			</StyledText>
-
 			<FlatList
 				data={
 					workoutsAndSets && !isPostgrestError(workoutsAndSets)
 						? workoutsAndSets
 						: []
 				}
-				renderItem={({ item: ws }) => (
-					<View key={ws.workout.id}>
-						<StyledText type="text">{`w.id ${
-							ws.workout.id
-						}, ${parseDateToWeekdayMonthDay(
-							new Date(ws.workout.date)
-						)}: ${ws.sets.length} sets`}</StyledText>
-					</View>
+				renderItem={({ item }) => (
+					<RoutineDayHistoryCard
+						key={item.workout.id}
+						workoutAndSets={item}
+					/>
 				)}
+				contentContainerStyle={styles.workoutsContainer}
 			/>
 
 			<PaginationActions
@@ -164,12 +158,15 @@ const styles = StyleSheet.create({
 		backgroundColor: theme.colors.backgroundBlack,
 		paddingHorizontal: theme.spacing.s,
 		paddingBottom: theme.spacing.xxl,
-		gap: theme.spacing.l
+		paddingTop: theme.spacing.xxs
 	},
 	paginationContainer: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
 		gap: theme.spacing.xxs
+	},
+	workoutsContainer: {
+		gap: theme.spacing.s
 	}
 })

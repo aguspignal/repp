@@ -1,5 +1,5 @@
 import { DraftExerciseAndProgression } from "../../types/exercises"
-import { GETUSEREXERCISESLAZY_KEY } from "../../hooks/useExercisesQuery"
+import { GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY } from "../../hooks/useExercisesQuery"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { RootStackScreenProps } from "../../navigation/params"
 import { useTranslation } from "react-i18next"
@@ -24,7 +24,6 @@ export default function CreateExercise({
 	}: DraftExerciseAndProgression) {
 		if (!user) return
 
-		console.log("1")
 		createExerciseAndProgressions(
 			{
 				exerciseData: {
@@ -49,7 +48,9 @@ export default function CreateExercise({
 					}
 
 					addExercise(newExercise)
-					invalidateQueries(GETUSEREXERCISESLAZY_KEY(user.id))
+					invalidateQueries(
+						GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY(user.id)
+					)
 					navigation.reset({
 						index: 0,
 						routes: [

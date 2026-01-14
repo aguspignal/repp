@@ -5,21 +5,21 @@ import {
 } from "../types/routines"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import { DatabaseExercise } from "../types/exercises"
 import { DatabaseUser } from "../types/user"
+import { ExerciseAndProgressions } from "../types/exercises"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 interface UserState {
 	user: DatabaseUser | null
-	exercises: DatabaseExercise[]
+	exercises: ExerciseAndProgressions[]
 	routines: RoutineWithDays[]
 
 	loadUser: (u: DatabaseUser | null) => void
-	loadExercises: (exs: DatabaseExercise[]) => void
+	loadExercisesAndProgressions: (eps: ExerciseAndProgressions[]) => void
 	loadRoutines: (rs: RoutineWithDays[]) => void
 	getRoutineByDayId: (dId: number) => DatabaseRoutine
 
-	addExercise: (ex: DatabaseExercise) => void
+	addExercise: (ep: ExerciseAndProgressions) => void
 	addRoutineWithDays: (r: RoutineWithDays) => void
 	addRoutineDay: (rd: DatabaseRoutineDay) => void
 	updateRoutine: (r: DatabaseRoutine) => void
@@ -40,18 +40,20 @@ export const useUserStore = create<UserState>()(
 			routines: [],
 
 			loadUser: (u) => set({ user: u }),
-			loadExercises: (exs) => set({ exercises: exs }),
+			loadExercisesAndProgressions: (eps) => set({ exercises: eps }),
 			loadRoutines: (rs) => set({ routines: rs }),
 			getRoutineByDayId: (dId) => {
 				return get().routines.filter((r) =>
 					r.days.find((d) => d.id === dId)
 				)[0].routine
 			},
-			addExercise: (exerc) =>
+			addExercise: (ep) =>
 				set({
 					exercises: get()
-						.exercises.filter((e) => e.id !== exerc.id)
-						.concat(exerc)
+						.exercises.filter(
+							(e) => e.exercise.id !== ep.exercise.id
+						)
+						.concat(ep)
 				}),
 			addRoutineWithDays: (routine) =>
 				set({
@@ -86,7 +88,11 @@ export const useUserStore = create<UserState>()(
 				}),
 
 			removeExercise: (eId) =>
-				set({ exercises: get().exercises.filter((e) => e.id !== eId) }),
+				set({
+					exercises: get().exercises.filter(
+						(e) => e.exercise.id !== eId
+					)
+				}),
 			removeRoutine: (rId) =>
 				set({
 					routines: get().routines.filter((r) => r.routine.id !== rId)

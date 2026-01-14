@@ -16,10 +16,10 @@ import { PostgrestError } from "@supabase/supabase-js"
 import { supabase } from "../lib/supabase"
 
 const routinesService = {
-	async getRoutineById(
+	async fetchRoutineById(
 		id: number
 	): Promise<DatabaseRoutine | null | PostgrestError> {
-		console.log("R-SERVICE: getRoutineById")
+		console.log("R-SERVICE: fetchRoutineById")
 		const { error, data } = await supabase
 			.from("Routines")
 			.select("*")
@@ -29,10 +29,10 @@ const routinesService = {
 		return data[0]
 	},
 
-	async getRoutineWithDaysAndExercisesById(
+	async fetchRoutineWithDaysAndExercisesById(
 		id: number
 	): Promise<RoutineWithDaysAndExercises | null | PostgrestError> {
-		console.log("R-SERVICE: getRoutineWithDaysAndExercisesById")
+		console.log("R-SERVICE: fetchRoutineWithDaysAndExercisesById")
 		const { error, data } = await supabase
 			.from("Routines")
 			.select("*, days:RoutineDays(*, exercises:RoutineDayExercises(*))")
@@ -49,10 +49,10 @@ const routinesService = {
 		}
 	},
 
-	async getRoutinesWithDaysByUserId(
+	async fetchRoutinesWithDaysByUserId(
 		userId: number
 	): Promise<RoutineWithDays[] | PostgrestError> {
-		console.log("R-SERVICE: getRoutinesWithDaysByUserId")
+		console.log("R-SERVICE: fetchRoutinesWithDaysByUserId")
 		const { error, data } = await supabase
 			.from("Routines")
 			.select("*, days:RoutineDays(*)")
@@ -65,10 +65,10 @@ const routinesService = {
 		})
 	},
 
-	async getRoutineDayAndExercises(
+	async fetchRoutineDayAndExercises(
 		dayId: number
 	): Promise<RoutineDayAndExercises | null | PostgrestError> {
-		console.log("R-SERVICE: getRoutineDayExercises")
+		console.log("R-SERVICE: fetchRoutineDayExercises")
 		const { error, data } = await supabase
 			.from("RoutineDays")
 			.select("*")
@@ -88,14 +88,14 @@ const routinesService = {
 		}
 	},
 
-	async getRoutineDayWorkoutsAndSetsInRange({
+	async fetchRoutineDayWorkoutsAndSetsInRange({
 		dayId,
 		rangeFrom,
 		rangeTo
 	}: GetRoutineDayWorkoutsAndSetsInRangeParams): Promise<
 		WorkoutAndSets[] | PostgrestError
 	> {
-		console.log("R-SERVICE: getRoutineDayWorkoutsAndSetsInRange")
+		console.log("R-SERVICE: fetchRoutineDayWorkoutsAndSetsInRange")
 		const { error, data: workouts } = await supabase
 			.from("Workouts")
 			.select("*")

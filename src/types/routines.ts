@@ -1,3 +1,4 @@
+import { DatabaseProgression } from "./exercises"
 import { Database } from "./supabase"
 
 export type DatabaseRoutine = Database["public"]["Tables"]["Routines"]["Row"]
@@ -57,3 +58,9 @@ export type RDEGoals = Pick<
 >
 
 export type RDEGoalType = "setsHigh" | "setsLow" | "repsHigh" | "repsLow"
+
+export type WorkoutSetsAndProgressions = {
+	workout: DatabaseWorkout
+	sets: DatabaseWorkoutSet[]
+	progressions: DatabaseProgression[]
+}

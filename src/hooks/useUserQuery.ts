@@ -1,4 +1,5 @@
 import { DatabaseUser, InitialData } from "../types/user"
+import { ExerciseAndProgressions } from "../types/exercises"
 import { isPostgrestError } from "../utils/queriesHelpers"
 import { PostgrestError } from "@supabase/supabase-js"
 import { useQuery } from "@tanstack/react-query"
@@ -22,7 +23,8 @@ export const GETANDUPDATEINITIALDATABYUUID_KEY = (uuid: string) => [
 ]
 
 export default function useUserQuery() {
-	const { loadUser, loadExercises, loadRoutines } = useUserStore()
+	const { loadUser, loadExercisesAndProgressions, loadRoutines } =
+		useUserStore()
 
 	function getUserByUuid(uuid: string | undefined) {
 		return useQuery<DatabaseUser | null | PostgrestError>({
@@ -44,7 +46,7 @@ export default function useUserQuery() {
 				if (!user || isPostgrestError(user))
 					throw new Error(i18next.t("error-messages.user-not-found"))
 
-				let exercises = await exercisesService.getExercisesByUserId(
+				let exercises = await exercisesService.fetchExercisesByUserId(
 					user.id
 				)
 				if (isPostgrestError(exercises)) {
@@ -56,8 +58,21 @@ export default function useUserQuery() {
 					exercises = []
 				}
 
+				let progressions =
+					await exercisesService.fetchProgressionsByExercisesIds(
+						exercises.map((e) => e.id)
+					)
+				if (isPostgrestError(progressions)) {
+					ToastNotification({
+						description: i18next.t(
+							"error-messages.couldnt-fetch-progressions"
+						)
+					})
+					progressions = []
+				}
+
 				let routines =
-					await routinesService.getRoutinesWithDaysByUserId(user.id)
+					await routinesService.fetchRoutinesWithDaysByUserId(user.id)
 				if (isPostgrestError(routines)) {
 					ToastNotification({
 						description: i18next.t(
@@ -67,11 +82,19 @@ export default function useUserQuery() {
 					routines = []
 				}
 
+				const exercisesAndProgressions: ExerciseAndProgressions[] =
+					exercises.map((e) => ({
+						exercise: e,
+						progressions: progressions.filter(
+							(p) => p.exercise_id === e.id
+						)
+					}))
+
 				loadUser(user)
-				loadExercises(exercises)
+				loadExercisesAndProgressions(exercisesAndProgressions)
 				loadRoutines(routines)
 
-				return { user, exercises, routines }
+				return { user, exercises: exercisesAndProgressions, routines }
 			}
 		})
 	}

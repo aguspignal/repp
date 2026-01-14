@@ -4,15 +4,14 @@ import {
 	DraftWorkoutSet,
 	ExercisesSets
 } from "../../../types/routines"
-import { DatabaseProgression } from "../../../types/exercises"
 import { FlatList, KeyboardAvoidingView, StyleSheet, View } from "react-native"
 import { isPostgrestError } from "../../../utils/queriesHelpers"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { sortRDExercisesByOrderAsc } from "../../../utils/sorting"
 import { theme } from "../../../resources/theme"
-import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigation } from "@react-navigation/native"
+import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../../stores/useUserStore"
 import { WorkoutSchema, WorkoutValues } from "../../../utils/zodSchemas"
@@ -20,7 +19,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import Button from "../../../components/buttons/Button"
 import ConfirmationModal from "../../../components/modals/ConfirmationModal"
 import ToastNotification from "../../../components/notifications/ToastNotification"
-import useExercisesQuery from "../../../hooks/useExercisesQuery"
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
 import WorkoutExerciseCard from "../../../components/cards/WorkoutExerciseCard"
 import WorkoutInput from "../../../components/inputs/WorkoutInput"
@@ -33,16 +31,11 @@ type Props = {
 export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 	const { t } = useTranslation()
 	const { exercises } = useUserStore()
-	const { getProgressionsByExercisesIds } = useExercisesQuery()
 	const { createWorkoutAndSetsMutation } = useRoutineMutation()
 	const nav = useNavigation<RootStackNavigationProp>()
 
 	const { mutate: createWorkoutAndSets, isPending } =
 		createWorkoutAndSetsMutation
-
-	const { data: fetchedProgressions } = getProgressionsByExercisesIds(
-		dayExercises.map((de) => de.exercise_id)
-	)
 
 	const {
 		handleSubmit,
@@ -55,8 +48,7 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 	const [confirmationModalVisible, setConfirmationModalVisible] =
 		useState(false)
 	const [date, setDate] = useState(new Date())
-	const [progressions, setProgressions] = useState<DatabaseProgression[]>([])
-	const [exercisesSets, setExercisesSets] = useState<ExercisesSets[]>(
+	const [workoutSets, setWorkoutSets] = useState<ExercisesSets[]>(
 		dayExercises.map((de) => ({
 			exerciseId: de.exercise_id,
 			sets: [{ order: 1, progressionId: null, reps: null }]
@@ -72,7 +64,7 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 
 	function handleFinishWorkout({ note }: WorkoutValues) {
 		if (
-			exercisesSets.some((es) =>
+			workoutSets.some((es) =>
 				es.sets.some((s) => !s.progressionId || s.progressionId < 0)
 			)
 		) {
@@ -83,9 +75,7 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 			return
 		}
 
-		if (
-			exercisesSets.every((es) => es.sets.every((s) => !s.progressionId))
-		) {
+		if (workoutSets.every((es) => es.sets.every((s) => !s.progressionId))) {
 			setConfirmationModalVisible(false)
 			nav.goBack()
 			return
@@ -93,9 +83,8 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 
 		let draftSets: DraftWorkoutSet[] = []
 
-		console.log("1")
-		for (let i = 0; i < exercisesSets.length; i++) {
-			const es = exercisesSets[i].sets
+		for (let i = 0; i < workoutSets.length; i++) {
+			const es = workoutSets[i].sets
 			draftSets.push(...es)
 			for (let j = 0; j < es.length; j++) {
 				console.log(
@@ -104,7 +93,6 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 			}
 		}
 
-		console.log("2 draftsets: ", draftSets)
 		createWorkoutAndSets(
 			{
 				date: date.toISOString(),
@@ -114,31 +102,17 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 			},
 			{
 				onSuccess: (workoutAndSets) => {
-					console.log("3")
 					if (!workoutAndSets || isPostgrestError(workoutAndSets)) {
 						ToastNotification({ title: workoutAndSets?.message })
 						return
 					}
-					console.log("4")
+
 					setConfirmationModalVisible(false)
 					nav.reset({ index: 0, routes: [{ name: "Home" }] })
 				}
 			}
 		)
-		// for (let i = 0; i < exercisesSets.length; i++) {
-		// 	console.log("EXERCISE: " + exercisesSets[i].exerciseId)
-		// 	for (let j = 0; j < exercisesSets[i].sets.length; j++) {
-		// 		console.log(
-		// 			`set ${exercisesSets[i].sets[j].order}: ${exercisesSets[i].sets[j].progressionId}`
-		// 		)
-		// 	}
-		// }
 	}
-
-	useEffect(() => {
-		if (fetchedProgressions && !isPostgrestError(fetchedProgressions))
-			setProgressions(fetchedProgressions)
-	}, [fetchedProgressions])
 
 	return (
 		<KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
@@ -173,9 +147,11 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 						}
 					}) => (
 						<WorkoutExerciseCard
-							exercise={exercises.find(
-								(e) => e.id === exercise_id
-							)}
+							exerciseAndProgressions={
+								exercises.find(
+									(e) => e.exercise.id === exercise_id
+								)!
+							}
 							exerciseNote={note}
 							goals={{
 								rep_goal_high,
@@ -183,11 +159,8 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 								set_goal_low,
 								set_goal_high
 							}}
-							progressions={progressions.filter(
-								(p) => p.exercise_id === exercise_id
-							)}
-							exercisesSets={exercisesSets}
-							setExercisesSets={setExercisesSets}
+							workoutSets={workoutSets}
+							setWorkoutSets={setWorkoutSets}
 							onCreateProgression={handleGoCreateProgression}
 						/>
 					)}

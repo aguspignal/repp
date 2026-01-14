@@ -1,4 +1,4 @@
-import { SignInFormValues, SignUpFormValues } from "../types/forms"
+import { SignInValues, SignUpValues } from "../utils/zodSchemas"
 import { supabase } from "../lib/supabase"
 // import * as QueryParams from "expo-auth-session/build/QueryParams"
 
@@ -23,7 +23,7 @@ export default function useSession() {
 		if (error) throw error
 	}
 
-	async function signUpWithEmail({ email, password }: SignUpFormValues) {
+	async function signUpWithEmail({ email, password }: SignUpValues) {
 		const { error } = await supabase.auth.signUp({
 			email: email.toLowerCase(),
 			password: password
@@ -36,7 +36,7 @@ export default function useSession() {
 		return null
 	}
 
-	async function signInWithEmail({ email, password }: SignInFormValues) {
+	async function signInWithEmail({ email, password }: SignInValues) {
 		const { error } = await supabase.auth.signInWithPassword({
 			email: email.toLowerCase(),
 			password: password

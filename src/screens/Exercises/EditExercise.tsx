@@ -1,14 +1,14 @@
-import useExercisesQuery, {
-	GETUSEREXERCISESLAZY_KEY,
-	GETEXERCISEANDPROGRESSIONSBYID_KEY,
-	GETPROGRESSIONSBYEXERCISESIDS_KEY
-} from "../../hooks/useExercisesQuery"
 import {
-	DatabaseExercise,
-	DraftExerciseAndProgression
+	DraftExerciseAndProgression,
+	ExerciseAndProgressions
 } from "../../types/exercises"
+import useExercisesQuery, {
+	GETEXERCISEANDPROGRESSIONSBYID_KEY,
+	GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY
+} from "../../hooks/useExercisesQuery"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { RootStackScreenProps } from "../../navigation/params"
+import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
 import ErrorScreen from "../ErrorScreen"
@@ -22,7 +22,7 @@ export default function EditExercise({
 	route
 }: RootStackScreenProps<"EditExercise">) {
 	const { t } = useTranslation()
-	const { user, addExercise } = useUserStore()
+	const { user, exercises, addExercise } = useUserStore()
 	const { getExerciseAndProgressionsById } = useExercisesQuery()
 	const {
 		updateExerciseAndProgressionsMutation,
@@ -74,8 +74,8 @@ export default function EditExercise({
 					upsertProgressions
 				},
 				{
-					onSuccess: (result) => {
-						if (isPostgrestError(result)) {
+					onSuccess: (newProgressions) => {
+						if (isPostgrestError(newProgressions)) {
 							ToastNotification({
 								description: t(
 									"error-messages.trouble-getting-exercise"
@@ -84,7 +84,10 @@ export default function EditExercise({
 							return
 						}
 
-						onMutationSuccess()
+						onMutationSuccess({
+							exercise: data.exercise,
+							progressions: newProgressions
+						})
 					}
 				}
 			)
@@ -106,8 +109,11 @@ export default function EditExercise({
 				upsertProgressions
 			},
 			{
-				onSuccess: (newExercise) => {
-					if (!newExercise || isPostgrestError(newExercise)) {
+				onSuccess: (newExerciseAndProgressions) => {
+					if (
+						!newExerciseAndProgressions ||
+						isPostgrestError(newExerciseAndProgressions)
+					) {
 						ToastNotification({
 							description: t(
 								"error-messages.trouble-getting-exercise"
@@ -116,26 +122,22 @@ export default function EditExercise({
 						return
 					}
 
-					onMutationSuccess(newExercise)
+					onMutationSuccess(newExerciseAndProgressions)
 				}
 			}
 		)
 	}
 
-	function onMutationSuccess(newExercise?: DatabaseExercise) {
+	function onMutationSuccess(
+		newExerciseAndProgressions: ExerciseAndProgressions
+	) {
 		if (!user) return
 
-		if (newExercise) addExercise(newExercise)
-
+		addExercise(newExerciseAndProgressions)
 		invalidateQueries(GETEXERCISEANDPROGRESSIONSBYID_KEY(route.params.id))
-		invalidateQueries(GETUSEREXERCISESLAZY_KEY(user.id))
+		invalidateQueries(GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY(user.id))
 
 		if (route.params.comingFromWorkout) {
-			invalidateQueries(
-				GETPROGRESSIONSBYEXERCISESIDS_KEY(
-					route.params.comingFromWorkout
-				)
-			)
 			navigation.goBack()
 		} else
 			navigation.reset({
@@ -150,6 +152,10 @@ export default function EditExercise({
 			})
 	}
 
+	useEffect(() => {
+		if (data && !isPostgrestError(data)) addExercise(data)
+	}, [data])
+
 	if (isPending) return <Loading />
 	if (error) return <ErrorScreen errorMessage={error.message} />
 	if (isPostgrestError(data))
@@ -158,7 +164,9 @@ export default function EditExercise({
 	return (
 		<ExerciseInner
 			type="edit"
-			exerciseData={data}
+			exerciseData={
+				exercises.find((e) => e.exercise.id === route.params.id) ?? null
+			}
 			onSubmit={onSaveChanges}
 			isPendingAction={
 				isPendingUpdateExerciseAndProgressions ||

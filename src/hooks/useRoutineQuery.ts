@@ -3,14 +3,13 @@ import {
 	RoutineDayAndExercises,
 	RoutineWithDays,
 	DatabaseRoutine,
-	DatabaseWorkout,
 	WorkoutAndSets
 } from "../types/routines"
-import { PostgrestError } from "@supabase/supabase-js"
-import { useQuery } from "@tanstack/react-query"
 import routinesService, {
 	GetRoutineDayWorkoutsAndSetsInRangeParams
 } from "../services/routinesService"
+import { PostgrestError } from "@supabase/supabase-js"
+import { useQuery } from "@tanstack/react-query"
 
 const RQKEY_ROOT = "routinesQueries"
 
@@ -48,7 +47,7 @@ export default function useRoutineQuery() {
 			queryKey: GETROUTINEBYID_KEY(id ?? 0),
 			queryFn: async () => {
 				if (!id) return null
-				return await routinesService.getRoutineById(id)
+				return await routinesService.fetchRoutineById(id)
 			}
 		})
 	}
@@ -58,7 +57,7 @@ export default function useRoutineQuery() {
 			queryKey: GETROUTINEWITHDAYSANDEXERCISESBYID_KEY(id ?? 0),
 			queryFn: async () => {
 				if (!id) return null
-				return await routinesService.getRoutineWithDaysAndExercisesById(
+				return await routinesService.fetchRoutineWithDaysAndExercisesById(
 					id
 				)
 			}
@@ -70,7 +69,9 @@ export default function useRoutineQuery() {
 			queryKey: GETUSERROUTINESWITHDAYSLAZY_KEY(userId ?? 0),
 			queryFn: async () => {
 				if (!userId) return []
-				return await routinesService.getRoutinesWithDaysByUserId(userId)
+				return await routinesService.fetchRoutinesWithDaysByUserId(
+					userId
+				)
 			},
 			enabled: false
 		})
@@ -80,7 +81,7 @@ export default function useRoutineQuery() {
 		return useQuery<RoutineDayAndExercises | null | PostgrestError>({
 			queryKey: GETROUTINEDAYANDEXERCISES_KEY(dayId ?? 0),
 			queryFn: async () => {
-				return await routinesService.getRoutineDayAndExercises(dayId)
+				return await routinesService.fetchRoutineDayAndExercises(dayId)
 			}
 		})
 	}
@@ -95,7 +96,7 @@ export default function useRoutineQuery() {
 				params.rangeTo
 			),
 			queryFn: async () => {
-				return await routinesService.getRoutineDayWorkoutsAndSetsInRange(
+				return await routinesService.fetchRoutineDayWorkoutsAndSetsInRange(
 					params
 				)
 			}

@@ -1,16 +1,14 @@
-import useExercisesQuery, {
-	GETUSEREXERCISESLAZY_KEY
-} from "../../hooks/useExercisesQuery"
 import {
 	parseExerciseFilterByToText,
 	parseExerciseSortByToText
 } from "../../utils/parsing"
 import {
 	DatabaseExercise,
+	ExerciseAndProgressions,
 	ExerciseFilterBy,
 	ExerciseSortBy
 } from "../../types/exercises"
-import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
+import { isPostgrestError } from "../../utils/queriesHelpers"
 import { RefreshControl, ScrollView, StyleSheet, View } from "react-native"
 import { RootStackScreenProps } from "../../navigation/params"
 import { theme } from "../../resources/theme"
@@ -23,19 +21,24 @@ import ExerciseCard from "../../components/cards/ExerciseCard"
 import IconButton from "../../components/buttons/IconButton"
 import ListActionCard from "../../components/cards/ListActionCard"
 import StyledText from "../../components/texts/StyledText"
+import useExercisesQuery from "../../hooks/useExercisesQuery"
 
 export default function ExerciseRepository({
 	navigation,
 	route
 }: RootStackScreenProps<"ExerciseRepository">) {
 	const { t } = useTranslation()
-	const { user, exercises, loadExercises } = useUserStore()
-	const { getUserExercisesLazy } = useExercisesQuery()
+	const { user, exercises, loadExercisesAndProgressions } = useUserStore()
+	const { getUserExercisesAndProgressionsLazy } = useExercisesQuery()
 
-	const { data, isFetching } = getUserExercisesLazy(user?.id)
+	const {
+		refetch: fetchExerciseAndProgressions,
+		data,
+		isFetching
+	} = getUserExercisesAndProgressionsLazy(user?.id)
 
 	const [exercisesList, setExercisesList] =
-		useState<DatabaseExercise[]>(exercises)
+		useState<ExerciseAndProgressions[]>(exercises)
 	const [sortBy, setSortBy] = useState<ExerciseSortBy>("ascending")
 	const [filterBy, setFilterBy] = useState<ExerciseFilterBy>("all")
 	const [selectedExercises, setSelectedExercises] = useState<
@@ -53,7 +56,8 @@ export default function ExerciseRepository({
 	}
 
 	function handleRefresh() {
-		invalidateQueries(GETUSEREXERCISESLAZY_KEY(user?.id ?? 0))
+		fetchExerciseAndProgressions()
+		// invalidateQueries(GETUSEREXERCISESLAZY_KEY(user?.id ?? 0))
 	}
 
 	function handleSort(order: ExerciseSortBy) {
@@ -64,12 +68,12 @@ export default function ExerciseRepository({
 				if (order === "type") {
 					const weight = (e: DatabaseExercise) =>
 						e.is_bodyweight ? 0 : e.is_freeweight ? 1 : 2
-					return weight(a) - weight(b)
+					return weight(a.exercise) - weight(b.exercise)
 				}
 
 				return order === "ascending"
-					? a.name.localeCompare(b.name)
-					: -1 * a.name.localeCompare(b.name)
+					? a.exercise.name.localeCompare(b.exercise.name)
+					: -1 * a.exercise.name.localeCompare(b.exercise.name)
 			})
 		)
 	}
@@ -80,9 +84,9 @@ export default function ExerciseRepository({
 		setExercisesList(
 			exercises.filter((e) => {
 				if (param === "all") return true
-				else if (param === "bodyweight") return e.is_bodyweight
-				else if (param === "freeweight") return e.is_freeweight
-				else return e.is_isometric
+				else if (param === "bodyweight") return e.exercise.is_bodyweight
+				else if (param === "freeweight") return e.exercise.is_freeweight
+				else return e.exercise.is_isometric
 			})
 		)
 	}
@@ -109,10 +113,7 @@ export default function ExerciseRepository({
 	}
 
 	useEffect(() => {
-		if (data && !isPostgrestError(data)) {
-			loadExercises(data)
-			setExercisesList(data)
-		}
+		if (data && !isPostgrestError(data)) loadExercisesAndProgressions(data)
 	}, [data])
 
 	return (
@@ -180,14 +181,14 @@ export default function ExerciseRepository({
 				</View>
 			</View>
 
-			{exercisesList.map((exerc) => (
+			{exercisesList.map((expr) => (
 				<ExerciseCard
-					exercise={exerc}
+					exercise={expr.exercise}
 					onPress={
 						isSelectionView ? handleSelectExercise : goToExercise
 					}
 					isSelectable={isSelectionView}
-					key={exerc.id}
+					key={expr.exercise.id}
 				/>
 			))}
 

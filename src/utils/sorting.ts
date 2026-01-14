@@ -1,10 +1,9 @@
-import { DatabaseProgression } from "../types/exercises"
 import {
-	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
 	DraftWorkoutSet,
 	RoutineDayAndExercises
 } from "../types/routines"
+import { DatabaseProgression } from "../types/exercises"
 
 export function sortProgressionsByOrderDesc(
 	progressions: DatabaseProgression[]

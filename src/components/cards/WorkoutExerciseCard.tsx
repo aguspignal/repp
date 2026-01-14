@@ -2,7 +2,10 @@ import {
 	sortDraftWorkoutSetsByOrderAsc,
 	sortProgressionsByOrderDesc
 } from "../../utils/sorting"
-import { DatabaseExercise, DatabaseProgression } from "../../types/exercises"
+import {
+	DatabaseProgression,
+	ExerciseAndProgressions
+} from "../../types/exercises"
 import { Dispatch, SetStateAction, useMemo, useState } from "react"
 import { DraftWorkoutSet, ExercisesSets, RDEGoals } from "../../types/routines"
 import { parseGoalsToText, parseNumericInput } from "../../utils/parsing"
@@ -15,22 +18,20 @@ import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
 
 type Props = {
-	exercise: DatabaseExercise | undefined
+	exerciseAndProgressions: ExerciseAndProgressions
 	exerciseNote: string | null
 	goals: RDEGoals
-	progressions: DatabaseProgression[]
-	exercisesSets: ExercisesSets[]
-	setExercisesSets: Dispatch<SetStateAction<ExercisesSets[]>>
+	workoutSets: ExercisesSets[]
+	setWorkoutSets: Dispatch<SetStateAction<ExercisesSets[]>>
 	onCreateProgression: (eId: number) => void
 }
 
 export default function WorkoutExerciseCard({
-	exercise,
+	exerciseAndProgressions: { exercise, progressions },
 	exerciseNote,
 	goals,
-	progressions,
-	exercisesSets,
-	setExercisesSets,
+	workoutSets,
+	setWorkoutSets,
 	onCreateProgression
 }: Props) {
 	const { t } = useTranslation()
@@ -45,7 +46,7 @@ export default function WorkoutExerciseCard({
 	function handleDeleteSet(set: DraftWorkoutSet) {
 		if (!exercise) return
 
-		setExercisesSets((prev) =>
+		setWorkoutSets((prev) =>
 			prev.map((es) => {
 				if (es.exerciseId !== exercise.id) return es
 
@@ -97,7 +98,7 @@ export default function WorkoutExerciseCard({
 	function handleAddProgression(set: DraftWorkoutSet, progId: number) {
 		if (!exercise) return
 
-		setExercisesSets((prev) =>
+		setWorkoutSets((prev) =>
 			prev.map((es) => {
 				if (es.exerciseId !== exercise.id) return es
 
@@ -118,7 +119,7 @@ export default function WorkoutExerciseCard({
 	function handleAddSet() {
 		if (!exercise) return
 
-		setExercisesSets((prev) =>
+		setWorkoutSets((prev) =>
 			prev.map((es) => {
 				if (es.exerciseId !== exercise.id) return es
 
@@ -151,7 +152,7 @@ export default function WorkoutExerciseCard({
 	function handleUpdateReps(draftSet: DraftWorkoutSet, reps: number | null) {
 		if (!exercise) return
 
-		setExercisesSets((prev) =>
+		setWorkoutSets((prev) =>
 			prev.map((es) => {
 				if (es.exerciseId !== exercise.id) return es
 
@@ -191,7 +192,7 @@ export default function WorkoutExerciseCard({
 
 			<HeaderRow isIsometric={exercise?.is_isometric ?? false} />
 
-			{exercisesSets
+			{workoutSets
 				.find((es) => es.exerciseId === exercise?.id)
 				?.sets.map((set) => (
 					<SetRow

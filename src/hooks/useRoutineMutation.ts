@@ -2,7 +2,6 @@ import routinesService, {
 	PostRoutineDayParams,
 	PostRoutineExercisesParamas,
 	PostRoutineParams,
-	PostWorkoutParams,
 	UpdateUserRoutineStatusParams
 } from "../services/routinesService"
 import {

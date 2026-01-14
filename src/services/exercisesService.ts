@@ -7,53 +7,40 @@ import { PostgrestError } from "@supabase/supabase-js"
 import { supabase } from "../lib/supabase"
 
 const exercisesService = {
-	async getExerciseById(
+	async fetchExerciseById(
 		id: number
 	): Promise<DatabaseExercise | null | PostgrestError> {
-		console.log("E-SERVICE: getExerciseById")
+		console.log("E-SERVICE: fetchExerciseById")
 		const { error, data } = await supabase
 			.from("Exercises")
 			.select("*")
 			.eq("id", id)
 
 		if (error) return error
-		return data[0]
+		return data[0] ?? null
 	},
 
-	async getExercisesByUserId(
-		userId: number
+	async fetchExercisesByUserId(
+		uId: number
 	): Promise<DatabaseExercise[] | PostgrestError> {
-		console.log("E-SERVICE: getExercisesByUserId")
+		console.log("E-SERVICE: fetchExercisesByUserId")
 		const { error, data } = await supabase
 			.from("Exercises")
 			.select("*")
-			.eq("user_id", userId)
+			.eq("user_id", uId)
 
 		if (error) return error
 		return data
 	},
 
-	async getProgressionsByExerciseId(
-		exerciseId: number
+	async fetchProgressionsByExercisesIds(
+		eIds: number[]
 	): Promise<DatabaseProgression[] | PostgrestError> {
-		console.log("E-SERVICE: getProgressionsByExerciseId")
+		console.log("E-SERVICE: fetchProgressionsByExerciseId")
 		const { error, data } = await supabase
 			.from("Progressions")
 			.select("*")
-			.eq("exercise_id", exerciseId)
-
-		if (error) return error
-		return data
-	},
-
-	async getProgressionsByExercisesIds(
-		ids: number[]
-	): Promise<DatabaseProgression[] | PostgrestError> {
-		console.log("E-SERVICE: getProgressionsByExercisesIds")
-		const { error, data } = await supabase
-			.from("Progressions")
-			.select("*")
-			.in("exercise_id", ids)
+			.in("exercise_id", eIds)
 
 		if (error) return error
 		return data
@@ -81,25 +68,29 @@ const exercisesService = {
 			.select()
 
 		if (error) return error
-		return data[0]
+		return data[0] ?? null
 	},
 
 	async postProgressionsBulk({
 		exerciseId,
 		progressions
-	}: PostProgressionsBulkParams): Promise<number | PostgrestError> {
+	}: PostProgressionsBulkParams): Promise<
+		DatabaseProgression[] | PostgrestError
+	> {
 		console.log("E-SERVICE: postProgressionsBulk")
-		const { error, count } = await supabase.from("Progressions").insert(
-			progressions.map((p) => ({
-				...p,
-				exercise_id: exerciseId,
-				created_at: new Date(Date.now()).toISOString()
-			})),
-			{ count: "exact" }
-		)
+		const { error, data } = await supabase
+			.from("Progressions")
+			.insert(
+				progressions.map((p) => ({
+					...p,
+					exercise_id: exerciseId,
+					created_at: new Date(Date.now()).toISOString()
+				}))
+			)
+			.select()
 
 		if (error) return error
-		return count ?? 0
+		return data
 	},
 
 	async updateExercise(
@@ -113,19 +104,22 @@ const exercisesService = {
 			.select()
 
 		if (error) return error
-		return data[0]
+		return data[0] ?? null
 	},
 
 	async upsertProgressions({
 		progressions
-	}: UpsertProgressionsParams): Promise<number | PostgrestError> {
+	}: UpsertProgressionsParams): Promise<
+		DatabaseProgression[] | PostgrestError
+	> {
 		console.log("E-SERVICE: upsertProgressions")
-		const { error, count } = await supabase
+		const { error, data } = await supabase
 			.from("Progressions")
-			.upsert(progressions, { count: "exact" })
+			.upsert(progressions)
+			.select()
 
 		if (error) return error
-		return count ?? 0
+		return data
 	},
 
 	async deleteExerciseAndProgressions(

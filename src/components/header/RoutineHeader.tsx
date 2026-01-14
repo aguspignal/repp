@@ -1,14 +1,14 @@
 import { Header } from "@react-navigation/elements"
+import { isPostgrestError } from "../../utils/queriesHelpers"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { navigationStyles } from "../../navigation/styles"
 import { ParamListBase } from "@react-navigation/native"
-import { TouchableOpacity, View } from "react-native"
-import MCIcon from "../icons/MCIcon"
-import { useUserStore } from "../../stores/useUserStore"
 import { RootStackScreenProps } from "../../navigation/params"
-import useRoutineMutation from "../../hooks/useRoutineMutation"
-import { isPostgrestError } from "../../utils/queriesHelpers"
+import { TouchableOpacity, View } from "react-native"
+import { useUserStore } from "../../stores/useUserStore"
+import MCIcon from "../icons/MCIcon"
 import ToastNotification from "../notifications/ToastNotification"
+import useRoutineMutation from "../../hooks/useRoutineMutation"
 
 type Props = {
 	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>

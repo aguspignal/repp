@@ -71,6 +71,7 @@
 		"cant-be-more-than-3-digits": "Can't be more than 3 digits",
 		"couldnt-fetch-exercises": "We couldn't fetch exercises",
 		"couldnt-fetch-routines": "We couldn't fetch routines",
+		"couldnt-fetch-progressions": "We couldn't fetch progressions",
 		"invalid-email": "Invalid email",
 		"please-select-type-for-exercise": "Please select a type for this exercise",
 		"passwords-dont-match": "Passwords don't match",

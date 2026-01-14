@@ -1,4 +1,10 @@
-import { ActivityIndicator, StyleProp, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
+import {
+	ActivityIndicator,
+	StyleProp,
+	TextStyle,
+	TouchableOpacity,
+	ViewStyle
+} from "react-native"
 import { theme } from "../../resources/theme"
 import MCIcon from "../icons/MCIcon"
 
@@ -7,6 +13,7 @@ type Props = {
 	onPress: () => void
 	size?: "xs" | "s" | "m" | "l" | "xl"
 	color?: keyof typeof theme.colors
+	withPadding?: boolean
 	isDisabled?: boolean
 	isBordered?: boolean
 	isLoading?: boolean
@@ -18,10 +25,11 @@ export default function IconButton({
 	onPress,
 	size = "m",
 	color = "primary",
+	withPadding = false,
 	isDisabled = false,
 	isBordered = false,
 	isLoading = false,
-	style,
+	style
 }: Props) {
 	const bgColor =
 		isDisabled || isLoading
@@ -33,18 +41,20 @@ export default function IconButton({
 	const btnStyles: StyleProp<ViewStyle> = {
 		alignItems: "center",
 		justifyContent: "center",
-		padding: size === "xs" ? theme.spacing.xxs : theme.spacing.xs,
-		backgroundColor: bgColor,
+		padding: !withPadding
+			? 0
+			: size === "xs"
+			? theme.spacing.xxs
+			: theme.spacing.xs,
+		backgroundColor: withPadding ? bgColor : undefined,
 		borderWidth: isBordered ? 1 : 0,
 		borderColor: theme.colors[color as keyof typeof theme.colors],
-		borderRadius: 80,
+		borderRadius: 80
 	}
 
 	const iconColor = isDisabled
 		? theme.colors.grayDark
-		: isBordered
-		? theme.colors[color as keyof typeof theme.colors]
-		: theme.colors.textDark
+		: theme.colors[color as keyof typeof theme.colors]
 
 	const iconSize =
 		size === "xs" || size === "s"
@@ -55,7 +65,7 @@ export default function IconButton({
 
 	const iconStyles: StyleProp<TextStyle> = {
 		color: iconColor,
-		fontSize: iconSize,
+		fontSize: iconSize
 	}
 
 	return isLoading ? (
@@ -69,7 +79,9 @@ export default function IconButton({
 			onPress={onPress}
 			disabled={isDisabled}
 		>
-			{icon === undefined ? null : <MCIcon name={icon} style={iconStyles} />}
+			{icon === undefined ? null : (
+				<MCIcon name={icon} style={iconStyles} />
+			)}
 		</TouchableOpacity>
 	)
 }

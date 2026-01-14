@@ -8,6 +8,7 @@
     - routine history
         - cards
         - sort by date
+        - header
     - edit finished workouts
     - routine schedule
         - sort days on routineinner by schedule
