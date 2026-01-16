@@ -8,14 +8,14 @@ import { ReactNode } from "react"
 import { StyleSheet } from "react-native"
 import { theme } from "../../resources/theme"
 
-type Option = {
+export type DropdownOption = {
 	text: string
 	onSelect: () => void
 }
 
 type Props = {
 	renderTrigger?: ReactNode
-	options: (Option | null)[]
+	options: (DropdownOption | null)[]
 }
 
 export default function DropdownMenu({ renderTrigger, options }: Props) {

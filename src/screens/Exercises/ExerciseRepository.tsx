@@ -19,9 +19,9 @@ import Button from "../../components/buttons/Button"
 import DropdownMenu from "../../components/dropdowns/DropdownMenu"
 import ExerciseCard from "../../components/cards/ExerciseCard"
 import IconButton from "../../components/buttons/IconButton"
-import ListActionCard from "../../components/cards/ListActionCard"
 import StyledText from "../../components/texts/StyledText"
 import useExercisesQuery from "../../hooks/useExercisesQuery"
+import ListActionCard from "../../components/cards/ListActionCard"
 
 export default function ExerciseRepository({
 	navigation,
@@ -128,57 +128,43 @@ export default function ExerciseRepository({
 			}
 		>
 			<View style={styles.actionsContainer}>
-				<View style={styles.listActionContainer}>
-					<StyledText type="text">{t("actions.sort")}</StyledText>
-
-					<DropdownMenu
-						renderTrigger={
-							<ListActionCard
-								title={parseExerciseSortByToText(sortBy)}
-							/>
+				<ListActionCard
+					title={t("actions.sort")}
+					triggerLabel={parseExerciseSortByToText(sortBy)}
+					options={[
+						{
+							text: "A-Z",
+							onSelect: () => handleSort("ascending")
+						},
+						{
+							text: "Z-A",
+							onSelect: () => handleSort("descending")
+						},
+						{
+							text: t("attributes.type"),
+							onSelect: () => handleSort("type")
 						}
-						options={[
-							{
-								text: "A-Z",
-								onSelect: () => handleSort("ascending")
-							},
-							{
-								text: "Z-A",
-								onSelect: () => handleSort("descending")
-							},
-							{
-								text: t("attributes.type"),
-								onSelect: () => handleSort("type")
-							}
-						]}
-					/>
-				</View>
+					]}
+				/>
 
-				<View style={styles.listActionContainer}>
-					<StyledText type="text">{t("actions.filter")}</StyledText>
-
-					<DropdownMenu
-						renderTrigger={
-							<ListActionCard
-								title={parseExerciseFilterByToText(filterBy)}
-							/>
+				<ListActionCard
+					title={t("actions.filter")}
+					triggerLabel={parseExerciseFilterByToText(filterBy)}
+					options={[
+						{
+							text: t("attributes.all"),
+							onSelect: () => handleFilter("all")
+						},
+						{
+							text: t("attributes.bodyweight"),
+							onSelect: () => handleFilter("bodyweight")
+						},
+						{
+							text: t("attributes.freeweight"),
+							onSelect: () => handleFilter("freeweight")
 						}
-						options={[
-							{
-								text: t("attributes.all"),
-								onSelect: () => handleFilter("all")
-							},
-							{
-								text: t("attributes.bodyweight"),
-								onSelect: () => handleFilter("bodyweight")
-							},
-							{
-								text: t("attributes.freeweight"),
-								onSelect: () => handleFilter("freeweight")
-							}
-						]}
-					/>
-				</View>
+					]}
+				/>
 			</View>
 
 			{exercisesList.map((expr) => (

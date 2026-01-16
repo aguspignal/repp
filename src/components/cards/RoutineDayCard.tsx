@@ -9,12 +9,12 @@ import {
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise
 } from "../../types/routines"
+import { parseGoalsToText } from "../../utils/parsing"
 import { TextType } from "../../types/misc"
 import { theme } from "../../resources/theme"
 import { useUserStore } from "../../stores/useUserStore"
 import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
-import { parseGoalsToText } from "../../utils/parsing"
 
 type Props = {
 	routineDay: DatabaseRoutineDay | null
@@ -89,8 +89,10 @@ export default function RoutineDayCard({
 									<StyledText type="text" color="grayDark">
 										{
 											exercises.find(
-												(e) => e.id === exercise_id
-											)?.name
+												(e) =>
+													e.exercise.id ===
+													exercise_id
+											)?.exercise.name
 										}
 									</StyledText>
 

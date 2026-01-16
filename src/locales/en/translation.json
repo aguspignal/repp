@@ -103,7 +103,9 @@
 		"tip-mark-routine-active-to-start-workingout-faster": "Tip: Mark a routine as active to start working out faster",
 		"to": "to",
 		"workouts-related-to-day-will-be-saved": "Workouts related to this day will be saved",
-		"you-dont-have-routines-yet": "You don't have any routine yet"
+		"you-dont-have-routines-yet": "You don't have any routine yet",
+		"newest-first": "Newest first",
+		"oldest-first": "Oldest first"
 	},
 	"questions": {
 		"already-have-one": "Already have one?",
@@ -137,6 +139,8 @@
 		"exercises": "Exercises",
 		"my-routines": "My routines",
 		"progressions": "Progressions",
-		"(dayName)-workout": "{{dayName}} workout"
+		"(dayName)-workout": "{{dayName}} workout",
+		"(dayName)-history": "{{dayName}} history",
+		"history": "History"
 	}
 }

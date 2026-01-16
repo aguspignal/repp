@@ -20,8 +20,8 @@ export default function LogoHeader({ back }: Props) {
 				/>
 			)}
 			headerTitleAlign="center"
-			headerShadowVisible={false}
 			headerStyle={navigationStyles.headerBackground}
+			headerShadowVisible={false}
 			back={back}
 		/>
 	)

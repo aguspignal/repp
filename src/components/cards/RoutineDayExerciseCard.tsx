@@ -31,7 +31,9 @@ export default function RoutineDayExerciseCard({
 	const { exercises } = useUserStore()
 
 	const exercise = useMemo(
-		() => exercises.find((e) => e.id === draftRDExercise.exercise_id),
+		() =>
+			exercises.find((e) => e.exercise.id === draftRDExercise.exercise_id)
+				?.exercise,
 		[exercises, draftRDExercise.exercise_id]
 	)
 

@@ -1,20 +1,22 @@
 import { FlatList, StyleSheet, View } from "react-native"
 import { isPostgrestError } from "../../utils/queriesHelpers"
+import { parseWorkoutHistorySortByToText } from "../../utils/parsing"
 import { RootStackScreenProps } from "../../navigation/params"
+import { sortWorkoutsByDate } from "../../utils/sorting"
 import { theme } from "../../resources/theme"
-import { useMemo, useState } from "react"
-import { useUserStore } from "../../stores/useUserStore"
+import { useEffect, useMemo, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { WorkoutAndSets, WorkoutHistorySortBy } from "../../types/routines"
 import Button from "../../components/buttons/Button"
+import ListActionCard from "../../components/cards/ListActionCard"
 import Loading from "../Loading"
-import StyledText from "../../components/texts/StyledText"
-import useRoutineQuery from "../../hooks/useRoutineQuery"
 import RoutineDayHistoryCard from "../../components/cards/RoutineDayHistoryCard"
+import useRoutineQuery from "../../hooks/useRoutineQuery"
 
 export default function RoutineDayHistory({
-	navigation,
 	route
 }: RootStackScreenProps<"RoutineDayHistory">) {
-	const { routines } = useUserStore()
+	const { t } = useTranslation()
 	const {
 		getRoutineDayAllTimeWorkoutsCount,
 		getRoutineDayWorkoutsAndSetsInRange
@@ -27,37 +29,72 @@ export default function RoutineDayHistory({
 
 	const [paginationFrom, setPaginationFrom] = useState(0)
 	const [paginationTo, setPaginationTo] = useState(showInGroupsOf - 1)
+	const [sortBy, setSortBy] = useState<WorkoutHistorySortBy>("newest")
+	const [workoutsAndSets, setWorkoutsAndSets] = useState<WorkoutAndSets[]>([])
 
-	const { data: workoutsAndSets, isPending } =
-		getRoutineDayWorkoutsAndSetsInRange({
-			dayId: route.params.id,
-			rangeFrom: paginationFrom,
-			rangeTo: paginationTo
-		})
-
-	const routineDay = routines
-		.find((r) => r.days.some((d) => d.id === route.params.id))
-		?.days.find((d) => d.id === route.params.id)
+	const { data, isPending } = getRoutineDayWorkoutsAndSetsInRange({
+		dayId: route.params.id,
+		rangeFrom: paginationFrom,
+		rangeTo: paginationTo
+	})
 
 	function setPaginationRange(from: number, to: number) {
 		setPaginationFrom(from)
 		setPaginationTo(to)
 	}
 
+	function handleSort(by: WorkoutHistorySortBy) {
+		setSortBy(by)
+		setWorkoutsAndSets((prev) => sortWorkoutsByDate(prev, by))
+	}
+
+	useEffect(() => {
+		if (data && !isPostgrestError(data))
+			setWorkoutsAndSets(sortWorkoutsByDate(data, sortBy))
+	}, [data])
+
 	if (isPending || isPendingCount) return <Loading />
 
 	return (
 		<View style={styles.container}>
+			{/* <ListActionCard
+				title="View"
+				triggerLabel={viewPer === "Set" ? "Per set" : "Per progression"}
+				options={[
+					{
+						text: "Per set",
+						onSelect: () => setViewPer("Set")
+					},
+					{
+						text: "Per progression",
+						onSelect: () => setViewPer("Progression")
+					}
+				]}
+			/> */}
+
+			<ListActionCard
+				title={t("actions.sort")}
+				triggerLabel={parseWorkoutHistorySortByToText(sortBy)}
+				options={[
+					{
+						text: t("messages.newest-first"),
+						onSelect: () => handleSort("newest")
+					},
+					{
+						text: t("messages.oldest-first"),
+						onSelect: () => handleSort("oldest")
+					}
+				]}
+			/>
+
 			<FlatList
-				data={
-					workoutsAndSets && !isPostgrestError(workoutsAndSets)
-						? workoutsAndSets
-						: []
-				}
-				renderItem={({ item }) => (
+				data={workoutsAndSets}
+				renderItem={({ item, index }) => (
 					<RoutineDayHistoryCard
 						key={item.workout.id}
-						workoutAndSets={item}
+						workout={item.workout}
+						sets={item.sets}
+						isFirstInList={index === 0}
 					/>
 				)}
 				contentContainerStyle={styles.workoutsContainer}
@@ -157,16 +194,21 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: theme.colors.backgroundBlack,
 		paddingHorizontal: theme.spacing.s,
-		paddingBottom: theme.spacing.xxl,
 		paddingTop: theme.spacing.xxs
+	},
+	listActionContainer: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between"
 	},
 	paginationContainer: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
-		gap: theme.spacing.xxs
+		gap: theme.spacing.xxs,
+		paddingVertical: theme.spacing.xs
 	},
 	workoutsContainer: {
-		gap: theme.spacing.s
+		gap: theme.spacing.xxs
 	}
 })

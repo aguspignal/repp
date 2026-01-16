@@ -64,3 +64,5 @@ export type WorkoutSetsAndProgressions = {
 	sets: DatabaseWorkoutSet[]
 	progressions: DatabaseProgression[]
 }
+
+export type WorkoutHistorySortBy = "newest" | "oldest"
