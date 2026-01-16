@@ -54,6 +54,8 @@ export default function IconButton({
 
 	const iconColor = isDisabled
 		? theme.colors.grayDark
+		: withPadding
+		? theme.colors.textDark
 		: theme.colors[color as keyof typeof theme.colors]
 
 	const iconSize =

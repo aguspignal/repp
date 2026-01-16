@@ -11,17 +11,16 @@ import {
 import { isPostgrestError } from "../../utils/queriesHelpers"
 import { RefreshControl, ScrollView, StyleSheet, View } from "react-native"
 import { RootStackScreenProps } from "../../navigation/params"
+import { sortExercisesAndProgressionsBy } from "../../utils/sorting"
 import { theme } from "../../resources/theme"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
 import Button from "../../components/buttons/Button"
-import DropdownMenu from "../../components/dropdowns/DropdownMenu"
 import ExerciseCard from "../../components/cards/ExerciseCard"
 import IconButton from "../../components/buttons/IconButton"
-import StyledText from "../../components/texts/StyledText"
-import useExercisesQuery from "../../hooks/useExercisesQuery"
 import ListActionCard from "../../components/cards/ListActionCard"
+import useExercisesQuery from "../../hooks/useExercisesQuery"
 
 export default function ExerciseRepository({
 	navigation,
@@ -60,22 +59,9 @@ export default function ExerciseRepository({
 		// invalidateQueries(GETUSEREXERCISESLAZY_KEY(user?.id ?? 0))
 	}
 
-	function handleSort(order: ExerciseSortBy) {
-		setSortBy(order)
-
-		setExercisesList(
-			exercisesList.sort((a, b) => {
-				if (order === "type") {
-					const weight = (e: DatabaseExercise) =>
-						e.is_bodyweight ? 0 : e.is_freeweight ? 1 : 2
-					return weight(a.exercise) - weight(b.exercise)
-				}
-
-				return order === "ascending"
-					? a.exercise.name.localeCompare(b.exercise.name)
-					: -1 * a.exercise.name.localeCompare(b.exercise.name)
-			})
-		)
+	function handleSort(by: ExerciseSortBy) {
+		setSortBy(by)
+		setExercisesList((prev) => sortExercisesAndProgressionsBy(prev, by))
 	}
 
 	function handleFilter(param: ExerciseFilterBy) {
@@ -113,7 +99,10 @@ export default function ExerciseRepository({
 	}
 
 	useEffect(() => {
-		if (data && !isPostgrestError(data)) loadExercisesAndProgressions(data)
+		if (data && !isPostgrestError(data))
+			loadExercisesAndProgressions(
+				sortExercisesAndProgressionsBy(data, sortBy)
+			)
 	}, [data])
 
 	return (
@@ -199,6 +188,7 @@ export default function ExerciseRepository({
 					icon="plus"
 					onPress={goToCreateExercise}
 					size="xl"
+					withPadding
 					style={styles.createExerciseBtn}
 				/>
 			)}

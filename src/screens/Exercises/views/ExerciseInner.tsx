@@ -123,12 +123,18 @@ export default function ExerciseInner({
 	}
 
 	async function handleAction({ description, name }: CreateExerciseValues) {
-		if (!user) return
-		if (type === "edit" && !exerciseData) return
+		if (!user || (type === "edit" && !exerciseData)) return
 
 		if (!isBodyweight && !isFreeweight) {
 			ToastNotification({
 				title: t("error-messages.please-select-type-for-exercise")
+			})
+			return
+		}
+
+		if (progressions.some((p) => p.name.length === 0 || !p.name)) {
+			ToastNotification({
+				title: t("error-messages.you-cant-add-empty-progressions")
 			})
 			return
 		}

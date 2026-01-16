@@ -87,7 +87,8 @@
 		"trouble-getting-routine": "We had trouble retrieving thiss routine",
 		"ups-error-ocurred": "Oops! It looks like an error occurred",
 		"ups": "Oops!",
-		"user-not-found": "User not found"
+		"user-not-found": "User not found",
+		"you-cant-add-empty-progressions": "You can't add empty progressions"
 	},
 	"messages": {
 		"accepting-terms-policies": "By registering with any of these options, you certify that you have read, understood and accepted our",

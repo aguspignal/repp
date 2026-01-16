@@ -5,7 +5,12 @@ import {
 	WorkoutAndSets,
 	WorkoutHistorySortBy
 } from "../types/routines"
-import { DatabaseProgression } from "../types/exercises"
+import {
+	DatabaseExercise,
+	DatabaseProgression,
+	ExerciseAndProgressions,
+	ExerciseSortBy
+} from "../types/exercises"
 
 export function sortProgressionsByOrderDesc(
 	progressions: DatabaseProgression[]
@@ -17,6 +22,23 @@ export function sortDraftWorkoutSetsByOrderAsc(
 	sets: DraftWorkoutSet[]
 ): DraftWorkoutSet[] {
 	return sets.sort((a, b) => a.order - b.order)
+}
+
+export function sortExercisesAndProgressionsBy(
+	exercises: ExerciseAndProgressions[],
+	sortBy: ExerciseSortBy
+): ExerciseAndProgressions[] {
+	return exercises.sort((a, b) => {
+		if (sortBy === "type") {
+			const weight = (e: DatabaseExercise) =>
+				e.is_bodyweight ? 0 : e.is_freeweight ? 1 : 2
+			return weight(a.exercise) - weight(b.exercise)
+		}
+
+		return sortBy === "ascending"
+			? a.exercise.name.localeCompare(b.exercise.name)
+			: -1 * a.exercise.name.localeCompare(b.exercise.name)
+	})
 }
 
 export function sortRDExercisesByOrderAsc(
