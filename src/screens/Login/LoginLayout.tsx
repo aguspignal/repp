@@ -8,11 +8,11 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { ParamListBase } from "@react-navigation/native"
 import { ReactNode } from "react"
 import { theme } from "../../resources/theme"
-import { useHeaderHeight } from "@react-navigation/elements"
 import { useTranslation } from "react-i18next"
 import Button from "../../components/buttons/Button"
 import StyledText from "../../components/texts/StyledText"
 import TextButton from "../../components/buttons/TextButton"
+import useKeyboardBehaviour from "../../hooks/useKeyboardBehaviour"
 
 type Props = {
 	type: "signin" | "signup" | "recovery" | "updatepsw" | "otpcode"
@@ -30,7 +30,7 @@ export default function LoginLayout({
 	navigation
 }: Props) {
 	const { t } = useTranslation()
-	const headerHeight = useHeaderHeight()
+	const { behaviour } = useKeyboardBehaviour()
 
 	function handleNavigation() {
 		if (navigation)
@@ -38,11 +38,7 @@ export default function LoginLayout({
 	}
 
 	return (
-		<KeyboardAvoidingView
-			behavior={undefined}
-			keyboardVerticalOffset={headerHeight}
-			style={styles.container}
-		>
+		<KeyboardAvoidingView behavior={behaviour} style={styles.container}>
 			<ScrollView
 				contentContainerStyle={[
 					styles.subcontainer,

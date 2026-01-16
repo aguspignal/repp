@@ -19,6 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import Button from "../../../components/buttons/Button"
 import ConfirmationModal from "../../../components/modals/ConfirmationModal"
 import ToastNotification from "../../../components/notifications/ToastNotification"
+import useKeyboardBehaviour from "../../../hooks/useKeyboardBehaviour"
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
 import WorkoutExerciseCard from "../../../components/cards/WorkoutExerciseCard"
 import WorkoutInput from "../../../components/inputs/WorkoutInput"
@@ -30,6 +31,7 @@ type Props = {
 
 export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 	const { t } = useTranslation()
+	const { behaviour } = useKeyboardBehaviour()
 	const { exercises } = useUserStore()
 	const { createWorkoutAndSetsMutation } = useRoutineMutation()
 	const nav = useNavigation<RootStackNavigationProp>()
@@ -115,7 +117,7 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 	}
 
 	return (
-		<KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+		<KeyboardAvoidingView style={{ flex: 1 }} behavior={behaviour}>
 			<View style={styles.container}>
 				<View style={styles.paddingHorizontal}>
 					<Button

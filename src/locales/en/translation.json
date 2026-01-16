@@ -70,12 +70,12 @@
 		"an-error-ocurred": "It looks like an error occurred",
 		"cant-be-more-than-3-digits": "Can't be more than 3 digits",
 		"couldnt-fetch-exercises": "We couldn't fetch exercises",
-		"couldnt-fetch-routines": "We couldn't fetch routines",
 		"couldnt-fetch-progressions": "We couldn't fetch progressions",
+		"couldnt-fetch-routines": "We couldn't fetch routines",
 		"invalid-email": "Invalid email",
-		"please-select-type-for-exercise": "Please select a type for this exercise",
-		"passwords-dont-match": "Passwords don't match",
 		"password-must-have-at-least-(minCharacters)-charactes": "Password must have at least {{minCharacters}} characters",
+		"passwords-dont-match": "Passwords don't match",
+		"please-select-type-for-exercise": "Please select a type for this exercise",
 		"progressions-cant-be-empty": "Progressions can't be empty",
 		"required": "Required",
 		"too-long": "Too long",
@@ -93,20 +93,20 @@
 	"messages": {
 		"accepting-terms-policies": "By registering with any of these options, you certify that you have read, understood and accepted our",
 		"create-routine-to-start-workingout": "Create a routine to start working out",
+		"newest-first": "Newest first",
 		"notes-for-this-exercise": "Notes for this exercise",
 		"notes-for-this-routine": "Notes for this routine",
+		"oldest-first": "Oldest first",
 		"reps-goal": "Reps goal",
-		"sets-goal": "Sets goal",
 		"seconds-goal": "Seconds goal",
+		"sets-goal": "Sets goal",
 		"terms-and-policies": "Terms of Service and Privacy Policy",
 		"this-exercise-doesnt-have-any-progressions": "This exercise doesn't have any progressions",
 		"this-will-also-delete-progressions": "This action will delete all data and progressions and cannot be undone",
 		"tip-mark-routine-active-to-start-workingout-faster": "Tip: Mark a routine as active to start working out faster",
 		"to": "to",
 		"workouts-related-to-day-will-be-saved": "Workouts related to this day will be saved",
-		"you-dont-have-routines-yet": "You don't have any routine yet",
-		"newest-first": "Newest first",
-		"oldest-first": "Oldest first"
+		"you-dont-have-routines-yet": "You don't have any routine yet"
 	},
 	"questions": {
 		"already-have-one": "Already have one?",
@@ -136,12 +136,12 @@
 		"weak_password": "Password too weak, try a stronger one"
 	},
 	"titles": {
+		"(dayName)-history": "{{dayName}} history",
+		"(dayName)-workout": "{{dayName}} workout",
 		"exercise-repository": "Exercise repository",
 		"exercises": "Exercises",
+		"history": "History",
 		"my-routines": "My routines",
-		"progressions": "Progressions",
-		"(dayName)-workout": "{{dayName}} workout",
-		"(dayName)-history": "{{dayName}} history",
-		"history": "History"
+		"progressions": "Progressions"
 	}
 }

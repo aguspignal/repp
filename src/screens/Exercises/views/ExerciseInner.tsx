@@ -28,6 +28,7 @@ import ExerciseTypeCard from "../../../components/cards/ExerciseTypeCard"
 import StyledText from "../../../components/texts/StyledText"
 import TextButton from "../../../components/buttons/TextButton"
 import ToastNotification from "../../../components/notifications/ToastNotification"
+import useKeyboardBehaviour from "../../../hooks/useKeyboardBehaviour"
 
 type Props = {
 	type: "create" | "edit"
@@ -44,6 +45,7 @@ export default function ExerciseInner({
 }: Props) {
 	const { t } = useTranslation()
 	const { user } = useUserStore()
+	const { behaviour } = useKeyboardBehaviour()
 
 	const {
 		handleSubmit,
@@ -188,7 +190,7 @@ export default function ExerciseInner({
 	}
 
 	return (
-		<KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+		<KeyboardAvoidingView style={{ flex: 1 }} behavior={behaviour}>
 			<ScrollView
 				style={styles.container}
 				contentContainerStyle={styles.contentContainer}

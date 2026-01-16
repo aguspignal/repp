@@ -33,14 +33,15 @@ import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../../stores/useUserStore"
 import { zodResolver } from "@hookform/resolvers/zod"
 import Button from "../../../components/buttons/Button"
+import ConfirmationModal from "../../../components/modals/ConfirmationModal"
 import EditRoutineDayInput from "../../../components/inputs/EditRoutineDayInput"
 import MCIcon from "../../../components/icons/MCIcon"
 import RoutineDayExerciseCard from "../../../components/cards/RoutineDayExerciseCard"
 import Sortables, { SortableGridRenderItem } from "react-native-sortables"
 import StyledText from "../../../components/texts/StyledText"
 import ToastNotification from "../../../components/notifications/ToastNotification"
+import useKeyboardBehaviour from "../../../hooks/useKeyboardBehaviour"
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
-import ConfirmationModal from "../../../components/modals/ConfirmationModal"
 
 type Props = {
 	day: DatabaseRoutineDay
@@ -53,6 +54,8 @@ export default function EditRoutineDayInner({
 	selectedExercises
 }: Props) {
 	const { t } = useTranslation()
+
+	const { behaviour } = useKeyboardBehaviour()
 	const { user, addRoutineDay } = useUserStore()
 	const { updateRoutineDayAndExercisesMutation } = useRoutineMutation()
 	const nav = useNavigation<RootStackNavigationProp>()
@@ -264,7 +267,7 @@ export default function EditRoutineDayInner({
 	)
 
 	return (
-		<KeyboardAvoidingView style={{ flex: 1 }} behavior="height">
+		<KeyboardAvoidingView style={{ flex: 1 }} behavior={behaviour}>
 			<ScrollView
 				style={styles.container}
 				contentContainerStyle={styles.contentContainer}

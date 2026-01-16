@@ -1,7 +1,5 @@
 # To fix
 
-    - white padding on hide keyboard
-
 # To implement
 
     - edit finished workouts
