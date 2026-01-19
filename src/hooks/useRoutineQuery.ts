@@ -10,6 +10,7 @@ import routinesService, {
 } from "../services/routinesService"
 import { PostgrestError } from "@supabase/supabase-js"
 import { useQuery } from "@tanstack/react-query"
+import { ZodStandardSchemaWithJSON } from "zod"
 
 const RQKEY_ROOT = "routinesQueries"
 
@@ -29,7 +30,7 @@ export const GETROUTINEDAYANDEXERCISES_KEY = (rdId: number) => [
 	"dayAndExercises",
 	rdId
 ]
-export const GETROUTINEDAYWORKOUTSANDSETSINRANGE_KEY = (
+export const GETWORKOUTSANDSETSINRANGEBYDAYID_KEY = (
 	dId: number,
 	rf: number,
 	rt: number
@@ -39,6 +40,11 @@ export const GETROUTINEDAYALLTIMEWORKOUTSCOUNT_KEY = (dId: number) => [
 	RQKEY_ROOT,
 	"dayAllTimeWorkoutsCount",
 	dId
+]
+export const GETWORKOUTANDSETSBYID_KEY = (wId: number) => [
+	RQKEY_ROOT,
+	"workoutAndSetsById",
+	wId
 ]
 
 export default function useRoutineQuery() {
@@ -86,17 +92,17 @@ export default function useRoutineQuery() {
 		})
 	}
 
-	function getRoutineDayWorkoutsAndSetsInRange(
+	function getWorkoutsAndSetsInRangeByDayId(
 		params: GetRoutineDayWorkoutsAndSetsInRangeParams
 	) {
 		return useQuery<WorkoutAndSets[] | PostgrestError>({
-			queryKey: GETROUTINEDAYWORKOUTSANDSETSINRANGE_KEY(
+			queryKey: GETWORKOUTSANDSETSINRANGEBYDAYID_KEY(
 				params.dayId,
 				params.rangeFrom,
 				params.rangeTo
 			),
 			queryFn: async () => {
-				return await routinesService.fetchRoutineDayWorkoutsAndSetsInRange(
+				return await routinesService.fetchWorkoutsAndSetsInRangeByDayId(
 					params
 				)
 			}
@@ -114,12 +120,23 @@ export default function useRoutineQuery() {
 		})
 	}
 
+	function getWorkoutAndSetsById(wId: number | undefined) {
+		return useQuery<WorkoutAndSets | null | PostgrestError>({
+			queryKey: GETWORKOUTANDSETSBYID_KEY(wId ?? 0),
+			queryFn: async () => {
+				if (!wId) return null
+				return await routinesService.fetchWorkoutAndSetsById(wId)
+			}
+		})
+	}
+
 	return {
 		getRoutineById,
 		getRoutineWithDaysAndExercisesById,
 		getUserRoutinesWithDaysLazy,
 		getRoutineDayAndExercises,
-		getRoutineDayWorkoutsAndSetsInRange,
-		getRoutineDayAllTimeWorkoutsCount
+		getWorkoutsAndSetsInRangeByDayId,
+		getRoutineDayAllTimeWorkoutsCount,
+		getWorkoutAndSetsById
 	}
 }

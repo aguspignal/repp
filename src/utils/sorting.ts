@@ -58,7 +58,7 @@ export function sortWorkoutsByDate(
 	sortBy: WorkoutHistorySortBy
 ): WorkoutAndSets[] {
 	return workoutsAndSets.sort((a, b) =>
-		sortBy === "newest"
+		sortBy === "oldest"
 			? a.workout.date.localeCompare(b.workout.date)
 			: -1 * a.workout.date.localeCompare(b.workout.date)
 	)

@@ -1,12 +1,19 @@
+import {
+	parseWorkoutHistorySortByToText,
+	parseWorkoutHistoryViewPerToText
+} from "../../utils/parsing"
+import {
+	WorkoutAndSets,
+	WorkoutHistorySortBy,
+	WorkoutHistoryViewPer
+} from "../../types/routines"
 import { FlatList, StyleSheet, View } from "react-native"
 import { isPostgrestError } from "../../utils/queriesHelpers"
-import { parseWorkoutHistorySortByToText } from "../../utils/parsing"
 import { RootStackScreenProps } from "../../navigation/params"
 import { sortWorkoutsByDate } from "../../utils/sorting"
 import { theme } from "../../resources/theme"
 import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { WorkoutAndSets, WorkoutHistorySortBy } from "../../types/routines"
 import Button from "../../components/buttons/Button"
 import ListActionCard from "../../components/cards/ListActionCard"
 import Loading from "../Loading"
@@ -19,20 +26,21 @@ export default function RoutineDayHistory({
 	const { t } = useTranslation()
 	const {
 		getRoutineDayAllTimeWorkoutsCount,
-		getRoutineDayWorkoutsAndSetsInRange
+		getWorkoutsAndSetsInRangeByDayId
 	} = useRoutineQuery()
-
-	const showInGroupsOf = 10
 
 	const { data: allTimeCount, isPending: isPendingCount } =
 		getRoutineDayAllTimeWorkoutsCount(route.params.id)
 
+	const showInGroupsOf = 10
 	const [paginationFrom, setPaginationFrom] = useState(0)
 	const [paginationTo, setPaginationTo] = useState(showInGroupsOf - 1)
-	const [sortBy, setSortBy] = useState<WorkoutHistorySortBy>("newest")
 	const [workoutsAndSets, setWorkoutsAndSets] = useState<WorkoutAndSets[]>([])
+	const [sortBy, setSortBy] = useState<WorkoutHistorySortBy>("newest")
+	const [viewPer, setViewPer] =
+		useState<WorkoutHistoryViewPer>("progressions")
 
-	const { data, isPending } = getRoutineDayWorkoutsAndSetsInRange({
+	const { data, isPending } = getWorkoutsAndSetsInRangeByDayId({
 		dayId: route.params.id,
 		rangeFrom: paginationFrom,
 		rangeTo: paginationTo
@@ -57,20 +65,20 @@ export default function RoutineDayHistory({
 
 	return (
 		<View style={styles.container}>
-			{/* <ListActionCard
+			<ListActionCard
 				title="View"
-				triggerLabel={viewPer === "Set" ? "Per set" : "Per progression"}
+				triggerLabel={parseWorkoutHistoryViewPerToText(viewPer)}
 				options={[
 					{
-						text: "Per set",
-						onSelect: () => setViewPer("Set")
+						text: t("messages.per-progressions"),
+						onSelect: () => setViewPer("progressions")
 					},
 					{
-						text: "Per progression",
-						onSelect: () => setViewPer("Progression")
+						text: t("messages.per-set"),
+						onSelect: () => setViewPer("sets")
 					}
 				]}
-			/> */}
+			/>
 
 			<ListActionCard
 				title={t("actions.sort")}
@@ -95,13 +103,16 @@ export default function RoutineDayHistory({
 						workout={item.workout}
 						sets={item.sets}
 						isFirstInList={index === 0}
+						canEdit={route.params.canEdit}
+						viewPer={viewPer}
 					/>
 				)}
-				contentContainerStyle={styles.workoutsContainer}
+				style={styles.workoutContainer}
+				contentContainerStyle={styles.workoutsContentContainer}
 			/>
 
 			<PaginationActions
-				n={
+				count={
 					allTimeCount && !isPostgrestError(allTimeCount)
 						? allTimeCount
 						: 0
@@ -115,20 +126,20 @@ export default function RoutineDayHistory({
 }
 
 type Props = {
-	n: number
+	count: number
 	groupsOf: number
 	indexGroupsOf: number
 	onChangePagination: (from: number, to: number) => void
 }
 function PaginationActions({
-	n,
+	count,
 	groupsOf,
 	indexGroupsOf,
 	onChangePagination
 }: Props) {
 	const [indexOffset, setIndexOffset] = useState(0)
 
-	const pages = useMemo(() => Math.ceil(n / groupsOf), [n])
+	const pages = useMemo(() => Math.ceil(count / groupsOf), [count])
 
 	function handleChangePagination(index: number) {
 		const from = index * groupsOf
@@ -194,7 +205,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: theme.colors.backgroundBlack,
 		paddingHorizontal: theme.spacing.s,
-		paddingTop: theme.spacing.xxs
+		paddingTop: theme.spacing.xxs,
+		gap: theme.spacing.xxs
 	},
 	listActionContainer: {
 		flexDirection: "row",
@@ -208,7 +220,10 @@ const styles = StyleSheet.create({
 		gap: theme.spacing.xxs,
 		paddingVertical: theme.spacing.xs
 	},
-	workoutsContainer: {
+	workoutContainer: {
+		marginTop: theme.spacing.xs
+	},
+	workoutsContentContainer: {
 		gap: theme.spacing.xxs
 	}
 })

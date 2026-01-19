@@ -94,7 +94,7 @@ export default function RoutineInner({
 	}
 
 	function handleSeeDayHistory(id: number) {
-		nav.navigate("RoutineDayHistory", { id })
+		nav.navigate("RoutineDayHistory", { id, canEdit: true })
 	}
 
 	function handleRefresh() {

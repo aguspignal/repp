@@ -1,4 +1,4 @@
-import { DatabaseProgression } from "./exercises"
+import { DatabaseExercise, DatabaseProgression } from "./exercises"
 import { Database } from "./supabase"
 
 export type DatabaseRoutine = Database["public"]["Tables"]["Routines"]["Row"]
@@ -37,12 +37,13 @@ export type DraftRoutineDayExercise = Omit<
 >
 
 export type DraftWorkoutSet = {
+	id?: number
 	order: number
 	progressionId: number | null
 	reps: number | null
 }
 
-export type ExercisesSets = {
+export type DraftWorkoutExerciseSets = {
 	exerciseId: number
 	sets: DraftWorkoutSet[]
 }
@@ -66,3 +67,19 @@ export type WorkoutSetsAndProgressions = {
 }
 
 export type WorkoutHistorySortBy = "newest" | "oldest"
+export type WorkoutHistoryViewPer = "sets" | "progressions"
+
+export type DraftWorkout = Omit<DatabaseWorkout, "id" | "created_at">
+
+export type DraftWorkoutAndSets = {
+	draftWorkout: DraftWorkout
+	upsertSets: DatabaseWorkoutSet[]
+	insertSets: DraftWorkoutSet[]
+	deleteSets: DatabaseWorkoutSet[]
+}
+
+export type ExerciseProgressionsAndSets = {
+	exercise: DatabaseExercise
+	progressions: DatabaseProgression[]
+	sets: DatabaseWorkoutSet[]
+}

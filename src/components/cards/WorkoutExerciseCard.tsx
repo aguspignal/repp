@@ -6,8 +6,12 @@ import {
 	DatabaseProgression,
 	ExerciseAndProgressions
 } from "../../types/exercises"
+import {
+	DraftWorkoutSet,
+	DraftWorkoutExerciseSets,
+	RDEGoals
+} from "../../types/routines"
 import { Dispatch, SetStateAction, useMemo, useState } from "react"
-import { DraftWorkoutSet, ExercisesSets, RDEGoals } from "../../types/routines"
 import { parseGoalsToText, parseNumericInput } from "../../utils/parsing"
 import { SheetManager } from "react-native-actions-sheet"
 import { SheetOption } from "../../lib/sheets"
@@ -21,8 +25,8 @@ type Props = {
 	exerciseAndProgressions: ExerciseAndProgressions
 	exerciseNote: string | null
 	goals: RDEGoals
-	workoutSets: ExercisesSets[]
-	setWorkoutSets: Dispatch<SetStateAction<ExercisesSets[]>>
+	workoutSets: DraftWorkoutExerciseSets[]
+	setWorkoutSets: Dispatch<SetStateAction<DraftWorkoutExerciseSets[]>>
 	onCreateProgression: (eId: number) => void
 }
 
@@ -63,11 +67,11 @@ export default function WorkoutExerciseCard({
 		)
 	}
 
-	function handleChooseProgression(set: DraftWorkoutSet) {
+	function handleChooseProgression(draftSet: DraftWorkoutSet) {
 		const sheetOptions: SheetOption[] = [
 			...sortProgressionsByOrderDesc(progressions).map((p) => ({
 				label: p.name,
-				onPress: () => handleAddProgression(set, p.id)
+				onPress: () => handleAddProgression(draftSet, p.id)
 			})),
 			{
 				label: t("actions.add-progression"),
@@ -76,41 +80,38 @@ export default function WorkoutExerciseCard({
 			}
 		]
 
+		const noProgressionsOption: SheetOption = {
+			label: t("messages.this-exercise-doesnt-have-any-progressions"),
+			onPress: () => {},
+			textColor: "grayDark"
+		}
+
 		SheetManager.show("progressions-list", {
 			payload: {
 				options:
 					sheetOptions.length > 1
 						? sheetOptions
-						: [
-								{
-									label: t(
-										"messages.this-exercise-doesnt-have-any-progressions"
-									),
-									onPress: () => {},
-									textColor: "grayDark"
-								},
-								...sheetOptions
-						  ]
+						: [noProgressionsOption, ...sheetOptions]
 			}
 		})
 	}
 
-	function handleAddProgression(set: DraftWorkoutSet, progId: number) {
+	function handleAddProgression(draftSet: DraftWorkoutSet, progId: number) {
 		if (!exercise) return
 
 		setWorkoutSets((prev) =>
-			prev.map((es) => {
-				if (es.exerciseId !== exercise.id) return es
-
-				return {
-					...es,
-					sets: es.sets.map((s) =>
-						s.order === set.order
-							? { ...s, progressionId: progId }
-							: s
-					)
-				}
-			})
+			prev.map((es) =>
+				es.exerciseId !== exercise.id
+					? es
+					: {
+							...es,
+							sets: es.sets.map((s) =>
+								s.order === draftSet.order
+									? { ...s, progressionId: progId }
+									: s
+							)
+						}
+			)
 		)
 
 		SheetManager.hide("progressions-list")
@@ -184,7 +185,7 @@ export default function WorkoutExerciseCard({
 				) : null}
 
 				{goalsText ? (
-					<StyledText type="boldNote" color="grayDark">
+					<StyledText type="boldNote" color="secondary">
 						{goalsText}
 					</StyledText>
 				) : null}
@@ -284,7 +285,7 @@ type SetRowProps = {
 	draftSet: DraftWorkoutSet
 	progression: DatabaseProgression | undefined
 	onDelete: (set: DraftWorkoutSet) => void
-	onChooseProgression: (set: DraftWorkoutSet) => void
+	onChooseProgression: (draftSet: DraftWorkoutSet) => void
 	onUpdateReps: (draftSet: DraftWorkoutSet, reps: number | null) => void
 }
 function SetRow({

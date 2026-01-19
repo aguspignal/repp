@@ -53,7 +53,10 @@ function HeaderRight({ navigation, dayId }: HeaderRightProps) {
 	return (
 		<TouchableOpacity
 			onPress={() =>
-				navigation.navigate("RoutineDayHistory", { id: dayId })
+				navigation.navigate("RoutineDayHistory", {
+					id: dayId,
+					canEdit: false
+				})
 			}
 			style={navigationStyles.headerRightContainer}
 		>

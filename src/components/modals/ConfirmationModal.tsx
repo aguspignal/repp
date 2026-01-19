@@ -27,7 +27,7 @@ export default function ConfirmationModal({
 	confirmColor = "primary",
 	onConfirm,
 	cancelText,
-	onCancel,
+	onCancel = () => setIsVisible(false),
 	isLoadingConfirm = false
 }: Props) {
 	return (
@@ -50,9 +50,7 @@ export default function ConfirmationModal({
 				<View style={styles.actionsContainer}>
 					{isLoadingConfirm ? null : (
 						<Button
-							onPress={
-								onCancel ? onCancel : () => setIsVisible(false)
-							}
+							onPress={onCancel}
 							title={
 								cancelText
 									? cancelText

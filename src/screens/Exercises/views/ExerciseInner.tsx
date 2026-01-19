@@ -29,6 +29,7 @@ import StyledText from "../../../components/texts/StyledText"
 import TextButton from "../../../components/buttons/TextButton"
 import ToastNotification from "../../../components/notifications/ToastNotification"
 import useKeyboardBehaviour from "../../../hooks/useKeyboardBehaviour"
+import { areProgressionsValid } from "../../../utils/validation"
 
 type Props = {
 	type: "create" | "edit"
@@ -59,6 +60,21 @@ export default function ExerciseInner({
 		resolver: zodResolver(CreateExerciseSchema)
 	})
 
+	const emptyProgression = (order: number): DatabaseProgression => ({
+		name: "",
+		order,
+		is_weighted: false,
+		weight: null,
+		id: -1,
+		exercise_id: -1,
+		created_at: ""
+	})
+
+	const [progressions, setProgressions] = useState<DatabaseProgression[]>(
+		exerciseData && exerciseData.progressions.length > 0
+			? sortProgressionsByOrderDesc(exerciseData.progressions)
+			: [emptyProgression(1)]
+	)
 	const [isBodyweight, setIsBodyweight] = useState(
 		exerciseData?.exercise.is_bodyweight ?? false
 	)
@@ -69,38 +85,11 @@ export default function ExerciseInner({
 		exerciseData?.exercise.is_isometric ?? false
 	)
 
-	const [progressions, setProgressions] = useState<DatabaseProgression[]>(
-		exerciseData && exerciseData.progressions.length > 0
-			? sortProgressionsByOrderDesc(exerciseData.progressions)
-			: [
-					{
-						name: "",
-						order: 1,
-						is_weighted: false,
-						weight: null,
-						id: -1,
-						exercise_id: -1,
-						created_at: ""
-					}
-			  ]
-	)
-
 	function handleAddProgression() {
 		const sorted = sortProgressionsByOrderDesc(progressions)
-
 		const nextOrder = (sorted[0]?.order ?? 0) + 1
 
-		const emptyProgression: DatabaseProgression = {
-			name: "",
-			order: nextOrder,
-			is_weighted: false,
-			weight: null,
-			id: -1,
-			exercise_id: -1,
-			created_at: ""
-		}
-
-		setProgressions((prev) => [emptyProgression, ...prev])
+		setProgressions((prev) => [emptyProgression(nextOrder), ...prev])
 	}
 
 	function handleUpdateProgression(txt: string, progOrder: number) {
@@ -124,6 +113,45 @@ export default function ExerciseInner({
 		setProgressions(reordered)
 	}
 
+	function mapProgressionChanges() {
+		const diff =
+			progressions.length - (exerciseData?.progressions.length ?? 0)
+
+		const toCompare =
+			exerciseData?.progressions.length === 0
+				? []
+				: diff > 0
+					? progressions.slice(diff)
+					: progressions
+
+		const upsertProgressions: DatabaseProgression[] = toCompare.filter(
+			(newProg, i) => {
+				const oldIndex = diff >= 0 ? i : i - diff
+				const oldProg = exerciseData?.progressions[oldIndex]
+				return oldProg?.name !== newProg?.name
+			}
+		)
+
+		const insertProgressions: DraftProgression[] =
+			diff > 0
+				? progressions.slice(0, diff).map((p) => ({
+						name: p.name,
+						order: p.order,
+						is_weighted: p.is_weighted,
+						weight: p.weight
+					}))
+				: []
+
+		const deleteProgressionsFromOrder =
+			diff < 0 ? progressions.length + 1 : null
+
+		return {
+			upsertProgressions,
+			insertProgressions,
+			deleteProgressionsFromOrder
+		}
+	}
+
 	async function handleAction({ description, name }: CreateExerciseValues) {
 		if (!user || (type === "edit" && !exerciseData)) return
 
@@ -134,46 +162,18 @@ export default function ExerciseInner({
 			return
 		}
 
-		if (progressions.some((p) => p.name.length === 0 || !p.name)) {
+		if (!areProgressionsValid(progressions)) {
 			ToastNotification({
 				title: t("error-messages.you-cant-add-empty-progressions")
 			})
 			return
 		}
 
-		const diff =
-			progressions.length - (exerciseData?.progressions.length ?? 0)
-		const toCompare =
-			exerciseData?.progressions.length === 0
-				? []
-				: diff > 0
-				? progressions.slice(diff)
-				: progressions
-
-		let upsertProgressions: DatabaseProgression[] = []
-		for (let i = 0; i < toCompare.length; i++) {
-			const oldProgInOrder =
-				diff >= 0
-					? exerciseData?.progressions[i]
-					: exerciseData?.progressions[i - diff]
-			const newProgInOrder = toCompare[i]
-			if (oldProgInOrder?.name !== newProgInOrder?.name) {
-				upsertProgressions.push(newProgInOrder)
-			}
-		}
-
-		const insertProgressions: DraftProgression[] =
-			diff > 0
-				? progressions.slice(0, diff).map((p) => ({
-						name: p.name,
-						order: p.order,
-						is_weighted: p.is_weighted,
-						weight: p.weight
-				  }))
-				: []
-
-		const deleteProgressionsFromOrder =
-			diff < 0 ? progressions.length + 1 : null
+		const {
+			deleteProgressionsFromOrder,
+			insertProgressions,
+			upsertProgressions
+		} = mapProgressionChanges()
 
 		onSubmit({
 			draftExercise: {
@@ -255,6 +255,7 @@ export default function ExerciseInner({
 							progression={prog}
 							onUpdate={handleUpdateProgression}
 							onDelete={
+								progressions.length > 1 &&
 								prog.order === progressions.length
 									? onDeleteProgression
 									: undefined

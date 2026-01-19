@@ -1,17 +1,30 @@
 import {
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
+	DatabaseWorkoutSet,
+	DraftWorkoutAndSets,
+	DraftWorkoutExerciseSets,
 	DraftWorkoutSet,
-	ExercisesSets
+	WorkoutAndSets
 } from "../../../types/routines"
-import { FlatList, KeyboardAvoidingView, StyleSheet, View } from "react-native"
-import { isPostgrestError } from "../../../utils/queriesHelpers"
+import {
+	FlatList,
+	KeyboardAvoidingView,
+	ListRenderItem,
+	StyleSheet,
+	View
+} from "react-native"
+import {
+	mapWorkoutAndSetsToDraftWorkoutExerciseSets,
+	mapWorkoutDataToDraftWorkoutExerciseSets
+} from "../../../utils/parsing"
+import { areDraftWorkoutExerciseSetsInvalid } from "../../../utils/validation"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { sortRDExercisesByOrderAsc } from "../../../utils/sorting"
 import { theme } from "../../../resources/theme"
+import { useCallback, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigation } from "@react-navigation/native"
-import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../../stores/useUserStore"
 import { WorkoutSchema, WorkoutValues } from "../../../utils/zodSchemas"
@@ -20,41 +33,51 @@ import Button from "../../../components/buttons/Button"
 import ConfirmationModal from "../../../components/modals/ConfirmationModal"
 import ToastNotification from "../../../components/notifications/ToastNotification"
 import useKeyboardBehaviour from "../../../hooks/useKeyboardBehaviour"
-import useRoutineMutation from "../../../hooks/useRoutineMutation"
 import WorkoutExerciseCard from "../../../components/cards/WorkoutExerciseCard"
 import WorkoutInput from "../../../components/inputs/WorkoutInput"
 
 type Props = {
 	routineDay: DatabaseRoutineDay
 	dayExercises: DatabaseRoutineDayExercise[]
+	workoutData: WorkoutAndSets | null
+	onSubmit: (params: DraftWorkoutAndSets) => void
+	isLoadingAction: boolean
 }
 
-export default function WorkoutInner({ dayExercises, routineDay }: Props) {
+export default function WorkoutInner({
+	dayExercises,
+	routineDay,
+	workoutData,
+	onSubmit,
+	isLoadingAction
+}: Props) {
 	const { t } = useTranslation()
 	const { behaviour } = useKeyboardBehaviour()
 	const { exercises } = useUserStore()
-	const { createWorkoutAndSetsMutation } = useRoutineMutation()
 	const nav = useNavigation<RootStackNavigationProp>()
-
-	const { mutate: createWorkoutAndSets, isPending } =
-		createWorkoutAndSetsMutation
 
 	const {
 		handleSubmit,
 		control,
 		formState: { isSubmitting, isValidating }
 	} = useForm<WorkoutValues>({
+		defaultValues: { note: workoutData?.workout.note ?? "" },
 		resolver: zodResolver(WorkoutSchema)
 	})
 
 	const [confirmationModalVisible, setConfirmationModalVisible] =
 		useState(false)
-	const [date, setDate] = useState(new Date())
-	const [workoutSets, setWorkoutSets] = useState<ExercisesSets[]>(
-		dayExercises.map((de) => ({
-			exerciseId: de.exercise_id,
-			sets: [{ order: 1, progressionId: null, reps: null }]
-		}))
+	const [date, setDate] = useState(
+		workoutData?.workout.date
+			? new Date(workoutData.workout.date)
+			: new Date()
+	)
+	const [workoutSets, setWorkoutSets] = useState<DraftWorkoutExerciseSets[]>(
+		mapWorkoutAndSetsToDraftWorkoutExerciseSets(
+			dayExercises,
+			exercises,
+			workoutData
+		)
 	)
 
 	function handleGoCreateProgression(eId: number) {
@@ -64,12 +87,83 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 		})
 	}
 
-	function handleFinishWorkout({ note }: WorkoutValues) {
-		if (
-			workoutSets.some((es) =>
-				es.sets.some((s) => !s.progressionId || s.progressionId < 0)
+	function mapSetChanges() {
+		if (!workoutData)
+			return {
+				upsertSets: [],
+				insertSets: [],
+				deleteSets: []
+			}
+
+		const upsertSets: DatabaseWorkoutSet[] = workoutSets.flatMap((ws) => {
+			const thisExercise = exercises.find(
+				(e) => e.exercise.id === ws.exerciseId
 			)
-		) {
+
+			return ws.sets.flatMap((newSet) => {
+				const oldSet: DatabaseWorkoutSet | undefined =
+					workoutData.sets.find(
+						(s) =>
+							thisExercise?.progressions.some(
+								(p) => p.id === s.progression_id
+							) && s.order === newSet.order
+					)
+
+				if (!oldSet) return []
+				if (
+					oldSet.order === newSet.order &&
+					oldSet.progression_id === newSet.progressionId &&
+					oldSet.reps === newSet.reps
+				)
+					return []
+
+				return {
+					...oldSet,
+					order: newSet.order,
+					progression_id:
+						newSet.progressionId ?? oldSet.progression_id,
+					reps: newSet.reps ?? oldSet.reps
+				}
+			})
+		})
+
+		const insertSets: DraftWorkoutSet[] = workoutSets.flatMap((ws) => {
+			const thisExercise = exercises.find(
+				(e) => e.exercise.id === ws.exerciseId
+			)
+
+			const oldSetsCount = workoutData.sets.filter((s) =>
+				thisExercise?.progressions.some(
+					(p) => p.id === s.progression_id
+				)
+			).length
+
+			return ws.sets.length > oldSetsCount
+				? ws.sets.slice(oldSetsCount - 1)
+				: []
+		})
+
+		const deleteSets: DatabaseWorkoutSet[] = workoutSets.flatMap((ws) => {
+			const thisExercise = exercises.find(
+				(e) => e.exercise.id === ws.exerciseId
+			)
+
+			const thisExerciseOldSets = workoutData.sets.filter((s) =>
+				thisExercise?.progressions.some(
+					(p) => p.id === s.progression_id
+				)
+			)
+
+			return ws.sets.length < thisExerciseOldSets.length
+				? thisExerciseOldSets.slice(ws.sets.length)
+				: []
+		})
+
+		return { upsertSets, insertSets, deleteSets }
+	}
+
+	function handleFinishWorkout({ note }: WorkoutValues) {
+		if (areDraftWorkoutExerciseSetsInvalid(workoutSets)) {
 			setConfirmationModalVisible(false)
 			ToastNotification({
 				title: t("error-messages.progressions-cant-be-empty")
@@ -77,44 +171,77 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 			return
 		}
 
-		if (workoutSets.every((es) => es.sets.every((s) => !s.progressionId))) {
+		if (!workoutData) {
+			onSubmit({
+				draftWorkout: {
+					date: date.toISOString(),
+					note: note ?? null,
+					routineday_id: routineDay.id
+				},
+				insertSets: workoutSets.flatMap((ws) => ws.sets),
+				upsertSets: [],
+				deleteSets: []
+			})
+			setConfirmationModalVisible(false)
+			return
+		}
+
+		const oldWorkoutSets = mapWorkoutDataToDraftWorkoutExerciseSets(
+			workoutData,
+			exercises
+		)
+
+		if (JSON.stringify(workoutSets) === JSON.stringify(oldWorkoutSets)) {
 			setConfirmationModalVisible(false)
 			nav.goBack()
 			return
 		}
 
-		let draftSets: DraftWorkoutSet[] = []
-
-		for (let i = 0; i < workoutSets.length; i++) {
-			const es = workoutSets[i].sets
-			draftSets.push(...es)
-			for (let j = 0; j < es.length; j++) {
-				console.log(
-					`${es[j].order} - ${es[j].progressionId} ${es[j].reps}`
-				)
-			}
+		const mappedSets = mapSetChanges()
+		if (!mappedSets) {
+			setConfirmationModalVisible(false)
+			nav.goBack()
+			return
 		}
 
-		createWorkoutAndSets(
-			{
+		onSubmit({
+			draftWorkout: {
 				date: date.toISOString(),
 				note: note ?? null,
-				draftSets,
-				routineDayId: routineDay.id
+				routineday_id: routineDay.id
 			},
-			{
-				onSuccess: (workoutAndSets) => {
-					if (!workoutAndSets || isPostgrestError(workoutAndSets)) {
-						ToastNotification({ title: workoutAndSets?.message })
-						return
-					}
-
-					setConfirmationModalVisible(false)
-					nav.reset({ index: 0, routes: [{ name: "Home" }] })
-				}
-			}
-		)
+			insertSets: mappedSets.insertSets,
+			upsertSets: mappedSets.upsertSets,
+			deleteSets: mappedSets.deleteSets
+		})
+		setConfirmationModalVisible(false)
 	}
+
+	const renderItem = useCallback<ListRenderItem<DatabaseRoutineDayExercise>>(
+		({ item }) => {
+			const exercise = exercises.find(
+				(e) => e.exercise.id === item.exercise_id
+			)
+			if (!exercise) return null
+
+			return (
+				<WorkoutExerciseCard
+					exerciseAndProgressions={exercise}
+					exerciseNote={item.note}
+					goals={{
+						rep_goal_high: item.rep_goal_high,
+						rep_goal_low: item.rep_goal_low,
+						set_goal_low: item.set_goal_low,
+						set_goal_high: item.set_goal_high
+					}}
+					workoutSets={workoutSets}
+					setWorkoutSets={setWorkoutSets}
+					onCreateProgression={handleGoCreateProgression}
+				/>
+			)
+		},
+		[exercises, workoutSets]
+	)
 
 	return (
 		<KeyboardAvoidingView style={{ flex: 1 }} behavior={behaviour}>
@@ -123,7 +250,9 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 					<Button
 						title={t("actions.finish-workout")}
 						onPress={() => setConfirmationModalVisible(true)}
-						isLoading={isPending || isSubmitting || isValidating}
+						isLoading={
+							isLoadingAction || isSubmitting || isValidating
+						}
 					/>
 				</View>
 
@@ -138,34 +267,7 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 
 				<FlatList
 					data={sortRDExercisesByOrderAsc(dayExercises)}
-					renderItem={({
-						item: {
-							exercise_id,
-							note,
-							rep_goal_high,
-							rep_goal_low,
-							set_goal_high,
-							set_goal_low
-						}
-					}) => (
-						<WorkoutExerciseCard
-							exerciseAndProgressions={
-								exercises.find(
-									(e) => e.exercise.id === exercise_id
-								)!
-							}
-							exerciseNote={note}
-							goals={{
-								rep_goal_high,
-								rep_goal_low,
-								set_goal_low,
-								set_goal_high
-							}}
-							workoutSets={workoutSets}
-							setWorkoutSets={setWorkoutSets}
-							onCreateProgression={handleGoCreateProgression}
-						/>
-					)}
+					renderItem={renderItem}
 					contentContainerStyle={styles.exercisesList}
 				/>
 
@@ -176,7 +278,7 @@ export default function WorkoutInner({ dayExercises, routineDay }: Props) {
 					confirmText={t("actions.finish-workout")}
 					onConfirm={handleSubmit(handleFinishWorkout)}
 					onCancel={() => setConfirmationModalVisible(false)}
-					isLoadingConfirm={isPending}
+					isLoadingConfirm={isLoadingAction}
 				/>
 			</View>
 		</KeyboardAvoidingView>

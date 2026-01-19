@@ -25,6 +25,8 @@ import Workout from "../screens/Routines/Workout"
 import WorkoutHeader from "../components/header/WorkoutHeader"
 import RoutineDayHistory from "../screens/Routines/RoutineDayHistory"
 import RoutineDayHistoryHeader from "../components/header/RoutineDayHistoryHeader"
+import EditWorkout from "../screens/Routines/EditWorkout"
+import EditWorkoutHeader from "../components/header/EditWorkoutHeader"
 
 type Props = {
 	uuid: string
@@ -155,6 +157,21 @@ function RootNavigator() {
 						<RoutineDayHistoryHeader
 							route={
 								route as RootStackScreenProps<"RoutineDayHistory">["route"]
+							}
+							back={back}
+						/>
+					)
+				}}
+			/>
+			<RootStack.Screen
+				name="EditWorkout"
+				component={EditWorkout}
+				options={{
+					header: ({ navigation, route, back }) => (
+						<EditWorkoutHeader
+							navigation={navigation}
+							route={
+								route as RootStackScreenProps<"EditWorkout">["route"]
 							}
 							back={back}
 						/>

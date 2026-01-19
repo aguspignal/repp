@@ -18,7 +18,10 @@ export type RootStackParams = {
 	Settings: undefined
 	ExerciseRepository: { editingRoutineDayId?: number }
 	CreateExercise: undefined
-	EditExercise: { id: number; comingFromWorkout?: number[] }
+	EditExercise: {
+		id: number
+		comingFromWorkout?: number[]
+	}
 	Routine: { id: number }
 	EditRoutine: { id: number }
 	EditRoutineDay: {
@@ -26,7 +29,14 @@ export type RootStackParams = {
 		selectedExercises?: DatabaseExercise[]
 	}
 	Workout: { dayId: number }
-	RoutineDayHistory: { id: number }
+	EditWorkout: {
+		wId: number
+		dayId: number
+	}
+	RoutineDayHistory: {
+		id: number
+		canEdit: boolean
+	}
 }
 
 export type RootStackScreenProps<T extends keyof RootStackParams> =
