@@ -1,4 +1,4 @@
-import { DraftExerciseAndProgression } from "../../types/exercises"
+import { ExerciseUpdatePayload } from "../../types/exercises"
 import { GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY } from "../../hooks/useExercisesQuery"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { RootStackScreenProps } from "../../navigation/params"
@@ -21,7 +21,7 @@ export default function CreateExercise({
 	function onCreateExercise({
 		draftExercise,
 		insertProgressions
-	}: DraftExerciseAndProgression) {
+	}: ExerciseUpdatePayload) {
 		if (!user) return
 
 		createExerciseAndProgressions(

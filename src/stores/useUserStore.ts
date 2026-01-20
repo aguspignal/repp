@@ -1,26 +1,26 @@
 import {
 	DatabaseRoutine,
 	DatabaseRoutineDay,
-	RoutineWithDays
+	RoutineWithDaysAndSchedule
 } from "../types/routines"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import { DatabaseUser } from "../types/user"
-import { ExerciseAndProgressions } from "../types/exercises"
+import { ExerciseWithProgressions } from "../types/exercises"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 
 interface UserState {
 	user: DatabaseUser | null
-	exercises: ExerciseAndProgressions[]
-	routines: RoutineWithDays[]
+	exercises: ExerciseWithProgressions[]
+	routines: RoutineWithDaysAndSchedule[]
 
 	loadUser: (u: DatabaseUser | null) => void
-	loadExercisesAndProgressions: (eps: ExerciseAndProgressions[]) => void
-	loadRoutines: (rs: RoutineWithDays[]) => void
+	loadExercisesAndProgressions: (eps: ExerciseWithProgressions[]) => void
+	loadRoutines: (rs: RoutineWithDaysAndSchedule[]) => void
 	getRoutineByDayId: (dId: number) => DatabaseRoutine
 
-	addExercise: (ep: ExerciseAndProgressions) => void
-	addRoutineWithDays: (r: RoutineWithDays) => void
+	addExercise: (ep: ExerciseWithProgressions) => void
+	addRoutineWithDaysAndSchedule: (r: RoutineWithDaysAndSchedule) => void
 	addRoutineDay: (rd: DatabaseRoutineDay) => void
 	updateRoutine: (r: DatabaseRoutine) => void
 
@@ -55,7 +55,7 @@ export const useUserStore = create<UserState>()(
 						)
 						.concat(ep)
 				}),
-			addRoutineWithDays: (routine) =>
+			addRoutineWithDaysAndSchedule: (routine) =>
 				set({
 					routines: get()
 						.routines.filter(
@@ -83,7 +83,7 @@ export const useUserStore = create<UserState>()(
 									days: routine.days
 										.filter((d) => d.id !== rd.id)
 										.concat(rd)
-							  }
+								}
 					})
 				}),
 
@@ -102,7 +102,7 @@ export const useUserStore = create<UserState>()(
 					(r) => r.routine.id === rId
 				)[0]
 				const days = routine.days.filter((d) => d.id === dId)
-				const routineAndDay: RoutineWithDays = {
+				const routineAndDay: RoutineWithDaysAndSchedule = {
 					routine: routine.routine,
 					days
 				}

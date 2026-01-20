@@ -1,10 +1,10 @@
 import { DraftProgression } from "../../types/exercises"
+import { MAX_NAME_LENGTH } from "../../resources/constants"
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native"
 import { theme } from "../../resources/theme"
 import { useTranslation } from "react-i18next"
 import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
-import { MAX_NAME_LENGTH } from "../../resources/constants"
 
 type Props = {
 	progression: DraftProgression

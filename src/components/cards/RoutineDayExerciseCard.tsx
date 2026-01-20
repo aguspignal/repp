@@ -1,4 +1,7 @@
-import { DraftRoutineDayExercise, RDEGoalType } from "../../types/routines"
+import {
+	DraftRoutineDayExercise,
+	RoutineDayExerciseGoalType
+} from "../../types/routines"
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native"
 import { theme } from "../../resources/theme"
 import { useMemo, useState } from "react"
@@ -17,7 +20,7 @@ type Props = {
 	onUpdateGoal: (
 		draftRDE: DraftRoutineDayExercise,
 		goal: number | null,
-		goalType: RDEGoalType
+		goalType: RoutineDayExerciseGoalType
 	) => void
 }
 export default function RoutineDayExerciseCard({
@@ -65,7 +68,10 @@ export default function RoutineDayExerciseCard({
 		onUpdateNote(draftRDExercise, txt)
 	}
 
-	function handleChangeGoal(goal: number | null, goalType: RDEGoalType) {
+	function handleChangeGoal(
+		goal: number | null,
+		goalType: RoutineDayExerciseGoalType
+	) {
 		const value: string = goal ? goal.toString() : ""
 
 		switch (goalType) {

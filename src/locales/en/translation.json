@@ -145,6 +145,9 @@
 		"exercises": "Exercises",
 		"history": "History",
 		"my-routines": "My routines",
-		"progressions": "Progressions"
+		"progressions": "Progressions",
+		"(routineName)-schedule": "{{routineName}} schedule",
+		"(routineName)": "{{routineName}}",
+		"schedule": "Schedule"
 	}
 }

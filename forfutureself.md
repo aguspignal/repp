@@ -11,9 +11,7 @@
     - routine schedule
         - sort days on routineinner by schedule
     - milestones
-    - by progressions view
 
 # To test
 
-    - delete workout
     - delete set and i think it deleted next set reps

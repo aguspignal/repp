@@ -2,7 +2,7 @@ import {
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
 	DraftRoutineDayExercise,
-	RDEGoalType
+	RoutineDayExerciseGoalType
 } from "../../../types/routines"
 import {
 	invalidateQueries,
@@ -210,7 +210,7 @@ export default function EditRoutineDayInner({
 	function handleUpdateGoal(
 		draftRDE: DraftRoutineDayExercise,
 		goal: number | null,
-		goalType: RDEGoalType
+		goalType: RoutineDayExerciseGoalType
 	) {
 		setDraftRDExercises((prev) =>
 			prev.map((drde) => {

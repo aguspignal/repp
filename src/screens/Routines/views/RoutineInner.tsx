@@ -26,6 +26,7 @@ import StartWorkoutModal from "../../../components/modals/StartWorkoutModal"
 import StyledText from "../../../components/texts/StyledText"
 import ToastNotification from "../../../components/notifications/ToastNotification"
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
+import ScheduleDay from "../../../components/cards/ScheduleDay"
 
 type Props = {
 	routine: RoutineWithDaysAndExercises
@@ -141,6 +142,20 @@ export default function RoutineInner({
 				alignSelf
 			/>
 
+			<View style={styles.scheduleContainer}>
+				<StyledText type="subtitle">{t("titles.schedule")}</StyledText>
+
+				<View style={styles.schedule}>
+					<ScheduleDay weekday="Monday" routineDay={null} />
+					<ScheduleDay weekday="Tuesday" routineDay={null} />
+					<ScheduleDay weekday="Wednesday" routineDay={null} />
+					<ScheduleDay weekday="Thursday" routineDay={null} />
+					<ScheduleDay weekday="Friday" routineDay={null} />
+					<ScheduleDay weekday="Saturday" routineDay={null} />
+					<ScheduleDay weekday="Sunday" routineDay={null} />
+				</View>
+			</View>
+
 			{sortRoutineDaysAndExercisesByName(daysAndExercises)
 				.filter((de) => !de.day.deleted)
 				.map((de) => (
@@ -191,5 +206,14 @@ const styles = StyleSheet.create({
 		padding: theme.spacing.xs,
 		backgroundColor: theme.colors.backgroundDark,
 		borderRadius: theme.spacing.xxs
+	},
+	scheduleContainer: {
+		gap: theme.spacing.xxs
+	},
+	schedule: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		gap: theme.spacing.s
 	}
 })

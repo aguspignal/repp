@@ -4,7 +4,7 @@ import {
 } from "../../utils/parsing"
 import {
 	DatabaseExercise,
-	ExerciseAndProgressions,
+	ExerciseWithProgressions,
 	ExerciseFilterBy,
 	ExerciseSortBy
 } from "../../types/exercises"
@@ -37,7 +37,7 @@ export default function ExerciseRepository({
 	} = getUserExercisesAndProgressionsLazy(user?.id)
 
 	const [exercisesList, setExercisesList] =
-		useState<ExerciseAndProgressions[]>(exercises)
+		useState<ExerciseWithProgressions[]>(exercises)
 	const [sortBy, setSortBy] = useState<ExerciseSortBy>("ascending")
 	const [filterBy, setFilterBy] = useState<ExerciseFilterBy>("all")
 	const [selectedExercises, setSelectedExercises] = useState<
@@ -174,7 +174,7 @@ export default function ExerciseRepository({
 							? t("actions.add-exercise")
 							: t("actions.add-exercises-(count)", {
 									count: selectedExercises.length
-							  })
+								})
 					}
 					onPress={handleAddSelectedExercises}
 					icon="plus"

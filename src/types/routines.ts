@@ -1,4 +1,3 @@
-import { DatabaseExercise, DatabaseProgression } from "./exercises"
 import { Database } from "./supabase"
 
 export type DatabaseRoutine = Database["public"]["Tables"]["Routines"]["Row"]
@@ -9,77 +8,40 @@ export type DatabaseRoutineDay =
 export type DatabaseRoutineDayExercise =
 	Database["public"]["Tables"]["RoutineDayExercises"]["Row"]
 
-export type DatabaseWorkout = Database["public"]["Tables"]["Workouts"]["Row"]
-
-export type DatabaseWorkoutSet =
-	Database["public"]["Tables"]["WorkoutSets"]["Row"]
+export type DatabaseSchedule =
+	Database["public"]["Tables"]["RoutineSchedules"]["Row"]
 
 export type RoutineStatus = Database["public"]["Enums"]["RoutineStatus"]
-
-export type RoutineWithDays = {
-	routine: DatabaseRoutine
-	days: DatabaseRoutineDay[]
-}
-
-export type RoutineWithDaysAndExercises = {
-	routine: DatabaseRoutine
-	daysAndExercises: RoutineDayAndExercises[]
-}
-
-export type RoutineDayAndExercises = {
-	day: DatabaseRoutineDay
-	exercises: DatabaseRoutineDayExercise[]
-}
+export type Weekday = Database["public"]["Enums"]["Weekday"]
 
 export type DraftRoutineDayExercise = Omit<
 	DatabaseRoutineDayExercise,
 	"id" | "routineday_id" | "created_at"
 >
 
-export type DraftWorkoutSet = {
-	id?: number
-	order: number
-	progressionId: number | null
-	reps: number | null
-}
-
-export type DraftWorkoutExerciseSets = {
-	exerciseId: number
-	sets: DraftWorkoutSet[]
-}
-
-export type WorkoutAndSets = {
-	workout: DatabaseWorkout
-	sets: DatabaseWorkoutSet[]
-}
-
-export type RDEGoals = Pick<
+export type RoutineDayExerciseGoals = Pick<
 	DatabaseRoutineDayExercise,
 	"set_goal_low" | "set_goal_high" | "rep_goal_low" | "rep_goal_high"
 >
 
-export type RDEGoalType = "setsHigh" | "setsLow" | "repsHigh" | "repsLow"
-
-export type WorkoutSetsAndProgressions = {
-	workout: DatabaseWorkout
-	sets: DatabaseWorkoutSet[]
-	progressions: DatabaseProgression[]
+export type RoutineWithDaysAndSchedule = {
+	routine: DatabaseRoutine
+	days: DatabaseRoutineDay[]
+	schedule?: DatabaseSchedule[]
 }
 
-export type WorkoutHistorySortBy = "newest" | "oldest"
-export type WorkoutHistoryViewPer = "sets" | "progressions"
-
-export type DraftWorkout = Omit<DatabaseWorkout, "id" | "created_at">
-
-export type DraftWorkoutAndSets = {
-	draftWorkout: DraftWorkout
-	upsertSets: DatabaseWorkoutSet[]
-	insertSets: DraftWorkoutSet[]
-	deleteSets: DatabaseWorkoutSet[]
+export type RoutineDayWithExercises = {
+	day: DatabaseRoutineDay
+	exercises: DatabaseRoutineDayExercise[]
 }
 
-export type ExerciseProgressionsAndSets = {
-	exercise: DatabaseExercise
-	progressions: DatabaseProgression[]
-	sets: DatabaseWorkoutSet[]
+export type RoutineWithDaysAndExercises = {
+	routine: DatabaseRoutine
+	daysAndExercises: RoutineDayWithExercises[]
 }
+
+export type RoutineDayExerciseGoalType =
+	| "setsHigh"
+	| "setsLow"
+	| "repsHigh"
+	| "repsLow"

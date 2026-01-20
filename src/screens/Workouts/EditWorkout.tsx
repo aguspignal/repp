@@ -1,8 +1,8 @@
 import {
 	DatabaseWorkoutSet,
-	DraftWorkoutAndSets,
-	WorkoutAndSets
-} from "../../types/routines"
+	WorkoutUpdatePayload,
+	WorkoutWithSets
+} from "../../types/workouts"
 import { isPostgrestError } from "../../utils/queriesHelpers"
 import { PostgrestError } from "@supabase/supabase-js"
 import { RootStackScreenProps } from "../../navigation/params"
@@ -10,8 +10,9 @@ import ErrorScreen from "../ErrorScreen"
 import i18next from "i18next"
 import Loading from "../Loading"
 import ToastNotification from "../../components/notifications/ToastNotification"
-import useRoutineMutation from "../../hooks/useRoutineMutation"
 import useRoutineQuery from "../../hooks/useRoutineQuery"
+import useWorkoutMutation from "../../hooks/useWorkoutMutation"
+import useWorkoutQuery from "../../hooks/useWorkoutQuery"
 import WorkoutInner from "./views/WorkoutInner"
 
 export default function EditWorkout({
@@ -19,9 +20,9 @@ export default function EditWorkout({
 	route
 }: RootStackScreenProps<"EditWorkout">) {
 	const { updateWorkoutAndSetsMutation, updateWorkoutSetsMutation } =
-		useRoutineMutation()
-	const { getRoutineDayAndExercises, getWorkoutAndSetsById } =
-		useRoutineQuery()
+		useWorkoutMutation()
+	const { getRoutineDayAndExercises } = useRoutineQuery()
+	const { getWorkoutAndSetsById } = useWorkoutQuery()
 
 	const { mutate: updateWorkoutAndSets, isPending: isPendingWorkoutAndSets } =
 		updateWorkoutAndSetsMutation
@@ -45,7 +46,7 @@ export default function EditWorkout({
 		upsertSets,
 		deleteSets,
 		draftWorkout
-	}: DraftWorkoutAndSets) {
+	}: WorkoutUpdatePayload) {
 		if (!workoutAndSets || isPostgrestError(workoutAndSets)) return
 
 		const { date, note } = workoutAndSets.workout
@@ -77,7 +78,7 @@ export default function EditWorkout({
 	}
 
 	function onMutationSuccess(
-		result: WorkoutAndSets | DatabaseWorkoutSet[] | null | PostgrestError
+		result: WorkoutWithSets | DatabaseWorkoutSet[] | null | PostgrestError
 	) {
 		if (!result || isPostgrestError(result)) {
 			ToastNotification({

@@ -6,14 +6,15 @@ import {
 } from "react-native"
 import {
 	DatabaseProgression,
-	DraftExerciseAndProgression,
 	DraftProgression,
-	ExerciseAndProgressions
+	ExerciseUpdatePayload,
+	ExerciseWithProgressions
 } from "../../../types/exercises"
 import {
 	CreateExerciseSchema,
 	CreateExerciseValues
 } from "../../../utils/zodSchemas"
+import { areProgressionsValid } from "../../../utils/validation"
 import { sortProgressionsByOrderDesc } from "../../../utils/sorting"
 import { theme } from "../../../resources/theme"
 import { useForm } from "react-hook-form"
@@ -29,12 +30,11 @@ import StyledText from "../../../components/texts/StyledText"
 import TextButton from "../../../components/buttons/TextButton"
 import ToastNotification from "../../../components/notifications/ToastNotification"
 import useKeyboardBehaviour from "../../../hooks/useKeyboardBehaviour"
-import { areProgressionsValid } from "../../../utils/validation"
 
 type Props = {
 	type: "create" | "edit"
-	exerciseData: ExerciseAndProgressions | null
-	onSubmit: (params: DraftExerciseAndProgression) => void
+	exerciseData: ExerciseWithProgressions | null
+	onSubmit: (params: ExerciseUpdatePayload) => void
 	isPendingAction: boolean
 }
 

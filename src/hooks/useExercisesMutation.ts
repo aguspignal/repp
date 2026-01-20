@@ -5,7 +5,7 @@ import {
 	DatabaseExercise,
 	DatabaseProgression,
 	DraftProgression,
-	ExerciseAndProgressions
+	ExerciseWithProgressions
 } from "../types/exercises"
 import {
 	handleOnMutationError,
@@ -20,7 +20,7 @@ export default function useExercisesMutation() {
 			exerciseData,
 			progressions
 		}: ExerciseDataAndProgressions): Promise<
-			ExerciseAndProgressions | null | PostgrestError
+			ExerciseWithProgressions | null | PostgrestError
 		> => {
 			const exercise = await exercisesService.postExercise(exerciseData)
 
@@ -54,11 +54,10 @@ export default function useExercisesMutation() {
 			insertProgressions,
 			upsertProgressions
 		}: UpdateExerciseAndProgressions): Promise<
-			ExerciseAndProgressions | null | PostgrestError
+			ExerciseWithProgressions | null | PostgrestError
 		> => {
-			const updatedExercise = await exercisesService.updateExercise(
-				exercise
-			)
+			const updatedExercise =
+				await exercisesService.updateExercise(exercise)
 
 			if (!updatedExercise || isPostgrestError(updatedExercise))
 				return updatedExercise

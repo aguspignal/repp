@@ -1,15 +1,15 @@
 import { DatabaseProgression } from "../types/exercises"
-import { DraftWorkoutExerciseSets } from "../types/routines"
+import { ExerciseIdWithDraftSets } from "../types/workouts"
 
 export function areDraftWorkoutExerciseSetsInvalid(
-	workoutSets: DraftWorkoutExerciseSets[]
+	workoutSets: ExerciseIdWithDraftSets[]
 ): boolean {
 	const emptyProgressions = workoutSets.some((es) =>
-		es.sets.some((s) => !s.progressionId || s.progressionId < 0)
+		es.sets.some((s) => !s.progression_id || s.progression_id < 0)
 	)
 
 	const noProgressions = workoutSets.every((es) =>
-		es.sets.every((s) => !s.progressionId)
+		es.sets.every((s) => !s.progression_id)
 	)
 
 	return emptyProgressions || noProgressions

@@ -1,5 +1,5 @@
 import { DatabaseUser, InitialData } from "../types/user"
-import { ExerciseAndProgressions } from "../types/exercises"
+import { ExerciseWithProgressions } from "../types/exercises"
 import { isPostgrestError } from "../utils/queriesHelpers"
 import { PostgrestError } from "@supabase/supabase-js"
 import { useQuery } from "@tanstack/react-query"
@@ -82,7 +82,7 @@ export default function useUserQuery() {
 					routines = []
 				}
 
-				const exercisesAndProgressions: ExerciseAndProgressions[] =
+				const exercisesAndProgressions: ExerciseWithProgressions[] =
 					exercises.map((e) => ({
 						exercise: e,
 						progressions: progressions.filter(

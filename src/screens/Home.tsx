@@ -25,7 +25,8 @@ import useRoutineQuery from "../hooks/useRoutineQuery"
 
 export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 	const { t } = useTranslation()
-	const { user, routines, loadRoutines, addRoutineWithDays } = useUserStore()
+	const { user, routines, loadRoutines, addRoutineWithDaysAndSchedule } =
+		useUserStore()
 	const { getUserRoutinesWithDaysLazy } = useRoutineQuery()
 	const { createRoutineMutation } = useRoutineMutation()
 
@@ -59,7 +60,7 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 						return
 					}
 
-					addRoutineWithDays({ routine, days: [] })
+					addRoutineWithDaysAndSchedule({ routine, days: [] })
 					setCreateRoutineModalVisible(false)
 					navigation.navigate("Routine", { id: routine.id })
 				}

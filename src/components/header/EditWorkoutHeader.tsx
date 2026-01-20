@@ -1,4 +1,5 @@
 import { Header } from "@react-navigation/elements"
+import { isPostgrestError } from "../../utils/queriesHelpers"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { navigationStyles } from "../../navigation/styles"
 import { ParamListBase } from "@react-navigation/native"
@@ -9,9 +10,8 @@ import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
 import ConfirmationModal from "../modals/ConfirmationModal"
 import MCIcon from "../icons/MCIcon"
-import useRoutineMutation from "../../hooks/useRoutineMutation"
-import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import ToastNotification from "../notifications/ToastNotification"
+import useWorkoutMutation from "../../hooks/useWorkoutMutation"
 
 type Props = {
 	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>
@@ -59,7 +59,7 @@ type HeaderRightProps = {
 function HeaderRight({ navigation, dayId, workoutId }: HeaderRightProps) {
 	const { t } = useTranslation()
 	const { routines } = useUserStore()
-	const { deleteWorkoutMutation } = useRoutineMutation()
+	const { deleteWorkoutMutation } = useWorkoutMutation()
 
 	const { mutate: deleteWorkout, isPending } = deleteWorkoutMutation
 

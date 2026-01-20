@@ -1,16 +1,18 @@
 import {
 	DatabaseRoutineDayExercise,
-	DraftWorkoutSet,
-	RoutineDayAndExercises,
-	WorkoutAndSets,
-	WorkoutHistorySortBy
+	RoutineDayWithExercises
 } from "../types/routines"
 import {
 	DatabaseExercise,
 	DatabaseProgression,
-	ExerciseAndProgressions,
-	ExerciseSortBy
+	ExerciseSortBy,
+	ExerciseWithProgressions
 } from "../types/exercises"
+import {
+	DraftWorkoutSet,
+	WorkoutHistorySortBy,
+	WorkoutWithSets
+} from "../types/workouts"
 
 export function sortProgressionsByOrderDesc(
 	progressions: DatabaseProgression[]
@@ -25,9 +27,9 @@ export function sortDraftWorkoutSetsByOrderAsc(
 }
 
 export function sortExercisesAndProgressionsBy(
-	exercises: ExerciseAndProgressions[],
+	exercises: ExerciseWithProgressions[],
 	sortBy: ExerciseSortBy
-): ExerciseAndProgressions[] {
+): ExerciseWithProgressions[] {
 	return exercises.sort((a, b) => {
 		if (sortBy === "type") {
 			const weight = (e: DatabaseExercise) =>
@@ -48,15 +50,15 @@ export function sortRDExercisesByOrderAsc(
 }
 
 export function sortRoutineDaysAndExercisesByName(
-	days: RoutineDayAndExercises[]
-): RoutineDayAndExercises[] {
+	days: RoutineDayWithExercises[]
+): RoutineDayWithExercises[] {
 	return days.sort((a, b) => a.day.name.localeCompare(b.day.name))
 }
 
 export function sortWorkoutsByDate(
-	workoutsAndSets: WorkoutAndSets[],
+	workoutsAndSets: WorkoutWithSets[],
 	sortBy: WorkoutHistorySortBy
-): WorkoutAndSets[] {
+): WorkoutWithSets[] {
 	return workoutsAndSets.sort((a, b) =>
 		sortBy === "oldest"
 			? a.workout.date.localeCompare(b.workout.date)

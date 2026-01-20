@@ -1,18 +1,20 @@
 import {
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
-	DraftWorkoutExerciseSets,
-	DraftWorkoutSet,
-	RDEGoals,
-	WorkoutAndSets,
-	WorkoutHistorySortBy,
-	WorkoutHistoryViewPer
+	RoutineDayExerciseGoals
 } from "../types/routines"
 import {
-	ExerciseAndProgressions,
 	ExerciseFilterBy,
-	ExerciseSortBy
+	ExerciseSortBy,
+	ExerciseWithProgressions
 } from "../types/exercises"
+import {
+	DraftWorkoutSet,
+	ExerciseIdWithDraftSets,
+	WorkoutHistorySortBy,
+	WorkoutHistoryViewPer,
+	WorkoutWithSets
+} from "../types/workouts"
 import { Dispatch, SetStateAction } from "react"
 import i18next from "i18next"
 
@@ -83,7 +85,7 @@ export function parseNumericInput(
 }
 
 export function parseGoalsToText(
-	goals: RDEGoals,
+	goals: RoutineDayExerciseGoals,
 	inSeconds?: boolean,
 	hideGoalText?: boolean
 ): string | null {
@@ -118,16 +120,16 @@ export function parseGoalsToText(
 
 export function mapWorkoutAndSetsToDraftWorkoutExerciseSets(
 	routineDayExercises: DatabaseRoutineDayExercise[],
-	exercises: ExerciseAndProgressions[],
-	workoutData: WorkoutAndSets | null
-): DraftWorkoutExerciseSets[] {
+	exercises: ExerciseWithProgressions[],
+	workoutData: WorkoutWithSets | null
+): ExerciseIdWithDraftSets[] {
 	return routineDayExercises.map((de) => {
 		const thisExercise = exercises.find(
 			(e) => e.exercise.id === de.exercise_id
 		)
 
 		const sets: DraftWorkoutSet[] = !workoutData
-			? [{ order: 1, progressionId: null, reps: null }]
+			? [{ order: 1, progression_id: null, reps: 0 }]
 			: workoutData.sets
 					.filter((s) =>
 						thisExercise?.progressions.some(
@@ -137,7 +139,7 @@ export function mapWorkoutAndSetsToDraftWorkoutExerciseSets(
 					.map((s) => ({
 						id: s.id,
 						order: s.order,
-						progressionId: s.progression_id,
+						progression_id: s.progression_id,
 						reps: s.reps
 					}))
 
@@ -149,10 +151,10 @@ export function mapWorkoutAndSetsToDraftWorkoutExerciseSets(
 }
 
 export function mapWorkoutDataToDraftWorkoutExerciseSets(
-	workoutData: WorkoutAndSets,
-	exercises: ExerciseAndProgressions[]
-): DraftWorkoutExerciseSets[] {
-	const workoutExercises: ExerciseAndProgressions[] = exercises.flatMap(
+	workoutData: WorkoutWithSets,
+	exercises: ExerciseWithProgressions[]
+): ExerciseIdWithDraftSets[] {
+	const workoutExercises: ExerciseWithProgressions[] = exercises.flatMap(
 		(ep) =>
 			workoutData.sets.some((set) =>
 				ep.progressions.some((p) => p.id === set.progression_id)
@@ -169,7 +171,7 @@ export function mapWorkoutDataToDraftWorkoutExerciseSets(
 			)
 			.map((set) => ({
 				order: set.order,
-				progressionId: set.progression_id,
+				progression_id: set.progression_id,
 				reps: set.reps
 			}))
 	}))

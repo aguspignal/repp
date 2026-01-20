@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
-import { RDEGoalType } from "../../types/routines"
 import { parseNumericInput } from "../../utils/parsing"
+import { RoutineDayExerciseGoalType } from "../../types/routines"
 import { StyleSheet, TouchableOpacity, View } from "react-native"
 import { TextInput } from "react-native-gesture-handler"
 import { theme } from "../../resources/theme"
@@ -16,7 +16,10 @@ type Props = {
 	setGoalLow: Dispatch<SetStateAction<string>>
 	setGoalHigh: Dispatch<SetStateAction<string>>
 	setShowRange: Dispatch<SetStateAction<boolean>>
-	onUpdateGoal: (goal: number | null, goalType: RDEGoalType) => void
+	onUpdateGoal: (
+		goal: number | null,
+		goalType: RoutineDayExerciseGoalType
+	) => void
 	inSeconds?: boolean
 }
 export default function RDEGoalRangeInput({
@@ -35,7 +38,7 @@ export default function RDEGoalRangeInput({
 	function handleChangeGoal(
 		txt: string,
 		setState: Dispatch<SetStateAction<string>>,
-		goalType: RDEGoalType
+		goalType: RoutineDayExerciseGoalType
 	) {
 		const num = parseNumericInput(txt, setState)
 		onUpdateGoal(num, goalType)
@@ -56,8 +59,8 @@ export default function RDEGoalRangeInput({
 					{type === "sets"
 						? t("messages.sets-goal")
 						: inSeconds
-						? t("messages.seconds-goal")
-						: t("messages.reps-goal")}
+							? t("messages.seconds-goal")
+							: t("messages.reps-goal")}
 				</StyledText>
 
 				<TextInput

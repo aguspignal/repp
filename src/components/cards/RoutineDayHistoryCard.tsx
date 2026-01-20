@@ -1,9 +1,9 @@
 import {
 	DatabaseWorkout,
 	DatabaseWorkoutSet,
-	ExerciseProgressionsAndSets,
+	ExerciseWithProgressionsAndSets,
 	WorkoutHistoryViewPer
-} from "../../types/routines"
+} from "../../types/workouts"
 import { DatabaseProgression } from "../../types/exercises"
 import { parseDateToWeekdayMonthDay } from "../../utils/parsing"
 import { RootStackNavigationProp } from "../../navigation/params"
@@ -32,7 +32,7 @@ export default function RoutineDayHistoryCard({
 	const { exercises } = useUserStore()
 	const nav = useNavigation<RootStackNavigationProp>()
 
-	const workoutExercisesProgressionsAndSets: ExerciseProgressionsAndSets[] =
+	const workoutExercisesProgressionsAndSets: ExerciseWithProgressionsAndSets[] =
 		useMemo(() => {
 			const progressionIds = new Set(sets.map((s) => s.progression_id))
 
@@ -112,7 +112,7 @@ export default function RoutineDayHistoryCard({
 	)
 }
 
-type HistoryExerciseProps = ExerciseProgressionsAndSets & {
+type HistoryExerciseProps = ExerciseWithProgressionsAndSets & {
 	viewPer: WorkoutHistoryViewPer
 }
 function HistoryExercise({

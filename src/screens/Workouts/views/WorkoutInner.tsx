@@ -1,11 +1,6 @@
 import {
 	DatabaseRoutineDay,
-	DatabaseRoutineDayExercise,
-	DatabaseWorkoutSet,
-	DraftWorkoutAndSets,
-	DraftWorkoutExerciseSets,
-	DraftWorkoutSet,
-	WorkoutAndSets
+	DatabaseRoutineDayExercise
 } from "../../../types/routines"
 import {
 	FlatList,
@@ -18,6 +13,13 @@ import {
 	mapWorkoutAndSetsToDraftWorkoutExerciseSets,
 	mapWorkoutDataToDraftWorkoutExerciseSets
 } from "../../../utils/parsing"
+import {
+	DatabaseWorkoutSet,
+	DraftWorkoutSet,
+	ExerciseIdWithDraftSets,
+	WorkoutUpdatePayload,
+	WorkoutWithSets
+} from "../../../types/workouts"
 import { areDraftWorkoutExerciseSetsInvalid } from "../../../utils/validation"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { sortRDExercisesByOrderAsc } from "../../../utils/sorting"
@@ -39,8 +41,8 @@ import WorkoutInput from "../../../components/inputs/WorkoutInput"
 type Props = {
 	routineDay: DatabaseRoutineDay
 	dayExercises: DatabaseRoutineDayExercise[]
-	workoutData: WorkoutAndSets | null
-	onSubmit: (params: DraftWorkoutAndSets) => void
+	workoutData: WorkoutWithSets | null
+	onSubmit: (params: WorkoutUpdatePayload) => void
 	isLoadingAction: boolean
 }
 
@@ -72,7 +74,7 @@ export default function WorkoutInner({
 			? new Date(workoutData.workout.date)
 			: new Date()
 	)
-	const [workoutSets, setWorkoutSets] = useState<DraftWorkoutExerciseSets[]>(
+	const [workoutSets, setWorkoutSets] = useState<ExerciseIdWithDraftSets[]>(
 		mapWorkoutAndSetsToDraftWorkoutExerciseSets(
 			dayExercises,
 			exercises,
@@ -112,7 +114,7 @@ export default function WorkoutInner({
 				if (!oldSet) return []
 				if (
 					oldSet.order === newSet.order &&
-					oldSet.progression_id === newSet.progressionId &&
+					oldSet.progression_id === newSet.progression_id &&
 					oldSet.reps === newSet.reps
 				)
 					return []
@@ -121,7 +123,7 @@ export default function WorkoutInner({
 					...oldSet,
 					order: newSet.order,
 					progression_id:
-						newSet.progressionId ?? oldSet.progression_id,
+						newSet.progression_id ?? oldSet.progression_id,
 					reps: newSet.reps ?? oldSet.reps
 				}
 			})

@@ -3,10 +3,10 @@ import {
 	parseWorkoutHistoryViewPerToText
 } from "../../utils/parsing"
 import {
-	WorkoutAndSets,
 	WorkoutHistorySortBy,
-	WorkoutHistoryViewPer
-} from "../../types/routines"
+	WorkoutHistoryViewPer,
+	WorkoutWithSets
+} from "../../types/workouts"
 import { FlatList, StyleSheet, View } from "react-native"
 import { isPostgrestError } from "../../utils/queriesHelpers"
 import { RootStackScreenProps } from "../../navigation/params"
@@ -19,15 +19,14 @@ import ListActionCard from "../../components/cards/ListActionCard"
 import Loading from "../Loading"
 import RoutineDayHistoryCard from "../../components/cards/RoutineDayHistoryCard"
 import useRoutineQuery from "../../hooks/useRoutineQuery"
+import useWorkoutQuery from "../../hooks/useWorkoutQuery"
 
 export default function RoutineDayHistory({
 	route
 }: RootStackScreenProps<"RoutineDayHistory">) {
 	const { t } = useTranslation()
-	const {
-		getRoutineDayAllTimeWorkoutsCount,
-		getWorkoutsAndSetsInRangeByDayId
-	} = useRoutineQuery()
+	const { getRoutineDayAllTimeWorkoutsCount } = useRoutineQuery()
+	const { getWorkoutsAndSetsInRangeByDayId } = useWorkoutQuery()
 
 	const { data: allTimeCount, isPending: isPendingCount } =
 		getRoutineDayAllTimeWorkoutsCount(route.params.id)
@@ -35,7 +34,9 @@ export default function RoutineDayHistory({
 	const showInGroupsOf = 10
 	const [paginationFrom, setPaginationFrom] = useState(0)
 	const [paginationTo, setPaginationTo] = useState(showInGroupsOf - 1)
-	const [workoutsAndSets, setWorkoutsAndSets] = useState<WorkoutAndSets[]>([])
+	const [workoutsAndSets, setWorkoutsAndSets] = useState<WorkoutWithSets[]>(
+		[]
+	)
 	const [sortBy, setSortBy] = useState<WorkoutHistorySortBy>("newest")
 	const [viewPer, setViewPer] =
 		useState<WorkoutHistoryViewPer>("progressions")

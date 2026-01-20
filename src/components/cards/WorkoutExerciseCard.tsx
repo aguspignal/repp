@@ -4,15 +4,12 @@ import {
 } from "../../utils/sorting"
 import {
 	DatabaseProgression,
-	ExerciseAndProgressions
+	ExerciseWithProgressions
 } from "../../types/exercises"
-import {
-	DraftWorkoutSet,
-	DraftWorkoutExerciseSets,
-	RDEGoals
-} from "../../types/routines"
 import { Dispatch, SetStateAction, useMemo, useState } from "react"
+import { DraftWorkoutSet, ExerciseIdWithDraftSets } from "../../types/workouts"
 import { parseGoalsToText, parseNumericInput } from "../../utils/parsing"
+import { RoutineDayExerciseGoals } from "../../types/routines"
 import { SheetManager } from "react-native-actions-sheet"
 import { SheetOption } from "../../lib/sheets"
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native"
@@ -22,11 +19,11 @@ import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
 
 type Props = {
-	exerciseAndProgressions: ExerciseAndProgressions
+	exerciseAndProgressions: ExerciseWithProgressions
 	exerciseNote: string | null
-	goals: RDEGoals
-	workoutSets: DraftWorkoutExerciseSets[]
-	setWorkoutSets: Dispatch<SetStateAction<DraftWorkoutExerciseSets[]>>
+	goals: RoutineDayExerciseGoals
+	workoutSets: ExerciseIdWithDraftSets[]
+	setWorkoutSets: Dispatch<SetStateAction<ExerciseIdWithDraftSets[]>>
 	onCreateProgression: (eId: number) => void
 }
 
@@ -133,9 +130,9 @@ export default function WorkoutExerciseCard({
 						...es.sets,
 						{
 							order: nextOrder,
-							progressionId:
-								sorted[sorted.length - 1]?.progressionId,
-							reps: null
+							progression_id:
+								sorted[sorted.length - 1]?.progression_id,
+							reps: 0
 						}
 					]
 				}
@@ -160,7 +157,9 @@ export default function WorkoutExerciseCard({
 				return {
 					...es,
 					sets: es.sets.map((s) =>
-						s.order === draftSet.order ? { ...s, reps } : s
+						s.order === draftSet.order
+							? { ...s, reps: reps ?? 0 }
+							: s
 					)
 				}
 			})
@@ -200,7 +199,7 @@ export default function WorkoutExerciseCard({
 						key={set.order}
 						draftSet={set}
 						progression={progressions.find(
-							(p) => p.id === set.progressionId
+							(p) => p.id === set.progression_id
 						)}
 						onDelete={handleDeleteSet}
 						onChooseProgression={handleChooseProgression}
@@ -316,9 +315,9 @@ function SetRow({
 			>
 				<StyledText
 					type="text"
-					color={draftSet.progressionId ? "textLight" : "grayDark"}
+					color={draftSet.progression_id ? "textLight" : "grayDark"}
 				>
-					{draftSet.progressionId && progression
+					{draftSet.progression_id && progression
 						? progression.name
 						: t("actions.choose-progression")}
 				</StyledText>

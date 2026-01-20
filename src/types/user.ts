@@ -1,11 +1,11 @@
 import { Database } from "./supabase"
-import { ExerciseAndProgressions } from "./exercises"
-import { RoutineWithDays } from "./routines"
+import { ExerciseWithProgressions } from "./exercises"
+import { RoutineWithDaysAndSchedule } from "./routines"
 
 export type DatabaseUser = Database["public"]["Tables"]["Users"]["Row"]
 
 export type InitialData = {
 	user: DatabaseUser | null
-	exercises: ExerciseAndProgressions[]
-	routines: RoutineWithDays[]
+	exercises: ExerciseWithProgressions[]
+	routines: RoutineWithDaysAndSchedule[]
 }
