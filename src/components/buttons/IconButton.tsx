@@ -35,8 +35,8 @@ export default function IconButton({
 		isDisabled || isLoading
 			? theme.colors.grayLight
 			: !isBordered
-			? theme.colors[color as keyof typeof theme.colors]
-			: undefined
+				? theme.colors[color as keyof typeof theme.colors]
+				: undefined
 
 	const btnStyles: StyleProp<ViewStyle> = {
 		alignItems: "center",
@@ -44,8 +44,8 @@ export default function IconButton({
 		padding: !withPadding
 			? 0
 			: size === "xs"
-			? theme.spacing.xxs
-			: theme.spacing.xs,
+				? theme.spacing.xxs
+				: theme.spacing.xs,
 		backgroundColor: withPadding ? bgColor : undefined,
 		borderWidth: isBordered ? 1 : 0,
 		borderColor: theme.colors[color as keyof typeof theme.colors],
@@ -55,15 +55,17 @@ export default function IconButton({
 	const iconColor = isDisabled
 		? theme.colors.grayDark
 		: withPadding
-		? theme.colors.textDark
-		: theme.colors[color as keyof typeof theme.colors]
+			? theme.colors.textDark
+			: theme.colors[color as keyof typeof theme.colors]
 
 	const iconSize =
 		size === "xs" || size === "s"
 			? theme.fontSize.l
-			: size === "xl"
-			? theme.fontSize.h2
-			: theme.fontSize.xxl
+			: size === "m"
+				? theme.fontSize.xxl
+				: size === "l"
+					? theme.fontSize.h3
+					: theme.fontSize.h2
 
 	const iconStyles: StyleProp<TextStyle> = {
 		color: iconColor,

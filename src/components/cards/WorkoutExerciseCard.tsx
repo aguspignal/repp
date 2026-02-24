@@ -203,6 +203,7 @@ export default function WorkoutExerciseCard({
 					icon="history"
 					onPress={goToHistory}
 					color="textLight"
+					size="l"
 				/>
 			</TouchableOpacity>
 

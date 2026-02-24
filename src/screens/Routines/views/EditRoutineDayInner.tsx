@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
 		gap: theme.spacing.xs
 	},
 	exercisesContainer: {
-		gap: theme.spacing.xxs
+		gap: theme.spacing.xs
 	},
 	addExerciseBtn: {
 		flexDirection: "row",

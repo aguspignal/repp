@@ -79,7 +79,7 @@ export default function RDEGoalRangeInput({
 				/>
 
 				{showRange ? (
-					<StyledText type="note">{t("messages.to")}</StyledText>
+					<StyledText type="text">{t("messages.to")}</StyledText>
 				) : null}
 
 				{showRange ? (
@@ -111,13 +111,16 @@ const styles = StyleSheet.create({
 	row: {
 		flexDirection: "row",
 		alignItems: "center",
-		gap: theme.spacing.s
+		gap: theme.spacing.xs
 	},
 	spaceBetween: {
 		justifyContent: "space-between"
 	},
 	input: {
 		color: theme.colors.textLight,
-		fontSize: theme.fontSize.s
+		fontSize: theme.fontSize.s,
+		backgroundColor: theme.colors.backgroundGray,
+		paddingHorizontal: theme.spacing.xs,
+		borderRadius: theme.spacing.xxs
 	}
 })

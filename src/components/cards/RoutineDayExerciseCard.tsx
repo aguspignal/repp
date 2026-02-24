@@ -124,28 +124,30 @@ export default function RoutineDayExerciseCard({
 					/>
 				</View>
 
-				<RDEGoalRangeInput
-					type="sets"
-					goalHigh={setsGoalHigh}
-					goalLow={setsGoalLow}
-					showRange={showSetsRange}
-					setGoalLow={setSetsGoalLow}
-					setGoalHigh={setSetsGoalHigh}
-					setShowRange={setShowSetsRange}
-					onUpdateGoal={handleChangeGoal}
-				/>
+				<View style={styles.rangeInputsContainer}>
+					<RDEGoalRangeInput
+						type="sets"
+						goalHigh={setsGoalHigh}
+						goalLow={setsGoalLow}
+						showRange={showSetsRange}
+						setGoalLow={setSetsGoalLow}
+						setGoalHigh={setSetsGoalHigh}
+						setShowRange={setShowSetsRange}
+						onUpdateGoal={handleChangeGoal}
+					/>
 
-				<RDEGoalRangeInput
-					type="reps"
-					goalHigh={repsGoalHigh}
-					goalLow={repsGoalLow}
-					showRange={showRepsRange}
-					setGoalLow={setRepsGoalLow}
-					setGoalHigh={setRepsGoalHigh}
-					setShowRange={setShowRepsRange}
-					onUpdateGoal={handleChangeGoal}
-					inSeconds={exercise?.is_isometric}
-				/>
+					<RDEGoalRangeInput
+						type="reps"
+						goalHigh={repsGoalHigh}
+						goalLow={repsGoalLow}
+						showRange={showRepsRange}
+						setGoalLow={setRepsGoalLow}
+						setGoalHigh={setRepsGoalHigh}
+						setShowRange={setShowRepsRange}
+						onUpdateGoal={handleChangeGoal}
+						inSeconds={exercise?.is_isometric}
+					/>
+				</View>
 			</View>
 
 			{/* <Sortables.Handle>
@@ -174,5 +176,8 @@ const styles = StyleSheet.create({
 		paddingLeft: 0,
 		width: "100%"
 		// backgroundColor: "#ff0000"
+	},
+	rangeInputsContainer: {
+		gap: theme.spacing.xxs
 	}
 })
