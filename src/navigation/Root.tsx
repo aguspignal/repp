@@ -29,6 +29,7 @@ import EditWorkout from "../screens/Workouts/EditWorkout"
 import EditWorkoutHeader from "../components/header/EditWorkoutHeader"
 import RoutineSchedule from "../screens/Routines/RoutineSchedule"
 import RoutineScheduleHeader from "../components/header/RoutineScheduleHeader"
+import ExerciseHistory from "../screens/Exercises/ExerciseHistory"
 
 type Props = {
 	uuid: string
@@ -125,9 +126,8 @@ function RootNavigator() {
 				name="RoutineSchedule"
 				component={RoutineSchedule}
 				options={{
-					header: ({ navigation, back, route }) => (
+					header: ({ back, route }) => (
 						<RoutineScheduleHeader
-							navigation={navigation}
 							route={
 								route as RootStackScreenProps<"RoutineSchedule">["route"]
 							}
@@ -194,6 +194,11 @@ function RootNavigator() {
 						/>
 					)
 				}}
+			/>
+			<RootStack.Screen
+				name="ExerciseHistory"
+				component={ExerciseHistory}
+				options={{ headerTitle: i18next.t("titles.exercise-history") }}
 			/>
 		</RootStack.Navigator>
 	)

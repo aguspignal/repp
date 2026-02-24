@@ -27,7 +27,7 @@ export default function RoutineDayHistoryCard({
 	sets,
 	isFirstInList = false,
 	canEdit = true,
-	viewPer = "progressions"
+	viewPer = "progression"
 }: Props) {
 	const { exercises } = useUserStore()
 	const nav = useNavigation<RootStackNavigationProp>()
@@ -143,7 +143,7 @@ function HistoryExercise({
 			<View style={styles.horizontalLine} />
 
 			<View style={styles.setsContainer}>
-				{viewPer === "sets"
+				{viewPer === "set"
 					? sets.map((set) => (
 							<PerSetRow
 								key={set.id}
@@ -224,17 +224,19 @@ function PerProgressionRow({
 				{progression.name}
 			</StyledText>
 
-			{allSets.map((set) => (
-				<StyledText
-					key={set.order}
-					type="boldText"
-					align="center"
-					color={set.repsStr === "-" ? "grayDark" : "textLight"}
-					style={styles.perProgSetFlex}
-				>
-					{set.repsStr}
-				</StyledText>
-			))}
+			<View style={[styles.row, styles.progRowSetsContainer]}>
+				{allSets.map((set) => (
+					<StyledText
+						key={set.order}
+						type="boldText"
+						align="center"
+						color={set.repsStr === "-" ? "grayDark" : "textLight"}
+						style={styles.perProgSetFlex}
+					>
+						{set.repsStr}
+					</StyledText>
+				))}
+			</View>
 		</View>
 	)
 }
@@ -274,7 +276,7 @@ const styles = StyleSheet.create({
 		marginLeft: theme.spacing.xs,
 		borderLeftWidth: 1,
 		borderColor: theme.colors.primary,
-		gap: theme.spacing.m
+		gap: theme.spacing.s
 	},
 	setsContainer: {
 		gap: theme.spacing.xxs
@@ -283,7 +285,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: 1,
 		backgroundColor: theme.colors.primary,
-		marginVertical: theme.spacing.xxs
+		marginVertical: theme.spacing.x3s
 	},
 	setFlex: {
 		flex: 1
@@ -294,12 +296,19 @@ const styles = StyleSheet.create({
 	repsFlex: {
 		flex: 2
 	},
+	progRowSetsContainer: {
+		width: "50%",
+		justifyContent: "flex-end",
+		gap: theme.spacing.s
+		// backgroundColor: theme.colors.grayLight,
+	},
 	perProgNameFlex: {
-		flex: 3
+		// flex: 1,
+		width: "50%"
 		// backgroundColor: theme.colors.secondary
 	},
 	perProgSetFlex: {
-		flex: 1.2
+		// flex: 1,
 		// backgroundColor: theme.colors.danger
 	},
 	setsRowContainer: {

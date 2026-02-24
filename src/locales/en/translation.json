@@ -34,6 +34,7 @@
 		"save": "Save",
 		"save-changes": "Save changes",
 		"signin": "Sign in",
+		"split-in-two-weeks": "Split in two weeks",
 		"sort": "Sort",
 		"start-workout": "Start workout",
 		"update-password": "Update password",
@@ -63,7 +64,14 @@
 		"sets": "sets",
 		"SECS": "SECS",
 		"seconds": "seconds",
-		"weighted": "Weighted"
+		"weighted": "Weighted",
+		"monday": "Monday",
+		"tuesday": "Tuesday",
+		"wednesday": "Wednesday",
+		"thursday": "Thursday",
+		"friday": "Friday",
+		"saturday": "Saturday",
+		"sunday": "Sunday"
 	},
 	"error-messages": {
 		"an-error-ocurred-try-again": "It looks like an error occurred, please try again",
@@ -108,7 +116,7 @@
 		"workouts-related-to-day-will-be-saved": "Workouts related to this day will be saved",
 		"you-dont-have-routines-yet": "You don't have any routine yet",
 		"per-set": "Per set",
-		"per-progressions": "Per progression"
+		"per-progression": "Per progression"
 	},
 	"questions": {
 		"already-have-one": "Already have one?",
@@ -148,6 +156,12 @@
 		"progressions": "Progressions",
 		"(routineName)-schedule": "{{routineName}} schedule",
 		"(routineName)": "{{routineName}}",
-		"schedule": "Schedule"
+		"schedule": "Schedule",
+		"weekly-schedule": "Weekly schedule",
+		"exercise-history": "Exercise history",
+		"highest-progression": "Highest progression",
+		"lowest-progression": "Lowest progression",
+		"from-date": "From date",
+		"to-date": "To date"
 	}
 }

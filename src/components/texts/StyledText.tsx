@@ -7,6 +7,8 @@ type Props = {
 	color?: keyof typeof theme.colors
 	align?: "center" | "left" | "right"
 	style?: StyleProp<TextStyle>
+	numberOfLines?: number
+	ellipsizeMode?: "head" | "middle" | "tail" | "clip"
 	children: React.ReactNode
 }
 export default function StyledText({
@@ -14,6 +16,8 @@ export default function StyledText({
 	color = "textLight",
 	align = "left",
 	style,
+	numberOfLines,
+	ellipsizeMode,
 	children
 }: Props) {
 	const fontSize =
@@ -34,5 +38,5 @@ export default function StyledText({
 		color: theme.colors[color as keyof typeof theme.colors]
 	}
 
-	return <Text style={[textStyle, style]}>{children}</Text>
+	return <Text style={[textStyle, style]} numberOfLines={numberOfLines} ellipsizeMode={ellipsizeMode}>{children}</Text>
 }

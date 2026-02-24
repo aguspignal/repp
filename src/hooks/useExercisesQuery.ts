@@ -2,17 +2,28 @@ import { ExerciseWithProgressions } from "../types/exercises"
 import { isPostgrestError } from "../utils/queriesHelpers"
 import { PostgrestError } from "@supabase/supabase-js"
 import { useQuery } from "@tanstack/react-query"
-import exercisesService from "../services/exercisesService"
+import exercisesService, {
+	FetchExerciseHistoryParams
+} from "../services/exercisesService"
+import { ExerciseHistorySet } from "../types/workouts"
 
 const RQKEY_ROOT = "exercisesQueries"
 export const GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY = (uId: number) => [
 	RQKEY_ROOT,
-	"user",
+	"userExercisesAndProgressions",
 	uId
 ]
 export const GETEXERCISEANDPROGRESSIONSBYID_KEY = (id: number) => [
 	RQKEY_ROOT,
+	"exerciseAndProgressions",
 	id
+]
+export const GETEXERCISEHISTORY_KEY = (eId: number, df: string, dt: string) => [
+	RQKEY_ROOT,
+	"exerciseHistory",
+	eId,
+	df,
+	dt
 ]
 
 export default function useExercisesQuery() {
@@ -64,8 +75,51 @@ export default function useExercisesQuery() {
 		})
 	}
 
+	function getExerciseHistory({
+		exerciseId,
+		highestProgressionOrder,
+		lowestProgressionOrder,
+		...rest
+	}: GetExerciseHistoryParams) {
+		return useQuery<ExerciseHistorySet[] | null | PostgrestError>({
+			queryKey: GETEXERCISEHISTORY_KEY(
+				exerciseId ?? 0,
+				rest.fromDate.toISOString(),
+				rest.toDate.toISOString()
+			),
+			queryFn: async () => {
+				if (
+					!exerciseId ||
+					!highestProgressionOrder ||
+					!lowestProgressionOrder
+				)
+					return null
+
+				return exercisesService.fetchExerciseHistory({
+					exerciseId,
+					highestProgressionOrder,
+					lowestProgressionOrder,
+					...rest
+				})
+			}
+			// enabled:
+			// 	!!exerciseId &&
+			// 	!!highestProgressionOrder &&
+			// 	!!lowestProgressionOrder
+		})
+	}
+
 	return {
 		getUserExercisesAndProgressionsLazy,
-		getExerciseAndProgressionsById
+		getExerciseAndProgressionsById,
+		getExerciseHistory
 	}
+}
+
+type GetExerciseHistoryParams = {
+	exerciseId: number | undefined
+	highestProgressionOrder: number | undefined
+	lowestProgressionOrder: number | undefined
+	fromDate: Date
+	toDate: Date
 }

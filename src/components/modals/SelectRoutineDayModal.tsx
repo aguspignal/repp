@@ -9,14 +9,16 @@ import StyledText from "../texts/StyledText"
 type Props = {
 	isVisible: boolean
 	setIsVisible: (b: boolean) => void
-	onStart: (dayId: number) => void
+	title: string
+	onSelect: (dayId: number) => void
 	routineId: number | undefined
 }
 
-export default function StartWorkoutModal({
+export default function SelectRoutineDayModal({
 	isVisible,
 	setIsVisible,
-	onStart,
+	title,
+	onSelect,
 	routineId
 }: Props) {
 	const { routines } = useUserStore()
@@ -25,7 +27,7 @@ export default function StartWorkoutModal({
 
 	function handleConfirm(dayId: number | undefined) {
 		if (!dayId) return
-		onStart(dayId)
+		onSelect(dayId)
 	}
 
 	return (
@@ -36,9 +38,7 @@ export default function StartWorkoutModal({
 		>
 			<View style={styles.container}>
 				<StyledText type="boldText" align="center" style={styles.title}>
-					{i18next.t(
-						"actions.choose-training-day-to-start-working-out"
-					)}
+					{title}
 				</StyledText>
 
 				<View style={styles.daysContainer}>

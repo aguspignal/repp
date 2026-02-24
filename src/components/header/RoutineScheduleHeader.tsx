@@ -1,15 +1,10 @@
 import { Header } from "@react-navigation/elements"
-import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { navigationStyles } from "../../navigation/styles"
-import { ParamListBase } from "@react-navigation/native"
-import { TouchableOpacity } from "react-native"
-import MCIcon from "../icons/MCIcon"
-import { useUserStore } from "../../stores/useUserStore"
 import { RootStackScreenProps } from "../../navigation/params"
 import { useTranslation } from "react-i18next"
+import { useUserStore } from "../../stores/useUserStore"
 
 type Props = {
-	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>
 	route: RootStackScreenProps<"RoutineSchedule">["route"]
 	back?: {
 		title: string | undefined
@@ -17,11 +12,7 @@ type Props = {
 	}
 }
 
-export default function RoutineScheduleHeader({
-	navigation,
-	route,
-	back
-}: Props) {
+export default function RoutineScheduleHeader({ route, back }: Props) {
 	const { t } = useTranslation()
 	const { routines } = useUserStore()
 
@@ -34,7 +25,7 @@ export default function RoutineScheduleHeader({
 			title={
 				routine
 					? t("titles.(routineName)", {
-							routineName: routine.routine.id
+							routineName: routine.routine.name
 						})
 					: t("titles.schedule")
 			}

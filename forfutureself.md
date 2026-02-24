@@ -1,5 +1,6 @@
 # To fix
 
+    - add progression (and add from workout)
     - edit finished workouts
         - troubles with order
         - not deleting
@@ -11,6 +12,7 @@
     - routine schedule
         - sort days on routineinner by schedule
     - milestones
+    - sqlite
 
 # To test
 

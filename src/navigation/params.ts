@@ -38,6 +38,7 @@ export type RootStackParams = {
 		id: number
 		canEdit: boolean
 	}
+	ExerciseHistory: { id: number }
 }
 
 export type RootStackScreenProps<T extends keyof RootStackParams> =

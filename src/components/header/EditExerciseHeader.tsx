@@ -81,6 +81,15 @@ function HeaderRight({ navigation, exerciseId }: HeaderRightProps) {
 	return (
 		<View style={navigationStyles.headerRightContainer}>
 			<TouchableOpacity
+				onPress={() =>
+					navigation.navigate("ExerciseHistory", { id: exerciseId })
+				}
+				disabled={isPending}
+			>
+				<MCIcon name="history" style={navigationStyles.headerIcon} />
+			</TouchableOpacity>
+
+			<TouchableOpacity
 				onPress={() => setModalVisible(true)}
 				disabled={isPending}
 			>

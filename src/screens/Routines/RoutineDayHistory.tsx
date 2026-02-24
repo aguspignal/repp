@@ -38,8 +38,7 @@ export default function RoutineDayHistory({
 		[]
 	)
 	const [sortBy, setSortBy] = useState<WorkoutHistorySortBy>("newest")
-	const [viewPer, setViewPer] =
-		useState<WorkoutHistoryViewPer>("progressions")
+	const [viewPer, setViewPer] = useState<WorkoutHistoryViewPer>("progression")
 
 	const { data, isPending } = getWorkoutsAndSetsInRangeByDayId({
 		dayId: route.params.id,
@@ -71,12 +70,12 @@ export default function RoutineDayHistory({
 				triggerLabel={parseWorkoutHistoryViewPerToText(viewPer)}
 				options={[
 					{
-						text: t("messages.per-progressions"),
-						onSelect: () => setViewPer("progressions")
+						text: t("messages.per-progression"),
+						onSelect: () => setViewPer("progression")
 					},
 					{
 						text: t("messages.per-set"),
-						onSelect: () => setViewPer("sets")
+						onSelect: () => setViewPer("set")
 					}
 				]}
 			/>

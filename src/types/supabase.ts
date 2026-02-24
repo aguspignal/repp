@@ -374,7 +374,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_exercise_workout_sets: {
+        Args: {
+          exercise_id: number
+          from_date: string
+          highest_prog_order: number
+          lowest_prog_order: number
+          to_date: string
+        }
+        Returns: {
+          progression_id: number
+          reps: number
+          set_id: number
+          set_order: number
+          workout_date: string
+          workout_id: number
+        }[]
+      }
     }
     Enums: {
       RoutineStatus: "active" | "draft" | "archived"

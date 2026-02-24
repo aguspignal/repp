@@ -1,7 +1,8 @@
 import {
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
-	RoutineDayExerciseGoals
+	RoutineDayExerciseGoals,
+	Weekday
 } from "../types/routines"
 import {
 	ExerciseFilterBy,
@@ -10,13 +11,16 @@ import {
 } from "../types/exercises"
 import {
 	DraftWorkoutSet,
+	ExerciseHistorySet,
 	ExerciseIdWithDraftSets,
+	ExerciseHistoryPerWorkout,
 	WorkoutHistorySortBy,
 	WorkoutHistoryViewPer,
 	WorkoutWithSets
 } from "../types/workouts"
 import { Dispatch, SetStateAction } from "react"
 import i18next from "i18next"
+import { SheetOption } from "../lib/sheets"
 
 export function parseExerciseSortByToText(sortBy: ExerciseSortBy): string {
 	if (sortBy === "ascending") return "A-Z"
@@ -45,8 +49,7 @@ export function parseWorkoutHistorySortByToText(
 export function parseWorkoutHistoryViewPerToText(
 	viewPer: WorkoutHistoryViewPer
 ): string {
-	if (viewPer === "progressions")
-		return i18next.t("messages.per-progressions")
+	if (viewPer === "progression") return i18next.t("messages.per-progression")
 	else return i18next.t("messages.per-set")
 }
 
@@ -70,6 +73,20 @@ export function parseDateToWeekdayMonthDay(date: Date): string {
 		weekday: "short",
 		month: "long",
 		day: "numeric"
+	})
+}
+
+export function parseDateStringToMonthDay(dateStr: string): string {
+	return new Date(dateStr).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric"
+	})
+}
+export function parseDateToMonthDayYear(date: Date): string {
+	return date.toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric"
 	})
 }
 
@@ -175,4 +192,116 @@ export function mapWorkoutDataToDraftWorkoutExerciseSets(
 				reps: set.reps
 			}))
 	}))
+}
+
+export function parseWeekdayToShortText(weekday: Weekday): string {
+	let str = ""
+	switch (weekday) {
+		case "Monday": {
+			str = i18next.t("attributes.monday")
+			break
+		}
+		case "Tuesday": {
+			str = i18next.t("attributes.tuesday")
+			break
+		}
+		case "Wednesday": {
+			str = i18next.t("attributes.wednesday")
+			break
+		}
+		case "Thursday": {
+			str = i18next.t("attributes.thursday")
+			break
+		}
+		case "Friday": {
+			str = i18next.t("attributes.friday")
+			break
+		}
+		case "Saturday": {
+			str = i18next.t("attributes.saturday")
+			break
+		}
+		case "Sunday": {
+			str = i18next.t("attributes.sunday")
+			break
+		}
+	}
+
+	return str.slice(0, 3)
+}
+
+export function createSheetPayload(options: SheetOption[]) {
+	return {
+		payload: {
+			options
+		}
+	}
+}
+
+export function getDateFromAMonthAgo() {
+	const today = new Date()
+	return new Date(today.getFullYear(), today.getMonth() - 2, today.getDate())
+}
+
+export function parseExerciseHistoryPerWorkout(
+	sets: ExerciseHistorySet[]
+): ExerciseHistoryPerWorkout[] {
+	const workoutMap = new Map<number, ExerciseHistoryPerWorkout>()
+
+	for (const set of sets) {
+		if (!workoutMap.has(set.workout_id)) {
+			workoutMap.set(set.workout_id, {
+				workoutId: set.workout_id,
+				workoutDate: set.workout_date,
+				progressions: []
+			})
+		}
+
+		const workout = workoutMap.get(set.workout_id)!
+		let progression = workout.progressions.find(
+			(p) => p.progressionId === set.progression_id
+		)
+
+		if (!progression) {
+			progression = { progressionId: set.progression_id, sets: [] }
+			workout.progressions.push(progression)
+		}
+
+		progression.sets.push({
+			setId: set.set_id,
+			setOrder: set.set_order,
+			reps: set.reps
+		})
+	}
+
+	return Array.from(workoutMap.values()).sort((a, b) =>
+		b.workoutDate.localeCompare(a.workoutDate)
+	)
+}
+
+export function formatExerciseHistorySets(
+	sets: { setOrder: number; reps: number }[],
+	totalSets: number
+): string {
+	if (sets.length === 0) return ""
+
+	const sortedSets = sets.sort((a, b) => a.setOrder - b.setOrder)
+	const minOrder = sortedSets[0].setOrder
+	const maxOrder = sortedSets[sortedSets.length - 1].setOrder
+
+	const formatted: string[] = []
+	for (let order = 1; order <= totalSets; order++) {
+		if (order < minOrder) {
+			formatted.push("_")
+			continue
+		}
+		if (order > maxOrder) {
+			formatted.push("_")
+			continue
+		}
+		const set = sortedSets.find((s) => s.setOrder === order)
+		formatted.push(set ? set.reps.toString() : "_")
+	}
+
+	return formatted.join("-")
 }

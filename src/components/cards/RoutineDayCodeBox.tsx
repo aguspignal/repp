@@ -35,8 +35,7 @@ export function RoutineDayCodeBox({
 	const plusIconSize: keyof typeof theme.fontSize = size === "s" ? "h3" : "h2"
 
 	function handlePress() {
-		if (!onPress || !dayId) return
-		onPress(dayId)
+		if (onPress && dayId) onPress(dayId)
 	}
 
 	return (

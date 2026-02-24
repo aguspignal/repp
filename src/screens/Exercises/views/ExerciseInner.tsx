@@ -175,6 +175,10 @@ export default function ExerciseInner({
 			upsertProgressions
 		} = mapProgressionChanges()
 
+		console.log(upsertProgressions)
+		console.log(insertProgressions)
+		console.log(deleteProgressionsFromOrder)
+
 		onSubmit({
 			draftExercise: {
 				name,

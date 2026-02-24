@@ -17,6 +17,9 @@ import { theme } from "../../resources/theme"
 import { useTranslation } from "react-i18next"
 import MCIcon from "../icons/MCIcon"
 import StyledText from "../texts/StyledText"
+import IconButton from "../buttons/IconButton"
+import { useNavigation } from "@react-navigation/native"
+import { RootStackNavigationProp } from "../../navigation/params"
 
 type Props = {
 	exerciseAndProgressions: ExerciseWithProgressions
@@ -36,6 +39,7 @@ export default function WorkoutExerciseCard({
 	onCreateProgression
 }: Props) {
 	const { t } = useTranslation()
+	const nav = useNavigation<RootStackNavigationProp>()
 
 	const goalsText = useMemo(
 		() => parseGoalsToText(goals, exercise?.is_isometric),
@@ -104,7 +108,7 @@ export default function WorkoutExerciseCard({
 							...es,
 							sets: es.sets.map((s) =>
 								s.order === draftSet.order
-									? { ...s, progressionId: progId }
+									? { ...s, progression_id: progId }
 									: s
 							)
 						}
@@ -166,28 +170,40 @@ export default function WorkoutExerciseCard({
 		)
 	}
 
+	function goToHistory() {
+		nav.navigate("ExerciseHistory", { id: exercise.id })
+	}
+
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity
 				onPress={() => setShowNote((prev) => !prev)}
 				activeOpacity={0.7}
-				style={styles.nameAndNote}
+				style={[styles.row, styles.header]}
 			>
-				<StyledText type="subtitle">
-					{exercise?.name ?? t("attributes.exercise-name")}
-				</StyledText>
-
-				{exerciseNote && showNote ? (
-					<StyledText type="note" color="grayDark">
-						{exerciseNote}
+				<View style={styles.nameAndNote}>
+					<StyledText type="subtitle">
+						{exercise?.name ?? t("attributes.exercise-name")}
 					</StyledText>
-				) : null}
 
-				{goalsText ? (
-					<StyledText type="boldNote" color="secondary">
-						{goalsText}
-					</StyledText>
-				) : null}
+					{exerciseNote && showNote ? (
+						<StyledText type="note" color="grayDark">
+							{exerciseNote}
+						</StyledText>
+					) : null}
+
+					{goalsText ? (
+						<StyledText type="boldNote" color="secondary">
+							{goalsText}
+						</StyledText>
+					) : null}
+				</View>
+
+				<IconButton
+					icon="history"
+					onPress={goToHistory}
+					color="textLight"
+				/>
 			</TouchableOpacity>
 
 			<HeaderRow isIsometric={exercise?.is_isometric ?? false} />
@@ -348,9 +364,11 @@ const styles = StyleSheet.create({
 	container: {
 		gap: theme.spacing.xxs
 	},
-	nameAndNote: {
-		gap: theme.spacing.xxs,
+	header: {
 		paddingHorizontal: theme.spacing.s
+	},
+	nameAndNote: {
+		gap: theme.spacing.xxs
 	},
 	row: {
 		flexDirection: "row",

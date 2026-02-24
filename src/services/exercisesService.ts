@@ -5,6 +5,7 @@ import {
 } from "../types/exercises"
 import { PostgrestError } from "@supabase/supabase-js"
 import { supabase } from "../lib/supabase"
+import { ExerciseHistorySet } from "../types/workouts"
 
 const exercisesService = {
 	async fetchExerciseById(
@@ -41,6 +42,31 @@ const exercisesService = {
 			.from("Progressions")
 			.select("*")
 			.in("exercise_id", eIds)
+
+		if (error) return error
+		return data
+	},
+
+	async fetchExerciseHistory({
+		exerciseId,
+		fromDate,
+		toDate,
+		highestProgressionOrder,
+		lowestProgressionOrder
+	}: FetchExerciseHistoryParams): Promise<
+		ExerciseHistorySet[] | PostgrestError
+	> {
+		console.log("E-SERVICE: fetchExerciseHistory")
+		const { data, error } = await supabase.rpc(
+			"get_exercise_workout_sets",
+			{
+				exercise_id: exerciseId,
+				from_date: fromDate.toISOString(),
+				to_date: toDate.toISOString(),
+				highest_prog_order: highestProgressionOrder,
+				lowest_prog_order: lowestProgressionOrder
+			}
+		)
 
 		if (error) return error
 		return data
@@ -190,4 +216,12 @@ type deleteProgressionsFromOrderParams = {
 
 type UpsertProgressionsParams = {
 	progressions: DatabaseProgression[]
+}
+
+export type FetchExerciseHistoryParams = {
+	exerciseId: number
+	highestProgressionOrder: number
+	lowestProgressionOrder: number
+	fromDate: Date
+	toDate: Date
 }

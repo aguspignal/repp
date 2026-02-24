@@ -10,7 +10,12 @@ import {
 	GETROUTINEWITHDAYSANDEXERCISESBYID_KEY,
 	GETUSERROUTINESWITHDAYSLAZY_KEY
 } from "../../../hooks/useRoutineQuery"
-import { RefreshControl, StyleSheet, View } from "react-native"
+import {
+	RefreshControl,
+	StyleSheet,
+	TouchableOpacity,
+	View
+} from "react-native"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { ScrollView } from "react-native-gesture-handler"
 import { sortRoutineDaysAndExercisesByName } from "../../../utils/sorting"
@@ -22,11 +27,12 @@ import { useUserStore } from "../../../stores/useUserStore"
 import Button from "../../../components/buttons/Button"
 import CreateRoutineDayModal from "../../../components/modals/CreateRoutineDayModal"
 import RoutineDayCard from "../../../components/cards/RoutineDayCard"
-import StartWorkoutModal from "../../../components/modals/StartWorkoutModal"
+import StartWorkoutModal from "../../../components/modals/SelectRoutineDayModal"
 import StyledText from "../../../components/texts/StyledText"
 import ToastNotification from "../../../components/notifications/ToastNotification"
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
 import ScheduleDay from "../../../components/cards/ScheduleDay"
+import SelectRoutineDayModal from "../../../components/modals/SelectRoutineDayModal"
 
 type Props = {
 	routine: RoutineWithDaysAndExercises
@@ -89,13 +95,17 @@ export default function RoutineInner({
 		)
 	}
 
-	function handleEditDay(day: DatabaseRoutineDay | null) {
+	function goToEditDay(day: DatabaseRoutineDay | null) {
 		if (!day) return
 		nav.navigate("EditRoutineDay", { id: day.id })
 	}
 
-	function handleSeeDayHistory(id: number) {
+	function goToDayHistory(id: number) {
 		nav.navigate("RoutineDayHistory", { id, canEdit: true })
+	}
+
+	function goToSchedule() {
+		nav.navigate("RoutineSchedule", { routineId: routine.id })
 	}
 
 	function handleRefresh() {
@@ -145,7 +155,10 @@ export default function RoutineInner({
 			<View style={styles.scheduleContainer}>
 				<StyledText type="subtitle">{t("titles.schedule")}</StyledText>
 
-				<View style={styles.schedule}>
+				<TouchableOpacity
+					onPress={goToSchedule}
+					style={styles.schedule}
+				>
 					<ScheduleDay weekday="Monday" routineDay={null} />
 					<ScheduleDay weekday="Tuesday" routineDay={null} />
 					<ScheduleDay weekday="Wednesday" routineDay={null} />
@@ -153,7 +166,7 @@ export default function RoutineInner({
 					<ScheduleDay weekday="Friday" routineDay={null} />
 					<ScheduleDay weekday="Saturday" routineDay={null} />
 					<ScheduleDay weekday="Sunday" routineDay={null} />
-				</View>
+				</TouchableOpacity>
 			</View>
 
 			{sortRoutineDaysAndExercisesByName(daysAndExercises)
@@ -162,8 +175,8 @@ export default function RoutineInner({
 					<RoutineDayCard
 						routineDay={de.day}
 						rdExercises={de.exercises}
-						onPressCard={handleEditDay}
-						onPressHistory={handleSeeDayHistory}
+						onPressCard={goToEditDay}
+						onPressHistory={goToDayHistory}
 						key={de.day.id}
 					/>
 				))}
@@ -182,10 +195,11 @@ export default function RoutineInner({
 				isLoadingCreate={isPending}
 			/>
 
-			<StartWorkoutModal
+			<SelectRoutineDayModal
 				isVisible={startWorkoutModalVisible}
 				setIsVisible={setStartWorkoutModalVisible}
-				onStart={handleStartWorkout}
+				title={t("actions.choose-training-day-to-start-working-out")}
+				onSelect={handleStartWorkout}
 				routineId={routine.id}
 			/>
 		</ScrollView>
@@ -213,7 +227,7 @@ const styles = StyleSheet.create({
 	schedule: {
 		flexDirection: "row",
 		alignItems: "center",
-		justifyContent: "center",
-		gap: theme.spacing.s
+		justifyContent: "center"
+		// gap: theme.spacing.m
 	}
 })

@@ -43,4 +43,20 @@ export type WorkoutUpdatePayload = {
 }
 
 export type WorkoutHistorySortBy = "newest" | "oldest"
-export type WorkoutHistoryViewPer = "sets" | "progressions"
+export type WorkoutHistoryViewPer = "set" | "progression"
+
+export type ExerciseHistorySet =
+	Database["public"]["Functions"]["get_exercise_workout_sets"]["Returns"][number]
+
+export type ExerciseHistoryPerWorkout = {
+	workoutId: number
+	workoutDate: string
+	progressions: {
+		progressionId: number
+		sets: {
+			setId: number
+			setOrder: number
+			reps: number
+		}[]
+	}[]
+}

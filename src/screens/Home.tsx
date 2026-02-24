@@ -16,12 +16,13 @@ import Button from "../components/buttons/Button"
 import CreateRoutineModal from "../components/modals/CreateRoutineModal"
 import MCIcon from "../components/icons/MCIcon"
 import RoutineCard from "../components/cards/RoutineCard"
-import StartWorkoutModal from "../components/modals/StartWorkoutModal"
+import StartWorkoutModal from "../components/modals/SelectRoutineDayModal"
 import StyledText from "../components/texts/StyledText"
 import TextButton from "../components/buttons/TextButton"
 import ToastNotification from "../components/notifications/ToastNotification"
 import useRoutineMutation from "../hooks/useRoutineMutation"
 import useRoutineQuery from "../hooks/useRoutineQuery"
+import SelectRoutineDayModal from "../components/modals/SelectRoutineDayModal"
 
 export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 	const { t } = useTranslation()
@@ -196,10 +197,11 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 				isLoadingCreate={isPendingCreate}
 			/>
 
-			<StartWorkoutModal
+			<SelectRoutineDayModal
 				isVisible={startWorkoutModalVisible}
 				setIsVisible={setStartWorkoutModalVisible}
-				onStart={handleStartWorkout}
+				title={t("actions.choose-training-day-to-start-working-out")}
+				onSelect={handleStartWorkout}
 				routineId={
 					routines.find((r) => r.routine.status === "active")?.routine
 						.id

@@ -1,17 +1,29 @@
 import { DatabaseRoutineDay, Weekday } from "../../types/routines"
+import { parseWeekdayToShortText } from "../../utils/parsing"
 import { RoutineDayCodeBox } from "./RoutineDayCodeBox"
-import { StyleSheet, View } from "react-native"
+import { StyleSheet, TouchableOpacity } from "react-native"
 import { theme } from "../../resources/theme"
 import StyledText from "../texts/StyledText"
 
 type Props = {
 	weekday: Weekday
 	routineDay: DatabaseRoutineDay | null
+	onPress?: (weekday: Weekday) => void
 }
-export default function ScheduleDay({ routineDay, weekday }: Props) {
+export default function ScheduleDay({ routineDay, weekday, onPress }: Props) {
+	function handlePress() {
+		if (onPress) onPress(weekday)
+	}
+
 	return (
-		<View style={styles.container}>
-			<StyledText type="boldNote">{weekday.slice(0, 3)}</StyledText>
+		<TouchableOpacity
+			onPress={handlePress}
+			disabled={onPress === undefined}
+			style={styles.container}
+		>
+			<StyledText type="boldNote">
+				{parseWeekdayToShortText(weekday)}
+			</StyledText>
 
 			{routineDay ? (
 				<RoutineDayCodeBox
@@ -25,13 +37,16 @@ export default function ScheduleDay({ routineDay, weekday }: Props) {
 					-
 				</StyledText>
 			)}
-		</View>
+		</TouchableOpacity>
 	)
 }
 
 const styles = StyleSheet.create({
 	container: {
 		alignItems: "center",
-		gap: theme.spacing.xxs
+		gap: theme.spacing.xxs,
+		flex: 1
+		// borderColor: theme.colors.danger,
+		// borderWidth: 1
 	}
 })
