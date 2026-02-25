@@ -1,11 +1,9 @@
+import { ExerciseHistorySet } from "../types/workouts"
 import { ExerciseWithProgressions } from "../types/exercises"
 import { isPostgrestError } from "../utils/queriesHelpers"
 import { PostgrestError } from "@supabase/supabase-js"
 import { useQuery } from "@tanstack/react-query"
-import exercisesService, {
-	FetchExerciseHistoryParams
-} from "../services/exercisesService"
-import { ExerciseHistorySet } from "../types/workouts"
+import exercisesService from "../services/exercisesService"
 
 const RQKEY_ROOT = "exercisesQueries"
 export const GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY = (uId: number) => [

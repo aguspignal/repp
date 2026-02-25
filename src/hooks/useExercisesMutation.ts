@@ -54,7 +54,7 @@ export default function useExercisesMutation() {
 			insertProgressions,
 			upsertProgressions
 		}: UpdateExerciseAndProgressions): Promise<
-			ExerciseWithProgressions | null | PostgrestError
+			UpdateExerciseAndProgressionsResult | null | PostgrestError
 		> => {
 			const updatedExercise =
 				await exercisesService.updateExercise(exercise)
@@ -73,7 +73,7 @@ export default function useExercisesMutation() {
 
 			return {
 				exercise: updatedExercise,
-				progressions: progressionsResult
+				...progressionsResult
 			}
 		},
 		onError: handleOnMutationError
@@ -82,7 +82,7 @@ export default function useExercisesMutation() {
 	const deleteUpsertInsertProgressionsMutation = useMutation({
 		mutationFn: async (
 			params: DeleteUpsertInsertProgressionsParams
-		): Promise<DatabaseProgression[] | PostgrestError> => {
+		): Promise<UpdateProgressionsResult | PostgrestError> => {
 			return await deleteUpserIntertProgressions(params)
 		},
 		onError: handleOnMutationError
@@ -109,7 +109,11 @@ async function deleteUpserIntertProgressions({
 	insertProgressions,
 	upsertProgressions
 }: DeleteUpsertInsertProgressionsParams): Promise<
-	DatabaseProgression[] | PostgrestError
+	| {
+			updatedProgressions: DatabaseProgression[]
+			insertedProgressions: DatabaseProgression[]
+	  }
+	| PostgrestError
 > {
 	let deleteResult: number | PostgrestError = 0
 	if (deleteProgressionsFromOrder !== null)
@@ -135,7 +139,10 @@ async function deleteUpserIntertProgressions({
 	if (isPostgrestError(upsertResult)) return upsertResult
 	if (isPostgrestError(insertResult)) return insertResult
 
-	return [...upsertResult, ...insertResult]
+	return {
+		updatedProgressions: upsertResult,
+		insertedProgressions: insertResult
+	}
 }
 
 type ExerciseDataAndProgressions = {
@@ -155,4 +162,15 @@ type DeleteUpsertInsertProgressionsParams = {
 	upsertProgressions: DatabaseProgression[]
 	insertProgressions: DraftProgression[]
 	deleteProgressionsFromOrder: number | null
+}
+
+type UpdateExerciseAndProgressionsResult = {
+	exercise: DatabaseExercise
+	updatedProgressions: DatabaseProgression[]
+	insertedProgressions: DatabaseProgression[]
+}
+
+type UpdateProgressionsResult = {
+	updatedProgressions: DatabaseProgression[]
+	insertedProgressions: DatabaseProgression[]
 }

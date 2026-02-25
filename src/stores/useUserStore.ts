@@ -6,8 +6,13 @@ import {
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 import { DatabaseUser } from "../types/user"
-import { ExerciseWithProgressions } from "../types/exercises"
+import {
+	DatabaseExercise,
+	DatabaseProgression,
+	ExerciseWithProgressions
+} from "../types/exercises"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import { sortProgressionsByOrderDesc } from "../utils/sorting"
 
 interface UserState {
 	user: DatabaseUser | null
@@ -20,6 +25,12 @@ interface UserState {
 	getRoutineByDayId: (dId: number) => DatabaseRoutine
 
 	addExercise: (ep: ExerciseWithProgressions) => void
+	updateExerciseAndProgressions: (
+		e: DatabaseExercise,
+		updatedProgressions: DatabaseProgression[],
+		insertedProgressions: DatabaseProgression[],
+		deleteFromOrder: number | undefined
+	) => void
 	addRoutineWithDaysAndSchedule: (r: RoutineWithDaysAndSchedule) => void
 	addRoutineDay: (rd: DatabaseRoutineDay) => void
 	updateRoutine: (r: DatabaseRoutine) => void
@@ -54,6 +65,38 @@ export const useUserStore = create<UserState>()(
 							(e) => e.exercise.id !== ep.exercise.id
 						)
 						.concat(ep)
+				}),
+			updateExerciseAndProgressions: (
+				exercise,
+				updatedProgressions,
+				insertedProgressions,
+				deleteFromOrder
+			) =>
+				set({
+					exercises: get().exercises.map((e) => {
+						if (e.exercise.id !== exercise.id) return e
+
+						const mergedIds = new Set([
+							...updatedProgressions.map((p) => p.id),
+							...insertedProgressions.map((p) => p.id)
+						])
+
+						const filteredProgressions = e.progressions.filter(
+							(p) =>
+								p.order <
+									(deleteFromOrder ??
+										Number.POSITIVE_INFINITY) &&
+								!mergedIds.has(p.id)
+						)
+						return {
+							exercise,
+							progressions: sortProgressionsByOrderDesc([
+								...filteredProgressions,
+								...insertedProgressions,
+								...updatedProgressions
+							])
+						}
+					})
 				}),
 			addRoutineWithDaysAndSchedule: (routine) =>
 				set({

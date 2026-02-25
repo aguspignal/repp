@@ -114,36 +114,50 @@ export default function ExerciseInner({
 	}
 
 	function mapProgressionChanges() {
-		const diff =
-			progressions.length - (exerciseData?.progressions.length ?? 0)
-
-		const toCompare =
-			exerciseData?.progressions.length === 0
-				? []
-				: diff > 0
-					? progressions.slice(diff)
-					: progressions
-
-		const upsertProgressions: DatabaseProgression[] = toCompare.filter(
-			(newProg, i) => {
-				const oldIndex = diff >= 0 ? i : i - diff
-				const oldProg = exerciseData?.progressions[oldIndex]
-				return oldProg?.name !== newProg?.name
-			}
+		const originalMap = new Map(
+			(exerciseData?.progressions ?? []).map((p) => [p.id, p])
 		)
 
-		const insertProgressions: DraftProgression[] =
-			diff > 0
-				? progressions.slice(0, diff).map((p) => ({
-						name: p.name,
-						order: p.order,
-						is_weighted: p.is_weighted,
-						weight: p.weight
-					}))
-				: []
+		const upsertProgressions: DatabaseProgression[] = []
+		const insertProgressions: DraftProgression[] = []
 
-		const deleteProgressionsFromOrder =
-			diff < 0 ? progressions.length + 1 : null
+		for (const prog of progressions) {
+			const originalProg = originalMap.get(prog.id)
+
+			if (!originalProg) {
+				if (prog.id < 0) {
+					insertProgressions.push({
+						name: prog.name,
+						order: prog.order,
+						is_weighted: prog.is_weighted,
+						weight: prog.weight
+					})
+				}
+			} else {
+				if (
+					prog.name !== originalProg.name ||
+					prog.is_weighted !== originalProg.is_weighted ||
+					prog.weight !== originalProg.weight ||
+					prog.order !== originalProg.order
+				) {
+					upsertProgressions.push(prog)
+				}
+			}
+		}
+
+		let deleteProgressionsFromOrder: number | null = null
+		const currentIds = new Set(progressions.map((p) => p.id))
+
+		for (const originalProg of exerciseData?.progressions ?? []) {
+			if (!currentIds.has(originalProg.id)) {
+				if (
+					deleteProgressionsFromOrder === null ||
+					originalProg.order < deleteProgressionsFromOrder
+				) {
+					deleteProgressionsFromOrder = originalProg.order
+				}
+			}
+		}
 
 		return {
 			upsertProgressions,

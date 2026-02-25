@@ -18,5 +18,5 @@ export function areDraftWorkoutExerciseSetsInvalid(
 export function areProgressionsValid(
 	progressions: DatabaseProgression[]
 ): boolean {
-	return progressions.some((p) => p.name.length === 0 || !p.name)
+	return !progressions.some((p) => p.name.length === 0 || !p.name)
 }

@@ -99,10 +99,12 @@ export default function ExerciseRepository({
 	}
 
 	useEffect(() => {
-		if (data && !isPostgrestError(data))
+		if (data && !isPostgrestError(data)) {
+			console.log(data.find((d) => d.exercise.id === 20)?.progressions)
 			loadExercisesAndProgressions(
 				sortExercisesAndProgressionsBy(data, sortBy)
 			)
+		}
 	}, [data])
 
 	return (

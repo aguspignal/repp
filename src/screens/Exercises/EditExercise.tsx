@@ -13,6 +13,8 @@ import Loading from "../Loading"
 import ToastNotification from "../../components/notifications/ToastNotification"
 import useExercisesMutation from "../../hooks/useExercisesMutation"
 import {
+	DatabaseExercise,
+	DatabaseProgression,
 	ExerciseUpdatePayload,
 	ExerciseWithProgressions
 } from "../../types/exercises"
@@ -22,7 +24,8 @@ export default function EditExercise({
 	route
 }: RootStackScreenProps<"EditExercise">) {
 	const { t } = useTranslation()
-	const { user, exercises, addExercise } = useUserStore()
+	const { user, exercises, addExercise, updateExerciseAndProgressions } =
+		useUserStore()
 	const { getExerciseAndProgressionsById } = useExercisesQuery()
 	const {
 		updateExerciseAndProgressionsMutation,
@@ -34,7 +37,7 @@ export default function EditExercise({
 	)
 
 	const {
-		mutate: updateExerciseAndProgressions,
+		mutate: updateExerciseAndProgressionsMut,
 		isPending: isPendingUpdateExerciseAndProgressions
 	} = updateExerciseAndProgressionsMutation
 
@@ -84,17 +87,19 @@ export default function EditExercise({
 							return
 						}
 
-						onMutationSuccess({
-							exercise: data.exercise,
-							progressions: newProgressions
-						})
+						onMutationSuccess(
+							data.exercise,
+							newProgressions.updatedProgressions,
+							newProgressions.insertedProgressions,
+							deleteProgressionsFromOrder ?? undefined
+						)
 					}
 				}
 			)
 			return
 		}
 
-		updateExerciseAndProgressions(
+		updateExerciseAndProgressionsMut(
 			{
 				exercise: {
 					...data.exercise,
@@ -122,20 +127,37 @@ export default function EditExercise({
 						return
 					}
 
-					onMutationSuccess(newExerciseAndProgressions)
+					onMutationSuccess(
+						newExerciseAndProgressions.exercise,
+						newExerciseAndProgressions.updatedProgressions,
+						newExerciseAndProgressions.insertedProgressions,
+						deleteProgressionsFromOrder ?? undefined
+					)
 				}
 			}
 		)
 	}
 
 	function onMutationSuccess(
-		newExerciseAndProgressions: ExerciseWithProgressions
+		updatedExercise: DatabaseExercise,
+		updatedProgressions: DatabaseProgression[],
+		insertedProgressions: DatabaseProgression[],
+		deleteFromOrder: number | undefined
 	) {
 		if (!user) return
 
-		addExercise(newExerciseAndProgressions)
-		invalidateQueries(GETEXERCISEANDPROGRESSIONSBYID_KEY(route.params.id))
+		console.log(updatedExercise)
+		console.log(updatedProgressions)
+		console.log(insertedProgressions)
+		console.log(deleteFromOrder)
+		updateExerciseAndProgressions(
+			updatedExercise,
+			updatedProgressions,
+			insertedProgressions,
+			deleteFromOrder
+		)
 		invalidateQueries(GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY(user.id))
+		invalidateQueries(GETEXERCISEANDPROGRESSIONSBYID_KEY(route.params.id))
 
 		if (route.params.comingFromWorkout) {
 			navigation.goBack()
@@ -164,9 +186,7 @@ export default function EditExercise({
 	return (
 		<ExerciseInner
 			type="edit"
-			exerciseData={
-				exercises.find((e) => e.exercise.id === route.params.id) ?? null
-			}
+			exerciseData={data && !isPostgrestError(data) ? data : null}
 			onSubmit={onSaveChanges}
 			isPendingAction={
 				isPendingUpdateExerciseAndProgressions ||
