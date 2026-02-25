@@ -1,5 +1,5 @@
 import { Header } from "@react-navigation/elements"
-import { isPostgrestError } from "../../utils/queriesHelpers"
+import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { navigationStyles } from "../../navigation/styles"
 import { ParamListBase } from "@react-navigation/native"
@@ -9,6 +9,10 @@ import { useUserStore } from "../../stores/useUserStore"
 import MCIcon from "../icons/MCIcon"
 import ToastNotification from "../notifications/ToastNotification"
 import useRoutineMutation from "../../hooks/useRoutineMutation"
+import { useState } from "react"
+import ConfirmationModal from "../modals/ConfirmationModal"
+import { useTranslation } from "react-i18next"
+import { GETUSERROUTINESWITHDAYSLAZY_KEY } from "../../hooks/useRoutineQuery"
 
 type Props = {
 	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>
@@ -43,20 +47,33 @@ type HeaderRightProps = {
 	routineId: number
 }
 function HeaderRight({ navigation, routineId }: HeaderRightProps) {
-	const { user, routines, updateRoutine, markActiveRoutinesAsDraft } =
-		useUserStore()
-	const { markRoutineAsActiveMutation, markRoutineAsDraftMutation } =
-		useRoutineMutation()
+	const { t } = useTranslation()
+	const {
+		user,
+		routines,
+		updateRoutine,
+		removeRoutine,
+		markActiveRoutinesAsDraft
+	} = useUserStore()
+	const {
+		markRoutineAsActiveMutation,
+		markRoutineAsDraftMutation,
+		deleteAllRoutineDataMutation
+	} = useRoutineMutation()
 
 	const { mutate: markRoutineAsActive, isPending: isPendingActive } =
 		markRoutineAsActiveMutation
 
 	const { mutate: markRoutineAsDraft, isPending: isPendingDraft } =
 		markRoutineAsDraftMutation
+	const { mutate: deleteAllRoutineData, isPending: isPendingDelete } =
+		deleteAllRoutineDataMutation
 
 	const thisRoutine = routines.find(
 		(r) => r.routine.id === routineId
 	)?.routine
+
+	const [modalVisible, setModalVisible] = useState(false)
 
 	function handleMarkAsActive() {
 		if (!user || !thisRoutine) return
@@ -90,6 +107,25 @@ function HeaderRight({ navigation, routineId }: HeaderRightProps) {
 		})
 	}
 
+	function handleDeleteRoutine() {
+		if (!thisRoutine || !user) return
+		deleteAllRoutineData(thisRoutine.id, {
+			onSuccess: (result) => {
+				if (isPostgrestError(result)) {
+					ToastNotification({})
+					return
+				}
+				removeRoutine(thisRoutine.id)
+				invalidateQueries(GETUSERROUTINESWITHDAYSLAZY_KEY(user.id))
+			}
+		})
+		setModalVisible(false)
+		navigation.reset({
+			index: 0,
+			routes: [{ name: "Home" }]
+		})
+	}
+
 	return (
 		<View style={navigationStyles.headerRightContainer}>
 			<TouchableOpacity
@@ -117,6 +153,23 @@ function HeaderRight({ navigation, routineId }: HeaderRightProps) {
 					style={navigationStyles.headerIcon}
 				/>
 			</TouchableOpacity>
+
+			<TouchableOpacity onPress={() => setModalVisible(true)}>
+				<MCIcon name="trash-can" style={navigationStyles.headerIcon} />
+			</TouchableOpacity>
+
+			<ConfirmationModal
+				isVisible={modalVisible}
+				setIsVisible={setModalVisible}
+				title={t("questions.sure-want-to-delete-routine")}
+				subtitle={t(
+					"messages.this-will-delete-routine-data-cannot-be-undone"
+				)}
+				onConfirm={handleDeleteRoutine}
+				confirmText={t("actions.delete")}
+				confirmColor="danger"
+				isLoadingConfirm={isPendingDelete}
+			/>
 		</View>
 	)
 }

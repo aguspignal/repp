@@ -58,6 +58,11 @@ export default function useRoutineMutation() {
 		onError: handleOnMutationError
 	})
 
+	const deleteAllRoutineDataMutation = useMutation({
+		mutationFn: deleteAllRoutineData,
+		onError: handleOnMutationError
+	})
+
 	return {
 		createRoutineMutation,
 		createRoutineDayMutation,
@@ -66,7 +71,8 @@ export default function useRoutineMutation() {
 		updateRoutineMutation,
 		updateRoutineDayAndExercisesMutation,
 		markRoutineAsActiveMutation,
-		markRoutineAsDraftMutation
+		markRoutineAsDraftMutation,
+		deleteAllRoutineDataMutation
 	}
 }
 
@@ -148,6 +154,12 @@ async function deleteRoutineDay(
 
 	if (isPostgrestError(result)) return 0
 	return await routinesService.deleteRoutineDay(dayId)
+}
+
+async function deleteAllRoutineData(
+	rId: number
+): Promise<number | PostgrestError> {
+	return await routinesService.deleteAllRoutineData(rId)
 }
 
 type UpdateRoutineDayAndExercisesParams = {

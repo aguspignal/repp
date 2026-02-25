@@ -16,7 +16,6 @@ import Button from "../components/buttons/Button"
 import CreateRoutineModal from "../components/modals/CreateRoutineModal"
 import MCIcon from "../components/icons/MCIcon"
 import RoutineCard from "../components/cards/RoutineCard"
-import StartWorkoutModal from "../components/modals/SelectRoutineDayModal"
 import StyledText from "../components/texts/StyledText"
 import TextButton from "../components/buttons/TextButton"
 import ToastNotification from "../components/notifications/ToastNotification"
@@ -161,6 +160,13 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 							textType="subtitle"
 						/>
 					</View>
+
+					{routines.filter((r) => r.routine.status !== "active")
+						.length === 0 && (
+						<StyledText type="note" color="grayDark" align="center">
+							{t("messages.all-your-routines-will-appear-here")}
+						</StyledText>
+					)}
 
 					<FlatList
 						data={routines.filter(

@@ -374,6 +374,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_routine_cascade: {
+        Args: { p_routine_id: number }
+        Returns: undefined
+      }
       get_exercise_workout_sets: {
         Args: {
           exercise_id: number

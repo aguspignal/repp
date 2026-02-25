@@ -1,6 +1,5 @@
 # To fix
 
-    - add progression (and add from workout)
     - edit finished workouts
         - troubles with order
         - not deleting
@@ -9,6 +8,7 @@
 
 # To implement
 
+    - delete routine
     - routine schedule
         - sort days on routineinner by schedule
     - milestones

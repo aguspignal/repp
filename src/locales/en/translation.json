@@ -116,7 +116,9 @@
 		"workouts-related-to-day-will-be-saved": "Workouts related to this day will be saved",
 		"you-dont-have-routines-yet": "You don't have any routine yet",
 		"per-set": "Per set",
-		"per-progression": "Per progression"
+		"per-progression": "Per progression",
+		"this-will-delete-routine-data-cannot-be-undone": "This will delete any data related to this routine, including your workouts, and cannot be undone",
+		"all-your-routines-will-appear-here": "All your routines will appear here"
 	},
 	"questions": {
 		"already-have-one": "Already have one?",
@@ -126,7 +128,8 @@
 		"sure-want-to-delete-exercise": "Are you sure you want to delete this exercise?",
 		"sure-want-to-delete-workout": "Are you sure you want to delete this workout?",
 		"sure-want-to-finish-workout": "Are you sure you want to finish this workout?",
-		"sure-want-to-save-changes": "Are you sure you want to save changes?"
+		"sure-want-to-save-changes": "Are you sure you want to save changes?",
+		"sure-want-to-delete-routine": "Are you sure you want to delete this routine?"
 	},
 	"supabase-error-codes": {
 		"email_address_invalid": "The entered email is invalid, please try again",

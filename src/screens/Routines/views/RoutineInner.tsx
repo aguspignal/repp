@@ -33,6 +33,7 @@ import ToastNotification from "../../../components/notifications/ToastNotificati
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
 import ScheduleDay from "../../../components/cards/ScheduleDay"
 import SelectRoutineDayModal from "../../../components/modals/SelectRoutineDayModal"
+import MCIcon from "../../../components/icons/MCIcon"
 
 type Props = {
 	routine: RoutineWithDaysAndExercises

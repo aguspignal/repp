@@ -268,6 +268,18 @@ const routinesService = {
 
 		if (error) return error
 		return count ?? 0
+	},
+
+	async deleteAllRoutineData(rId: number): Promise<number | PostgrestError> {
+		console.log("R-SERVICE: deleteAllRoutineData")
+		const { error, count } = await supabase.rpc("delete_routine_cascade", {
+			p_routine_id: rId
+		})
+
+		console.log(error)
+		console.log(count)
+		if (error) return error
+		return count ?? 0
 	}
 }
 
