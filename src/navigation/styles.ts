@@ -21,8 +21,8 @@ export const navigationStyles = StyleSheet.create({
 	headerRightContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		marginRight: theme.spacing.s,
-		gap: theme.spacing.x3s
+		marginRight: theme.spacing.s
+		// gap: theme.spacing.x3s
 	},
 	headerTextColor: {
 		color: theme.colors.textLight

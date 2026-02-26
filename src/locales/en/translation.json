@@ -39,7 +39,12 @@
 		"start-workout": "Start workout",
 		"update-password": "Update password",
 		"update-your-password": "Update your password",
-		"verify": "Verify"
+		"verify": "Verify",
+		"mark-as-active": "Mark as active",
+		"mark-as-draft": "Mark as draft",
+		"delete-routine": "Delete routine",
+		"archive-routine": "Archive routine",
+		"unarchive-routine": "Unarchive routine"
 	},
 	"attributes": {
 		"all": "All",
@@ -165,6 +170,7 @@
 		"highest-progression": "Highest progression",
 		"lowest-progression": "Lowest progression",
 		"from-date": "From date",
-		"to-date": "To date"
+		"to-date": "To date",
+		"archived-routines": "Archived routines"
 	}
 }

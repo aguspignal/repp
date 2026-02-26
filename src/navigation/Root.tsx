@@ -30,6 +30,7 @@ import EditWorkoutHeader from "../components/header/EditWorkoutHeader"
 import RoutineSchedule from "../screens/Routines/RoutineSchedule"
 import RoutineScheduleHeader from "../components/header/RoutineScheduleHeader"
 import ExerciseHistory from "../screens/Exercises/ExerciseHistory"
+import ArchivedRoutines from "../screens/Routines/ArchivedRoutines"
 
 type Props = {
 	uuid: string
@@ -149,6 +150,13 @@ function RootNavigator() {
 							back={back}
 						/>
 					)
+				}}
+			/>
+			<RootStack.Screen
+				name="ArchivedRoutines"
+				component={ArchivedRoutines}
+				options={{
+					headerTitle: i18next.t("titles.archived-routines")
 				}}
 			/>
 			<RootStack.Screen

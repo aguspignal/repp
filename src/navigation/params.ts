@@ -29,14 +29,15 @@ export type RootStackParams = {
 		selectedExercises?: DatabaseExercise[]
 	}
 	RoutineSchedule: { routineId: number }
+	ArchivedRoutines: undefined
+	RoutineDayHistory: {
+		id: number
+		canEdit: boolean
+	}
 	Workout: { dayId: number }
 	EditWorkout: {
 		wId: number
 		dayId: number
-	}
-	RoutineDayHistory: {
-		id: number
-		canEdit: boolean
 	}
 	ExerciseHistory: { id: number }
 }

@@ -13,6 +13,7 @@ import { useState } from "react"
 import ConfirmationModal from "../modals/ConfirmationModal"
 import { useTranslation } from "react-i18next"
 import { GETUSERROUTINESWITHDAYSLAZY_KEY } from "../../hooks/useRoutineQuery"
+import DropdownMenu from "../dropdowns/DropdownMenu"
 
 type Props = {
 	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>
@@ -58,14 +59,16 @@ function HeaderRight({ navigation, routineId }: HeaderRightProps) {
 	const {
 		markRoutineAsActiveMutation,
 		markRoutineAsDraftMutation,
-		deleteAllRoutineDataMutation
+		deleteAllRoutineDataMutation,
+		updateRoutineMutation
 	} = useRoutineMutation()
 
 	const { mutate: markRoutineAsActive, isPending: isPendingActive } =
 		markRoutineAsActiveMutation
-
 	const { mutate: markRoutineAsDraft, isPending: isPendingDraft } =
 		markRoutineAsDraftMutation
+	const { mutate: updateRoutineMut, isPending: isPendingUpdate } =
+		updateRoutineMutation
 	const { mutate: deleteAllRoutineData, isPending: isPendingDelete } =
 		deleteAllRoutineDataMutation
 
@@ -126,16 +129,40 @@ function HeaderRight({ navigation, routineId }: HeaderRightProps) {
 		})
 	}
 
+	function handleArchiveRoutine() {
+		if (!thisRoutine || !user) return
+
+		updateRoutineMut(
+			{
+				...thisRoutine,
+				status: thisRoutine.status === "archived" ? "draft" : "archived"
+			},
+			{
+				onSuccess: (newRoutine) => {
+					if (!newRoutine || isPostgrestError(newRoutine)) {
+						ToastNotification({})
+						return
+					}
+
+					updateRoutine(newRoutine)
+					invalidateQueries(GETUSERROUTINESWITHDAYSLAZY_KEY(user.id))
+					navigation.reset({
+						index: 0,
+						routes:
+							thisRoutine.status === "archived"
+								? [{ name: "Home" }]
+								: [
+										{ name: "Home" },
+										{ name: "ArchivedRoutines" }
+									]
+					})
+				}
+			}
+		)
+	}
+
 	return (
 		<View style={navigationStyles.headerRightContainer}>
-			<TouchableOpacity
-				onPress={() =>
-					navigation.navigate("EditRoutine", { id: routineId })
-				}
-			>
-				<MCIcon name="rename" style={navigationStyles.headerIcon} />
-			</TouchableOpacity>
-
 			<TouchableOpacity
 				onPress={
 					thisRoutine?.status === "active"
@@ -154,9 +181,34 @@ function HeaderRight({ navigation, routineId }: HeaderRightProps) {
 				/>
 			</TouchableOpacity>
 
-			<TouchableOpacity onPress={() => setModalVisible(true)}>
-				<MCIcon name="trash-can" style={navigationStyles.headerIcon} />
-			</TouchableOpacity>
+			<DropdownMenu
+				renderTrigger={
+					<MCIcon
+						name="dots-vertical"
+						style={navigationStyles.headerIcon}
+					/>
+				}
+				options={[
+					{
+						text: t("actions.edit-routine"),
+						onSelect: () =>
+							navigation.navigate("EditRoutine", {
+								id: routineId
+							})
+					},
+					{
+						text:
+							thisRoutine?.status === "archived"
+								? t("actions.unarchive-routine")
+								: t("actions.archive-routine"),
+						onSelect: handleArchiveRoutine
+					},
+					{
+						text: t("actions.delete-routine"),
+						onSelect: () => setModalVisible(true)
+					}
+				]}
+			/>
 
 			<ConfirmationModal
 				isVisible={modalVisible}

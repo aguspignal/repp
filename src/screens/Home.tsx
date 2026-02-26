@@ -79,6 +79,10 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 		})
 	}
 
+	function goToArchivedRoutines() {
+		navigation.navigate("ArchivedRoutines")
+	}
+
 	function handleRefresh() {
 		try {
 			setIsRefreshing(true)
@@ -161,7 +165,7 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 						/>
 					</View>
 
-					{routines.filter((r) => r.routine.status !== "active")
+					{routines.filter((r) => r.routine.status === "draft")
 						.length === 0 && (
 						<StyledText type="note" color="grayDark" align="center">
 							{t("messages.all-your-routines-will-appear-here")}
@@ -170,7 +174,7 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 
 					<FlatList
 						data={routines.filter(
-							(r) => r.routine.status !== "active"
+							(r) => r.routine.status === "draft"
 						)}
 						renderItem={({ item: routine }) => (
 							<RoutineCard
@@ -183,6 +187,17 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 					/>
 				</View>
 			)}
+
+			<TouchableOpacity
+				onPress={goToArchivedRoutines}
+				style={styles.archivedRoutinesCard}
+			>
+				<MCIcon name="archive" color="grayDark" />
+
+				<StyledText type="boldText" color="grayDark">
+					{t("titles.archived-routines")}
+				</StyledText>
+			</TouchableOpacity>
 
 			<TouchableOpacity
 				onPress={goToExerciseRepository}
@@ -243,6 +258,13 @@ const styles = StyleSheet.create({
 	},
 	routinesList: {
 		gap: theme.spacing.xl
+	},
+	archivedRoutinesCard: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "flex-start",
+		paddingVertical: theme.spacing.xs,
+		gap: theme.spacing.xs
 	},
 	exerciseRepoCard: {
 		flexDirection: "row",
