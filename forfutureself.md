@@ -8,11 +8,6 @@
 
 # To implement
 
-    - routine dropdown
-        - edit, archive, delete
-    - routine schedule
-        - sort days on routineinner by schedule
-
     - milestones
     - sqlite
 

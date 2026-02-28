@@ -12,7 +12,6 @@ export type DatabaseSchedule =
 	Database["public"]["Tables"]["RoutineSchedules"]["Row"]
 
 export type RoutineStatus = Database["public"]["Enums"]["RoutineStatus"]
-export type Weekday = Database["public"]["Enums"]["Weekday"]
 
 export type DraftRoutineDayExercise = Omit<
 	DatabaseRoutineDayExercise,
@@ -24,10 +23,9 @@ export type RoutineDayExerciseGoals = Pick<
 	"set_goal_low" | "set_goal_high" | "rep_goal_low" | "rep_goal_high"
 >
 
-export type RoutineWithDaysAndSchedule = {
+export type RoutineWithDays = {
 	routine: DatabaseRoutine
 	days: DatabaseRoutineDay[]
-	schedule?: DatabaseSchedule[]
 }
 
 export type RoutineDayWithExercises = {

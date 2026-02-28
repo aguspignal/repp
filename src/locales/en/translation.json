@@ -10,7 +10,7 @@
 		"add": "Add",
 		"cancel": "Cancel",
 		"choose-progression": "Choose progression",
-		"choose-name-code-for-this-day": "Choose a name and code for this day",
+		"choose-name-code-for-this-training-day": "Choose a name and code for this training day",
 		"choose-training-day-to-start-working-out": "Choose a training day to start working out",
 		"confirm-password": "Confirm password",
 		"confirm": "Confirm",
@@ -44,7 +44,8 @@
 		"mark-as-draft": "Mark as draft",
 		"delete-routine": "Delete routine",
 		"archive-routine": "Archive routine",
-		"unarchive-routine": "Unarchive routine"
+		"unarchive-routine": "Unarchive routine",
+		"remove-day": "Remove day"
 	},
 	"attributes": {
 		"all": "All",
@@ -134,7 +135,8 @@
 		"sure-want-to-delete-workout": "Are you sure you want to delete this workout?",
 		"sure-want-to-finish-workout": "Are you sure you want to finish this workout?",
 		"sure-want-to-save-changes": "Are you sure you want to save changes?",
-		"sure-want-to-delete-routine": "Are you sure you want to delete this routine?"
+		"sure-want-to-delete-routine": "Are you sure you want to delete this routine?",
+		"what-will-you-train-on-(weekDay)": "What will you train on {{weekDay}}?"
 	},
 	"supabase-error-codes": {
 		"email_address_invalid": "The entered email is invalid, please try again",

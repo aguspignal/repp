@@ -3,6 +3,7 @@ import {
 	NativeStackScreenProps
 } from "@react-navigation/native-stack"
 import { DatabaseExercise } from "../types/exercises"
+import { DatabaseSchedule } from "../types/routines"
 
 export type LoginStackParams = {
 	Welcome: undefined
@@ -28,7 +29,10 @@ export type RootStackParams = {
 		id: number
 		selectedExercises?: DatabaseExercise[]
 	}
-	RoutineSchedule: { routineId: number }
+	RoutineSchedule: {
+		routineId: number
+		schedule: DatabaseSchedule[] | undefined
+	}
 	ArchivedRoutines: undefined
 	RoutineDayHistory: {
 		id: number

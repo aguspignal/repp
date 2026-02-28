@@ -6,16 +6,11 @@ import {
 	DatabaseRoutineDay,
 	RoutineWithDaysAndExercises
 } from "../../../types/routines"
-import {
+import useRoutineQuery, {
 	GETROUTINEWITHDAYSANDEXERCISESBYID_KEY,
 	GETUSERROUTINESWITHDAYSLAZY_KEY
 } from "../../../hooks/useRoutineQuery"
-import {
-	RefreshControl,
-	StyleSheet,
-	TouchableOpacity,
-	View
-} from "react-native"
+import { RefreshControl, StyleSheet, View } from "react-native"
 import { RootStackNavigationProp } from "../../../navigation/params"
 import { ScrollView } from "react-native-gesture-handler"
 import { sortRoutineDaysAndExercisesByName } from "../../../utils/sorting"
@@ -27,13 +22,11 @@ import { useUserStore } from "../../../stores/useUserStore"
 import Button from "../../../components/buttons/Button"
 import CreateRoutineDayModal from "../../../components/modals/CreateRoutineDayModal"
 import RoutineDayCard from "../../../components/cards/RoutineDayCard"
-import StartWorkoutModal from "../../../components/modals/SelectRoutineDayModal"
+import RoutineScheduleCard from "../../../components/cards/RoutineScheduleCard"
+import SelectRoutineDayModal from "../../../components/modals/SelectRoutineDayModal"
 import StyledText from "../../../components/texts/StyledText"
 import ToastNotification from "../../../components/notifications/ToastNotification"
 import useRoutineMutation from "../../../hooks/useRoutineMutation"
-import ScheduleDay from "../../../components/cards/ScheduleDay"
-import SelectRoutineDayModal from "../../../components/modals/SelectRoutineDayModal"
-import MCIcon from "../../../components/icons/MCIcon"
 
 type Props = {
 	routine: RoutineWithDaysAndExercises
@@ -45,18 +38,27 @@ export default function RoutineInner({
 }: Props) {
 	const { t } = useTranslation()
 	const { user, addRoutineDay } = useUserStore()
+	const { getRoutineSchedule } = useRoutineQuery()
 	const { createRoutineDayMutation } = useRoutineMutation()
 	const nav = useNavigation<RootStackNavigationProp>()
 
-	const { mutate: createRoutineDay, isPending } = createRoutineDayMutation
+	const { mutate: createRoutineDay, isPending: isPendingCreate } =
+		createRoutineDayMutation
+
+	const { data: fetchedSchedule, isPending: isSchedulePending } =
+		getRoutineSchedule(routine.id)
+
+	const routineSchedule = isPostgrestError(fetchedSchedule)
+		? undefined
+		: fetchedSchedule
 
 	const [refreshing, setRefreshing] = useState(false)
 	const [routineDayModalVisible, setRoutineDayModalVisible] = useState(false)
 	const [startWorkoutModalVisible, setStartWorkoutModalVisible] =
 		useState(false)
 
-	function handleStartWorkout(dayId: number) {
-		nav.navigate("Workout", { dayId })
+	function handleStartWorkout(dayId: number | undefined) {
+		if (dayId) nav.navigate("Workout", { dayId })
 	}
 
 	function handleAddRoutineDay({
@@ -96,19 +98,6 @@ export default function RoutineInner({
 		)
 	}
 
-	function goToEditDay(day: DatabaseRoutineDay | null) {
-		if (!day) return
-		nav.navigate("EditRoutineDay", { id: day.id })
-	}
-
-	function goToDayHistory(id: number) {
-		nav.navigate("RoutineDayHistory", { id, canEdit: true })
-	}
-
-	function goToSchedule() {
-		nav.navigate("RoutineSchedule", { routineId: routine.id })
-	}
-
 	function handleRefresh() {
 		if (!user) return
 		try {
@@ -124,6 +113,15 @@ export default function RoutineInner({
 		}
 	}
 
+	function goToEditDay(day: DatabaseRoutineDay | null) {
+		if (!day) return
+		nav.navigate("EditRoutineDay", { id: day.id })
+	}
+
+	function goToDayHistory(id: number) {
+		nav.navigate("RoutineDayHistory", { id, canEdit: true })
+	}
+
 	return (
 		<ScrollView
 			style={styles.container}
@@ -136,15 +134,19 @@ export default function RoutineInner({
 				/>
 			}
 		>
-			<StyledText type="title" align="center">
-				{routine.name}
-			</StyledText>
+			<View style={styles.routineInfoContainer}>
+				<StyledText type="title" align="center">
+					{routine.name}
+				</StyledText>
 
-			{routine.description ? (
-				<View style={styles.description}>
-					<StyledText type="text">{routine.description}</StyledText>
-				</View>
-			) : null}
+				{routine.description && (
+					<View style={styles.description}>
+						<StyledText type="text">
+							{routine.description}
+						</StyledText>
+					</View>
+				)}
+			</View>
 
 			<Button
 				title={t("actions.start-workout")}
@@ -153,47 +155,43 @@ export default function RoutineInner({
 				alignSelf
 			/>
 
+			<View style={styles.daysContainer}>
+				{sortRoutineDaysAndExercisesByName(daysAndExercises)
+					.filter((de) => !de.day.deleted)
+					.map((de) => (
+						<RoutineDayCard
+							routineDay={de.day}
+							rdExercises={de.exercises}
+							onPressCard={goToEditDay}
+							onPressHistory={goToDayHistory}
+							key={de.day.id}
+						/>
+					))}
+
+				<RoutineDayCard
+					routineDay={null}
+					title={t("actions.add-day")}
+					color="primary"
+					onPressCard={() => setRoutineDayModalVisible(true)}
+				/>
+			</View>
+
 			<View style={styles.scheduleContainer}>
 				<StyledText type="subtitle">{t("titles.schedule")}</StyledText>
 
-				<TouchableOpacity
-					onPress={goToSchedule}
-					style={styles.schedule}
-				>
-					<ScheduleDay weekday="Monday" routineDay={null} />
-					<ScheduleDay weekday="Tuesday" routineDay={null} />
-					<ScheduleDay weekday="Wednesday" routineDay={null} />
-					<ScheduleDay weekday="Thursday" routineDay={null} />
-					<ScheduleDay weekday="Friday" routineDay={null} />
-					<ScheduleDay weekday="Saturday" routineDay={null} />
-					<ScheduleDay weekday="Sunday" routineDay={null} />
-				</TouchableOpacity>
+				<RoutineScheduleCard
+					schedule={routineSchedule}
+					routineId={routine.id}
+					navOnPress
+				/>
 			</View>
-
-			{sortRoutineDaysAndExercisesByName(daysAndExercises)
-				.filter((de) => !de.day.deleted)
-				.map((de) => (
-					<RoutineDayCard
-						routineDay={de.day}
-						rdExercises={de.exercises}
-						onPressCard={goToEditDay}
-						onPressHistory={goToDayHistory}
-						key={de.day.id}
-					/>
-				))}
-			<RoutineDayCard
-				routineDay={null}
-				title={t("actions.add-day")}
-				color="primary"
-				onPressCard={() => setRoutineDayModalVisible(true)}
-			/>
 
 			<CreateRoutineDayModal
 				isVisible={routineDayModalVisible}
 				setIsVisible={setRoutineDayModalVisible}
 				onCreate={handleAddRoutineDay}
 				onCancel={() => setRoutineDayModalVisible(false)}
-				isLoadingCreate={isPending}
+				isLoadingCreate={isPendingCreate}
 			/>
 
 			<SelectRoutineDayModal
@@ -202,6 +200,7 @@ export default function RoutineInner({
 				title={t("actions.choose-training-day-to-start-working-out")}
 				onSelect={handleStartWorkout}
 				routineId={routine.id}
+				showRemoveBtn={false}
 			/>
 		</ScrollView>
 	)
@@ -214,8 +213,14 @@ const styles = StyleSheet.create({
 		paddingHorizontal: theme.spacing.s
 	},
 	contentContainer: {
-		gap: theme.spacing.l,
+		gap: theme.spacing.xl,
 		paddingBottom: theme.spacing.x3l
+	},
+	routineInfoContainer: {
+		gap: theme.spacing.s
+	},
+	daysContainer: {
+		gap: theme.spacing.s
 	},
 	description: {
 		padding: theme.spacing.xs,
@@ -224,11 +229,5 @@ const styles = StyleSheet.create({
 	},
 	scheduleContainer: {
 		gap: theme.spacing.xxs
-	},
-	schedule: {
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center"
-		// gap: theme.spacing.m
 	}
 })

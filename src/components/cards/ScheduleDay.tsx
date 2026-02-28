@@ -1,8 +1,9 @@
-import { DatabaseRoutineDay, Weekday } from "../../types/routines"
+import { DatabaseRoutineDay } from "../../types/routines"
 import { parseWeekdayToShortText } from "../../utils/parsing"
 import { RoutineDayCodeBox } from "./RoutineDayCodeBox"
-import { StyleSheet, TouchableOpacity } from "react-native"
+import { StyleSheet, TouchableOpacity, View } from "react-native"
 import { theme } from "../../resources/theme"
+import { Weekday } from "../../types/misc"
 import StyledText from "../texts/StyledText"
 
 type Props = {
@@ -11,13 +12,9 @@ type Props = {
 	onPress?: (weekday: Weekday) => void
 }
 export default function ScheduleDay({ routineDay, weekday, onPress }: Props) {
-	function handlePress() {
-		if (onPress) onPress(weekday)
-	}
-
 	return (
 		<TouchableOpacity
-			onPress={handlePress}
+			onPress={() => onPress?.(weekday)}
 			disabled={onPress === undefined}
 			style={styles.container}
 		>
@@ -33,9 +30,11 @@ export default function ScheduleDay({ routineDay, weekday, onPress }: Props) {
 					color="primary"
 				/>
 			) : (
-				<StyledText type="boldNote" color="grayDark">
-					-
-				</StyledText>
+				<View style={styles.emptyBox}>
+					<StyledText type="boldText" color="grayDark">
+						-
+					</StyledText>
+				</View>
 			)}
 		</TouchableOpacity>
 	)
@@ -43,10 +42,14 @@ export default function ScheduleDay({ routineDay, weekday, onPress }: Props) {
 
 const styles = StyleSheet.create({
 	container: {
+		flex: 1,
 		alignItems: "center",
-		gap: theme.spacing.xxs,
-		flex: 1
-		// borderColor: theme.colors.danger,
-		// borderWidth: 1
+		gap: theme.spacing.xxs
+	},
+	emptyBox: {
+		width: theme.spacing.x3l,
+		height: theme.spacing.x3l,
+		alignItems: "center",
+		justifyContent: "center"
 	}
 })

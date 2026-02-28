@@ -1,8 +1,9 @@
 import { RoutineDayCodeBox } from "../cards/RoutineDayCodeBox"
 import { StyleSheet, View } from "react-native"
 import { theme } from "../../resources/theme"
+import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
-import i18next from "../../lib/i18n"
+import Button from "../buttons/Button"
 import Modal from "react-native-modal"
 import StyledText from "../texts/StyledText"
 
@@ -10,8 +11,9 @@ type Props = {
 	isVisible: boolean
 	setIsVisible: (b: boolean) => void
 	title: string
-	onSelect: (dayId: number) => void
+	onSelect: (dayId: number | undefined) => void
 	routineId: number | undefined
+	showRemoveBtn?: boolean
 }
 
 export default function SelectRoutineDayModal({
@@ -19,14 +21,16 @@ export default function SelectRoutineDayModal({
 	setIsVisible,
 	title,
 	onSelect,
-	routineId
+	routineId,
+	showRemoveBtn = false
 }: Props) {
+	const { t } = useTranslation()
 	const { routines } = useUserStore()
 
 	const days = routines.find((r) => r.routine.id === routineId)?.days
 
 	function handleConfirm(dayId: number | undefined) {
-		if (!dayId) return
+		// if (!dayId) return
 		onSelect(dayId)
 	}
 
@@ -53,6 +57,13 @@ export default function SelectRoutineDayModal({
 						/>
 					))}
 				</View>
+
+				{showRemoveBtn && (
+					<Button
+						title={t("actions.remove-day")}
+						onPress={() => handleConfirm(undefined)}
+					/>
+				)}
 			</View>
 		</Modal>
 	)

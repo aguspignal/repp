@@ -7,22 +7,21 @@ import {
 	parseExerciseHistoryPerWorkout
 } from "../../utils/parsing"
 import { DatabaseProgression } from "../../types/exercises"
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker"
+import { ExerciseHistoryPerWorkout } from "../../types/workouts"
+import { isPostgrestError } from "../../utils/queriesHelpers"
 import { ReactNode, useEffect, useState } from "react"
 import { RootStackScreenProps } from "../../navigation/params"
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native"
 import { SheetManager } from "react-native-actions-sheet"
+import { sortProgressionsByOrderDesc } from "../../utils/sorting"
 import { theme } from "../../resources/theme"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
 import StyledText from "../../components/texts/StyledText"
 import useExercisesQuery from "../../hooks/useExercisesQuery"
-import { isPostgrestError } from "../../utils/queriesHelpers"
-import { ExerciseHistoryPerWorkout } from "../../types/workouts"
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker"
-import { sortProgressionsByOrderDesc } from "../../utils/sorting"
 
 export default function ExerciseHistory({
-	navigation,
 	route
 }: RootStackScreenProps<"ExerciseHistory">) {
 	const { t } = useTranslation()
@@ -222,6 +221,7 @@ export default function ExerciseHistory({
 								isBold
 								isCentered
 							/>
+
 							{filteredProgressions.map((p) => {
 								const totalSets = h.progressions.reduce(
 									(sum, p) => sum + p.sets.length,
@@ -294,6 +294,7 @@ function Cell({
 						>
 							{part}
 						</StyledText>
+
 						{i < parts.length - 1 && (
 							<StyledText
 								key={`sep-${i}`}

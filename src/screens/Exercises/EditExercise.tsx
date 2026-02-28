@@ -1,3 +1,8 @@
+import {
+	DatabaseExercise,
+	DatabaseProgression,
+	ExerciseUpdatePayload
+} from "../../types/exercises"
 import useExercisesQuery, {
 	GETEXERCISEANDPROGRESSIONSBYID_KEY,
 	GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY
@@ -12,12 +17,6 @@ import ExerciseInner from "./views/ExerciseInner"
 import Loading from "../Loading"
 import ToastNotification from "../../components/notifications/ToastNotification"
 import useExercisesMutation from "../../hooks/useExercisesMutation"
-import {
-	DatabaseExercise,
-	DatabaseProgression,
-	ExerciseUpdatePayload,
-	ExerciseWithProgressions
-} from "../../types/exercises"
 
 export default function EditExercise({
 	navigation,

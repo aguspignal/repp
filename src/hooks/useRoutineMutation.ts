@@ -2,6 +2,7 @@ import routinesService, {
 	PostRoutineDayParams,
 	PostRoutineExercisesParamas,
 	PostRoutineParams,
+	PostRoutineScheduleParams,
 	UpdateUserRoutineStatusParams
 } from "../services/routinesService"
 import {
@@ -12,6 +13,7 @@ import {
 	DatabaseRoutine,
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
+	DatabaseSchedule,
 	DraftRoutineDayExercise
 } from "../types/routines"
 import { PostgrestError } from "@supabase/supabase-js"
@@ -53,6 +55,11 @@ export default function useRoutineMutation() {
 		onError: handleOnMutationError
 	})
 
+	const replaceRoutineScheduleMutation = useMutation({
+		mutationFn: replaceRoutineSchedule,
+		onError: handleOnMutationError
+	})
+
 	const deleteRoutineDayMutation = useMutation({
 		mutationFn: deleteRoutineDay,
 		onError: handleOnMutationError
@@ -64,15 +71,16 @@ export default function useRoutineMutation() {
 	})
 
 	return {
-		createRoutineMutation,
-		createRoutineDayMutation,
 		createRoutineDayExercisesMutation,
+		createRoutineDayMutation,
+		createRoutineMutation,
+		replaceRoutineScheduleMutation,
+		deleteAllRoutineDataMutation,
 		deleteRoutineDayMutation,
-		updateRoutineMutation,
-		updateRoutineDayAndExercisesMutation,
 		markRoutineAsActiveMutation,
 		markRoutineAsDraftMutation,
-		deleteAllRoutineDataMutation
+		updateRoutineDayAndExercisesMutation,
+		updateRoutineMutation
 	}
 }
 
@@ -147,12 +155,24 @@ async function updateRoutineDayAndExercises({
 	return newRoutineDay
 }
 
+async function replaceRoutineSchedule(
+	params: PostRoutineScheduleParams
+): Promise<DatabaseSchedule[] | PostgrestError> {
+	return await routinesService.deleteAndPostRoutineSchedule(params)
+}
+
 async function deleteRoutineDay(
 	dayId: number
 ): Promise<number | PostgrestError> {
-	const result = await routinesService.deleteAllRoutineDayExercises(dayId)
+	const exercisesResult =
+		await routinesService.deleteAllRoutineDayExercises(dayId)
+	const schedulesResult =
+		await routinesService.deleteRoutineDaySchedules(dayId)
+	const workoutsResult = await routinesService.deleteRoutineDayWorkouts(dayId)
 
-	if (isPostgrestError(result)) return 0
+	if (isPostgrestError(exercisesResult)) return exercisesResult
+	if (isPostgrestError(schedulesResult)) return schedulesResult
+	if (isPostgrestError(workoutsResult)) return workoutsResult
 	return await routinesService.deleteRoutineDay(dayId)
 }
 

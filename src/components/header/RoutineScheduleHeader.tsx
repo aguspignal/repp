@@ -22,13 +22,7 @@ export default function RoutineScheduleHeader({ route, back }: Props) {
 
 	return (
 		<Header
-			title={
-				routine
-					? t("titles.(routineName)", {
-							routineName: routine.routine.name
-						})
-					: t("titles.schedule")
-			}
+			title={t("titles.weekly-schedule")}
 			headerTintColor={navigationStyles.headerTitle.color}
 			headerTitleStyle={navigationStyles.headerTitle}
 			headerStyle={navigationStyles.headerBackground}

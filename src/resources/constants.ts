@@ -1,5 +1,6 @@
 import { Dimensions } from "react-native"
 import Constants from "expo-constants"
+import { Weekday } from "../types/misc"
 
 // =============================================================================
 // DEVICE & LAYOUT
@@ -40,3 +41,12 @@ export const MAX_PASSWORD_LENGTH = 256
 export const MAX_CODE_LENGTH = 3
 export const MAX_NAME_LENGTH = 64
 export const MAX_DESCRIPTION_LENGTH = 255
+export const WEEKDAYS: Weekday[] = [
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
+	"Saturday",
+	"Sunday"
+]

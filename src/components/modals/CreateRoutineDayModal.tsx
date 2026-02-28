@@ -41,7 +41,9 @@ export default function CreateRoutineDayModal({
 		>
 			<View style={styles.container}>
 				<StyledText type="boldText" align="center" style={styles.title}>
-					{i18next.t("actions.choose-name-code-for-this-day")}
+					{i18next.t(
+						"actions.choose-name-code-for-this-training-day"
+					)}
 				</StyledText>
 
 				<View style={styles.actionsContainer}>

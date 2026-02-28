@@ -1,8 +1,8 @@
 import useRoutineQuery, {
 	GETROUTINEWITHDAYSANDEXERCISESBYID_KEY
 } from "../../hooks/useRoutineQuery"
-import { EditRoutineSchema, EditRoutineValues } from "../../utils/zodSchemas"
 import { DatabaseRoutine } from "../../types/routines"
+import { EditRoutineSchema, EditRoutineValues } from "../../utils/zodSchemas"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { RootStackScreenProps } from "../../navigation/params"
 import { StyleSheet, View } from "react-native"

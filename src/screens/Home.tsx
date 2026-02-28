@@ -25,8 +25,7 @@ import SelectRoutineDayModal from "../components/modals/SelectRoutineDayModal"
 
 export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 	const { t } = useTranslation()
-	const { user, routines, loadRoutines, addRoutineWithDaysAndSchedule } =
-		useUserStore()
+	const { user, routines, loadRoutines, addRoutineWithDays } = useUserStore()
 	const { getUserRoutinesWithDaysLazy } = useRoutineQuery()
 	const { createRoutineMutation } = useRoutineMutation()
 
@@ -60,7 +59,7 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 						return
 					}
 
-					addRoutineWithDaysAndSchedule({ routine, days: [] })
+					addRoutineWithDays({ routine, days: [] })
 					setCreateRoutineModalVisible(false)
 					navigation.navigate("Routine", { id: routine.id })
 				}
@@ -68,9 +67,9 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 		)
 	}
 
-	function handleStartWorkout(dayId: number) {
+	function handleStartWorkout(dayId: number | undefined) {
 		setStartWorkoutModalVisible(false)
-		navigation.navigate("Workout", { dayId })
+		if (dayId) navigation.navigate("Workout", { dayId })
 	}
 
 	function goToExerciseRepository() {

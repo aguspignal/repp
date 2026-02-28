@@ -1,7 +1,7 @@
 import {
 	DatabaseRoutine,
 	DatabaseRoutineDay,
-	RoutineWithDaysAndSchedule
+	RoutineWithDays
 } from "../types/routines"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
@@ -11,17 +11,17 @@ import {
 	DatabaseProgression,
 	ExerciseWithProgressions
 } from "../types/exercises"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { sortProgressionsByOrderDesc } from "../utils/sorting"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 interface UserState {
 	user: DatabaseUser | null
 	exercises: ExerciseWithProgressions[]
-	routines: RoutineWithDaysAndSchedule[]
+	routines: RoutineWithDays[]
 
 	loadUser: (u: DatabaseUser | null) => void
 	loadExercisesAndProgressions: (eps: ExerciseWithProgressions[]) => void
-	loadRoutines: (rs: RoutineWithDaysAndSchedule[]) => void
+	loadRoutines: (rs: RoutineWithDays[]) => void
 	getRoutineByDayId: (dId: number) => DatabaseRoutine
 
 	addExercise: (ep: ExerciseWithProgressions) => void
@@ -31,7 +31,7 @@ interface UserState {
 		insertedProgressions: DatabaseProgression[],
 		deleteFromOrder: number | undefined
 	) => void
-	addRoutineWithDaysAndSchedule: (r: RoutineWithDaysAndSchedule) => void
+	addRoutineWithDays: (r: RoutineWithDays) => void
 	addRoutineDay: (rd: DatabaseRoutineDay) => void
 	updateRoutine: (r: DatabaseRoutine) => void
 
@@ -98,7 +98,7 @@ export const useUserStore = create<UserState>()(
 						}
 					})
 				}),
-			addRoutineWithDaysAndSchedule: (routine) =>
+			addRoutineWithDays: (routine) =>
 				set({
 					routines: get()
 						.routines.filter(
@@ -145,7 +145,7 @@ export const useUserStore = create<UserState>()(
 					(r) => r.routine.id === rId
 				)[0]
 				const days = routine.days.filter((d) => d.id === dId)
-				const routineAndDay: RoutineWithDaysAndSchedule = {
+				const routineAndDay: RoutineWithDays = {
 					routine: routine.routine,
 					days
 				}

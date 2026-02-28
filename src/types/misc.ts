@@ -1,3 +1,5 @@
+import { Database } from "./supabase"
+
 export type TextType =
 	| "note"
 	| "boldNote"
@@ -5,3 +7,5 @@ export type TextType =
 	| "boldText"
 	| "subtitle"
 	| "title"
+
+export type Weekday = Database["public"]["Enums"]["Weekday"]

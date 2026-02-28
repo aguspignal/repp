@@ -2,14 +2,16 @@ import {
 	DatabaseRoutine,
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
+	DatabaseSchedule,
 	DraftRoutineDayExercise,
 	RoutineDayWithExercises,
 	RoutineWithDaysAndExercises,
-	RoutineWithDaysAndSchedule
+	RoutineWithDays
 } from "../types/routines"
 import { isPostgrestError } from "../utils/queriesHelpers"
 import { PostgrestError } from "@supabase/supabase-js"
 import { supabase } from "../lib/supabase"
+import { Weekday } from "../types/misc"
 
 const routinesService = {
 	async fetchRoutineById(
@@ -47,7 +49,7 @@ const routinesService = {
 
 	async fetchRoutinesWithDaysByUserId(
 		userId: number
-	): Promise<RoutineWithDaysAndSchedule[] | PostgrestError> {
+	): Promise<RoutineWithDays[] | PostgrestError> {
 		console.log("R-SERVICE: fetchRoutinesWithDaysByUserId")
 		const { error, data } = await supabase
 			.from("Routines")
@@ -82,6 +84,22 @@ const routinesService = {
 			day: data[0],
 			exercises
 		}
+	},
+
+	async fetchRoutineSchedule(
+		rId: number
+	): Promise<DatabaseSchedule[] | PostgrestError> {
+		console.log("R-SERVICE: fetchRoutineSchedule")
+		const { error, data } = await supabase
+			.from("RoutineSchedules")
+			.select("*, RoutineDays!inner(routine_id)")
+			.eq("RoutineDays.routine_id", rId)
+
+		if (error) return error
+		return data.map((row) => {
+			const { RoutineDays, ...schedule } = row
+			return schedule
+		})
 	},
 
 	async countRoutineDayWorkouts(
@@ -217,8 +235,37 @@ const routinesService = {
 		return count ?? 0
 	},
 
+	async deleteAndPostRoutineSchedule({
+		routineDaysIds,
+		schedule
+	}: PostRoutineScheduleParams): Promise<
+		DatabaseSchedule[] | PostgrestError
+	> {
+		console.log("R-SERVICE: deleteAndPostRoutineSchedule")
+		const { error: deleteError } = await supabase
+			.from("RoutineSchedules")
+			.delete()
+			.in("routineday_id", routineDaysIds)
+
+		if (deleteError) return deleteError
+
+		const { error, data } = await supabase
+			.from("RoutineSchedules")
+			.insert(
+				schedule.map((s) => ({
+					weekday: s.weekday,
+					routineday_id: s.routineDayId,
+					is_second_week: s.isSecondWeek
+				}))
+			)
+			.select()
+
+		if (error) return error
+		return data
+	},
+
 	async deleteRoutineDay(id: number): Promise<number | PostgrestError> {
-		console.log("R-SERVICE: deleteRoutinDay")
+		console.log("R-SERVICE: deleteRoutineDay")
 
 		const workoutsCount = await this.countRoutineDayWorkouts(id)
 		if (isPostgrestError(workoutsCount)) return workoutsCount
@@ -270,6 +317,32 @@ const routinesService = {
 		return count ?? 0
 	},
 
+	async deleteRoutineDaySchedules(
+		dayId: number
+	): Promise<number | PostgrestError> {
+		console.log("R-SERVICE: deleteRoutineDaySchedules")
+		const { error, count } = await supabase
+			.from("RoutineSchedules")
+			.delete({ count: "exact" })
+			.eq("routineday_id", dayId)
+
+		if (error) return error
+		return count ?? 0
+	},
+
+	async deleteRoutineDayWorkouts(
+		dayId: number
+	): Promise<number | PostgrestError> {
+		console.log("R-SERVICE: deleteRoutineDayWorkouts")
+		const { error, count } = await supabase
+			.from("Workouts")
+			.delete({ count: "exact" })
+			.eq("routineday_id", dayId)
+
+		if (error) return error
+		return count ?? 0
+	},
+
 	async deleteAllRoutineData(rId: number): Promise<number | PostgrestError> {
 		console.log("R-SERVICE: deleteAllRoutineData")
 		const { error, count } = await supabase.rpc("delete_routine_cascade", {
@@ -305,4 +378,13 @@ export type PostRoutineExercisesParamas = {
 export type UpdateUserRoutineStatusParams = {
 	userId: number
 	routineId: number
+}
+
+export type PostRoutineScheduleParams = {
+	routineDaysIds: number[]
+	schedule: {
+		weekday: Weekday
+		routineDayId: number
+		isSecondWeek: boolean
+	}[]
 }

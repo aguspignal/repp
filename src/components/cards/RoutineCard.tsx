@@ -1,14 +1,14 @@
 import { divideRoutineDayInGroups } from "../../utils/parsing"
 import { RootStackNavigationProp } from "../../navigation/params"
 import { RoutineDayCodeBox } from "./RoutineDayCodeBox"
-import { RoutineWithDaysAndSchedule } from "../../types/routines"
+import { RoutineWithDays } from "../../types/routines"
 import { StyleSheet, TouchableOpacity, View } from "react-native"
 import { theme } from "../../resources/theme"
 import { useNavigation } from "@react-navigation/native"
 import StyledText from "../texts/StyledText"
 
 type Props = {
-	routine: RoutineWithDaysAndSchedule
+	routine: RoutineWithDays
 }
 
 export default function RoutineCard({ routine: { routine, days } }: Props) {
