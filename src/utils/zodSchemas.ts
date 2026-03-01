@@ -10,16 +10,7 @@ import i18next from "i18next"
 
 export const SignInSchema = z.object({
 	email: z.email(),
-	password: z
-		.string()
-		.min(
-			MIN_PASSWORD_LENGTH,
-			i18next.t(
-				"error-messages.password-must-have-at-least-(minCharacters)-charactes",
-				{ minCharacters: MIN_PASSWORD_LENGTH }
-			)
-		)
-		.max(MAX_PASSWORD_LENGTH, i18next.t("error-messages.too-long"))
+	password: z.string()
 })
 export type SignInValues = z.infer<typeof SignInSchema>
 

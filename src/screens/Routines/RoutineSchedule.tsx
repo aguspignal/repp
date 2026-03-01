@@ -1,6 +1,6 @@
 import { GETROUTINESCHEDULE_KEY } from "../../hooks/useRoutineQuery"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
-import { RootStackScreenProps } from "../../navigation/params"
+import { RoutinesTabScreenProps } from "../../navigation/params"
 import { StyleSheet, TouchableOpacity, View } from "react-native"
 import { theme } from "../../resources/theme"
 import { useState, useEffect } from "react"
@@ -20,7 +20,7 @@ export default function RoutineSchedule({
 	route: {
 		params: { routineId, schedule }
 	}
-}: RootStackScreenProps<"RoutineSchedule">) {
+}: RoutinesTabScreenProps<"RoutineSchedule">) {
 	const { t } = useTranslation()
 	const { routines } = useUserStore()
 	const { replaceRoutineScheduleMutation } = useRoutineMutation()

@@ -26,5 +26,21 @@ export const navigationStyles = StyleSheet.create({
 	},
 	headerTextColor: {
 		color: theme.colors.textLight
+	},
+	tabBar: {
+		height: theme.spacing.x3l + 4,
+		backgroundColor: theme.colors.backgroundDark
+	},
+	tabIconContainer: {
+		width: theme.fontSize.h3 + 4,
+		height: theme.fontSize.h3 + 4,
+		marginTop: 4
+	},
+	tabIcon: {
+		fontSize: theme.fontSize.h3,
+		color: theme.colors.textLight
+	},
+	tabIconFocused: {
+		color: theme.colors.primary
 	}
 })

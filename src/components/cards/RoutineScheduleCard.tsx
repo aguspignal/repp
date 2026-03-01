@@ -54,7 +54,13 @@ export default function RoutineScheduleCard({
 			style={styles.container}
 			onPress={() =>
 				navOnPress &&
-				nav.navigate("RoutineSchedule", { routineId, schedule })
+				nav.navigate("Tabs", {
+					screen: "RoutinesTab",
+					params: {
+						screen: "RoutineSchedule",
+						params: { routineId, schedule }
+					}
+				})
 			}
 			activeOpacity={navOnPress ? 0.6 : 1}
 		>

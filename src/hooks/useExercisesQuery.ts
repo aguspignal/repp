@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query"
 import exercisesService from "../services/exercisesService"
 
 const RQKEY_ROOT = "exercisesQueries"
-export const GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY = (uId: number) => [
+export const GETUSEREXERCISESANDPROGRESSIONS_KEY = (uId: number) => [
 	RQKEY_ROOT,
 	"userExercisesAndProgressions",
 	uId
@@ -25,9 +25,9 @@ export const GETEXERCISEHISTORY_KEY = (eId: number, df: string, dt: string) => [
 ]
 
 export default function useExercisesQuery() {
-	function getUserExercisesAndProgressionsLazy(userId: number | undefined) {
+	function getUserExercisesAndProgressions(userId: number | undefined) {
 		return useQuery<ExerciseWithProgressions[] | PostgrestError>({
-			queryKey: GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY(userId ?? 0),
+			queryKey: GETUSEREXERCISESANDPROGRESSIONS_KEY(userId ?? 0),
 			queryFn: async () => {
 				if (!userId) return []
 
@@ -49,8 +49,7 @@ export default function useExercisesQuery() {
 						(p) => p.exercise_id === e.id
 					)
 				}))
-			},
-			enabled: false
+			}
 		})
 	}
 
@@ -108,7 +107,7 @@ export default function useExercisesQuery() {
 	}
 
 	return {
-		getUserExercisesAndProgressionsLazy,
+		getUserExercisesAndProgressions,
 		getExerciseAndProgressionsById,
 		getExerciseHistory
 	}

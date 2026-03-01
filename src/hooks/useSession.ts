@@ -45,6 +45,7 @@ export default function useSession() {
 		if (error) {
 			// if (error.code === "email_not_confirmed")
 			// 	supabase.auth.resend({ type: "signup", email })
+			console.log(error)
 			return error
 		}
 		return null

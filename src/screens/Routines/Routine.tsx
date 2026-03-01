@@ -1,12 +1,12 @@
 import { isPostgrestError } from "../../utils/queriesHelpers"
-import { RootStackScreenProps } from "../../navigation/params"
+import { RoutinesTabScreenProps } from "../../navigation/params"
 import ErrorScreen from "../ErrorScreen"
 import i18next from "i18next"
 import Loading from "../Loading"
 import RoutineInner from "./views/RoutineInner"
 import useRoutineQuery from "../../hooks/useRoutineQuery"
 
-export default function Routine({ route }: RootStackScreenProps<"Routine">) {
+export default function Routine({ route }: RoutinesTabScreenProps<"Routine">) {
 	const { getRoutineWithDaysAndExercisesById } = useRoutineQuery()
 
 	const { error, data, isPending } = getRoutineWithDaysAndExercisesById(

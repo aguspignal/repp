@@ -85,7 +85,18 @@ export default function EditWorkout({
 				title: result?.message
 			})
 		}
-		navigation.reset({ index: 0, routes: [{ name: "Home" }] })
+		navigation.reset({
+			index: 0,
+			routes: [
+				{
+					name: "Tabs",
+					params: {
+						screen: "RoutinesTab",
+						params: { screen: "MyRoutines" }
+					}
+				}
+			]
+		})
 	}
 
 	if (isPendingDay || isPendingWorkout) return <Loading />

@@ -1,14 +1,18 @@
-import { ExercisesTabScreenProps } from "../../navigation/params"
 import { isPostgrestError } from "../../utils/queriesHelpers"
+import { RootStackScreenProps } from "../../navigation/params"
 import { sortExercisesAndProgressionsBy } from "../../utils/sorting"
 import { useEffect } from "react"
 import { useUserStore } from "../../stores/useUserStore"
-import ExerciseRepoInner from "./views/ExerciseRepoInner"
-import useExercisesQuery from "../../hooks/useExercisesQuery"
 import ErrorScreen from "../ErrorScreen"
+import ExerciseRepoInner from "../Exercises/views/ExerciseRepoInner"
 import Loading from "../Loading"
+import useExercisesQuery from "../../hooks/useExercisesQuery"
 
-export default function ExerciseRepository({}: ExercisesTabScreenProps<"ExerciseRepository">) {
+export default function AddExercisesFromRepo({
+	route: {
+		params: { dayId }
+	}
+}: RootStackScreenProps<"AddExercisesFromRepo">) {
 	const { user, loadExercisesAndProgressions } = useUserStore()
 	const { getUserExercisesAndProgressions } = useExercisesQuery()
 
@@ -27,5 +31,5 @@ export default function ExerciseRepository({}: ExercisesTabScreenProps<"Exercise
 	if (isPostgrestError(data))
 		return <ErrorScreen errorMessage={data.message} />
 
-	return <ExerciseRepoInner exercisesWithProgressions={data} />
+	return <ExerciseRepoInner exercisesWithProgressions={data} dayId={dayId} />
 }

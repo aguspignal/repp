@@ -4,7 +4,7 @@ import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { navigationStyles } from "../../navigation/styles"
 import { ParamListBase } from "@react-navigation/native"
-import { RootStackScreenProps } from "../../navigation/params"
+import { ExercisesTabScreenProps } from "../../navigation/params"
 import { TouchableOpacity, View } from "react-native"
 import { useState } from "react"
 import { useUserStore } from "../../stores/useUserStore"
@@ -16,7 +16,7 @@ import useExercisesMutation from "../../hooks/useExercisesMutation"
 
 type Props = {
 	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>
-	route: RootStackScreenProps<"EditExercise">["route"]
+	route: ExercisesTabScreenProps<"EditExercise">["route"]
 	back?: {
 		title: string | undefined
 		href: string | undefined

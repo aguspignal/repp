@@ -83,9 +83,15 @@ export default function WorkoutInner({
 	)
 
 	function handleGoCreateProgression(eId: number) {
-		nav.navigate("EditExercise", {
-			id: eId,
-			comingFromWorkout: dayExercises.map((de) => de.exercise_id)
+		nav.navigate("Tabs", {
+			screen: "ExercisesTab",
+			params: {
+				screen: "EditExercise",
+				params: {
+					id: eId,
+					comingFromWorkout: dayExercises.map((de) => de.exercise_id)
+				}
+			}
 		})
 	}
 

@@ -1,11 +1,11 @@
 import { Header } from "@react-navigation/elements"
 import { navigationStyles } from "../../navigation/styles"
-import { RootStackScreenProps } from "../../navigation/params"
+import { RoutinesTabScreenProps } from "../../navigation/params"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
 
 type Props = {
-	route: RootStackScreenProps<"RoutineSchedule">["route"]
+	route: RoutinesTabScreenProps<"RoutineSchedule">["route"]
 	back?: {
 		title: string | undefined
 		href: string | undefined

@@ -1,19 +1,22 @@
+import {
+	ExercisesTabScreenProps,
+	RootStackNavigationProp
+} from "../../navigation/params"
 import { ExerciseUpdatePayload } from "../../types/exercises"
 import { GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY } from "../../hooks/useExercisesQuery"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
-import { RootStackScreenProps } from "../../navigation/params"
+import { useNavigation } from "@react-navigation/native"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
 import ExerciseInner from "./views/ExerciseInner"
 import ToastNotification from "../../components/notifications/ToastNotification"
 import useExercisesMutation from "../../hooks/useExercisesMutation"
 
-export default function CreateExercise({
-	navigation
-}: RootStackScreenProps<"CreateExercise">) {
+export default function CreateExercise({}: ExercisesTabScreenProps<"CreateExercise">) {
 	const { t } = useTranslation()
 	const { user, addExercise } = useUserStore()
 	const { createExerciseAndProgressionsMutation } = useExercisesMutation()
+	const nav = useNavigation<RootStackNavigationProp>()
 
 	const { mutate: createExerciseAndProgressions, isPending } =
 		createExerciseAndProgressionsMutation
@@ -51,13 +54,20 @@ export default function CreateExercise({
 					invalidateQueries(
 						GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY(user.id)
 					)
-					navigation.reset({
+					nav.reset({
 						index: 0,
 						routes: [
-							{ name: "Home" },
 							{
-								name: "ExerciseRepository",
-								params: { editingRoutineDayId: undefined }
+								name: "Tabs",
+								params: {
+									screen: "ExercisesTab",
+									params: {
+										screen: "ExerciseRepository",
+										params: {
+											editingRoutineDayId: undefined
+										}
+									}
+								}
 							}
 						]
 					})

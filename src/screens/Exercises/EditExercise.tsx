@@ -7,8 +7,11 @@ import useExercisesQuery, {
 	GETEXERCISEANDPROGRESSIONSBYID_KEY,
 	GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY
 } from "../../hooks/useExercisesQuery"
+import {
+	ExercisesTabScreenProps,
+	RootStackNavigationProp
+} from "../../navigation/params"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
-import { RootStackScreenProps } from "../../navigation/params"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
@@ -17,19 +20,20 @@ import ExerciseInner from "./views/ExerciseInner"
 import Loading from "../Loading"
 import ToastNotification from "../../components/notifications/ToastNotification"
 import useExercisesMutation from "../../hooks/useExercisesMutation"
+import { useNavigation } from "@react-navigation/native"
 
 export default function EditExercise({
 	navigation,
 	route
-}: RootStackScreenProps<"EditExercise">) {
+}: ExercisesTabScreenProps<"EditExercise">) {
 	const { t } = useTranslation()
-	const { user, exercises, addExercise, updateExerciseAndProgressions } =
-		useUserStore()
+	const { user, addExercise, updateExerciseAndProgressions } = useUserStore()
 	const { getExerciseAndProgressionsById } = useExercisesQuery()
 	const {
 		updateExerciseAndProgressionsMutation,
 		deleteUpsertInsertProgressionsMutation
 	} = useExercisesMutation()
+	const nav = useNavigation<RootStackNavigationProp>()
 
 	const { data, error, isPending } = getExerciseAndProgressionsById(
 		route.params.id
@@ -160,17 +164,26 @@ export default function EditExercise({
 
 		if (route.params.comingFromWorkout) {
 			navigation.goBack()
-		} else
-			navigation.reset({
-				index: 0,
-				routes: [
-					{ name: "Home" },
-					{
-						name: "ExerciseRepository",
-						params: { editingRoutineDayId: undefined }
+			return
+		}
+
+		nav.reset({
+			index: 0,
+			routes: [
+				{
+					name: "Tabs",
+					params: {
+						screen: "ExercisesTab",
+						params: {
+							screen: "ExerciseRepository",
+							params: {
+								editingRoutineDayId: undefined
+							}
+						}
 					}
-				]
-			})
+				}
+			]
+		})
 	}
 
 	useEffect(() => {

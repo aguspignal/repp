@@ -6,24 +6,26 @@ import {
 	TouchableOpacity,
 	View
 } from "react-native"
-import { isPostgrestError } from "../utils/queriesHelpers"
-import { RootStackScreenProps } from "../navigation/params"
-import { theme } from "../resources/theme"
+import { isPostgrestError } from "../../utils/queriesHelpers"
+import { RoutinesTabScreenProps } from "../../navigation/params"
+import { theme } from "../../resources/theme"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { useUserStore } from "../stores/useUserStore"
-import Button from "../components/buttons/Button"
-import CreateRoutineModal from "../components/modals/CreateRoutineModal"
-import MCIcon from "../components/icons/MCIcon"
-import RoutineCard from "../components/cards/RoutineCard"
-import StyledText from "../components/texts/StyledText"
-import TextButton from "../components/buttons/TextButton"
-import ToastNotification from "../components/notifications/ToastNotification"
-import useRoutineMutation from "../hooks/useRoutineMutation"
-import useRoutineQuery from "../hooks/useRoutineQuery"
-import SelectRoutineDayModal from "../components/modals/SelectRoutineDayModal"
+import { useUserStore } from "../../stores/useUserStore"
+import Button from "../../components/buttons/Button"
+import CreateRoutineModal from "../../components/modals/CreateRoutineModal"
+import MCIcon from "../../components/icons/MCIcon"
+import RoutineCard from "../../components/cards/RoutineCard"
+import StyledText from "../../components/texts/StyledText"
+import TextButton from "../../components/buttons/TextButton"
+import ToastNotification from "../../components/notifications/ToastNotification"
+import useRoutineMutation from "../../hooks/useRoutineMutation"
+import useRoutineQuery from "../../hooks/useRoutineQuery"
+import SelectRoutineDayModal from "../../components/modals/SelectRoutineDayModal"
 
-export default function Home({ navigation }: RootStackScreenProps<"Home">) {
+export default function MyRoutines({
+	navigation
+}: RoutinesTabScreenProps<"MyRoutines">) {
 	const { t } = useTranslation()
 	const { user, routines, loadRoutines, addRoutineWithDays } = useUserStore()
 	const { getUserRoutinesWithDaysLazy } = useRoutineQuery()
@@ -73,8 +75,14 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 	}
 
 	function goToExerciseRepository() {
-		navigation.navigate("ExerciseRepository", {
-			editingRoutineDayId: undefined
+		navigation.navigate("Tabs", {
+			screen: "ExercisesTab",
+			params: {
+				screen: "ExerciseRepository",
+				params: {
+					editingRoutineDayId: undefined
+				}
+			}
 		})
 	}
 
@@ -196,17 +204,6 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
 				<StyledText type="boldText" color="grayDark">
 					{t("titles.archived-routines")}
 				</StyledText>
-			</TouchableOpacity>
-
-			<TouchableOpacity
-				onPress={goToExerciseRepository}
-				style={styles.exerciseRepoCard}
-			>
-				<StyledText type="boldText">
-					{t("titles.exercise-repository")}
-				</StyledText>
-
-				<MCIcon name="chevron-right" color="grayDark" />
 			</TouchableOpacity>
 
 			<CreateRoutineModal

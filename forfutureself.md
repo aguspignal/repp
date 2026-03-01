@@ -1,5 +1,6 @@
 # To fix
 
+    - login
     - edit finished workouts
         - troubles with order
         - not deleting
@@ -7,6 +8,9 @@
         - maybe consider draftId?
 
 # To implement
+
+    - bottom tabs
+        - different screen for exerciseRepo (maybe do inner)
 
     - milestones
     - sqlite

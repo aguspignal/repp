@@ -1,11 +1,11 @@
 import { FlatList, StyleSheet, View } from "react-native"
-import { RootStackScreenProps } from "../../navigation/params"
+import { RoutinesTabScreenProps } from "../../navigation/params"
 import { theme } from "../../resources/theme"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
 import RoutineCard from "../../components/cards/RoutineCard"
 
-export default function ArchivedRoutines({}: RootStackScreenProps<"ArchivedRoutines">) {
+export default function ArchivedRoutines({}: RoutinesTabScreenProps<"ArchivedRoutines">) {
 	const { t } = useTranslation()
 	const { routines } = useUserStore()
 

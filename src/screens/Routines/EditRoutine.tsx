@@ -4,7 +4,7 @@ import useRoutineQuery, {
 import { DatabaseRoutine } from "../../types/routines"
 import { EditRoutineSchema, EditRoutineValues } from "../../utils/zodSchemas"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
-import { RootStackScreenProps } from "../../navigation/params"
+import { RoutinesTabScreenProps } from "../../navigation/params"
 import { StyleSheet, View } from "react-native"
 import { theme } from "../../resources/theme"
 import { useEffect, useState } from "react"
@@ -20,7 +20,7 @@ import useRoutineMutation from "../../hooks/useRoutineMutation"
 export default function EditRoutine({
 	navigation,
 	route
-}: RootStackScreenProps<"EditRoutine">) {
+}: RoutinesTabScreenProps<"EditRoutine">) {
 	const { t } = useTranslation()
 	const { user, updateRoutine } = useUserStore()
 	const { getRoutineById } = useRoutineQuery()

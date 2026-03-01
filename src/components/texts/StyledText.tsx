@@ -24,10 +24,10 @@ export default function StyledText({
 		type === "note" || type === "boldNote"
 			? theme.fontSize.xs
 			: type === "text" || type === "boldText"
-			? theme.fontSize.s
-			: type === "subtitle"
-			? theme.fontSize.l
-			: theme.fontSize.xxl
+				? theme.fontSize.s
+				: type === "subtitle"
+					? theme.fontSize.m
+					: theme.fontSize.xl
 
 	const fontWeight = type === "note" || type === "text" ? "500" : "600"
 
@@ -38,5 +38,13 @@ export default function StyledText({
 		color: theme.colors[color as keyof typeof theme.colors]
 	}
 
-	return <Text style={[textStyle, style]} numberOfLines={numberOfLines} ellipsizeMode={ellipsizeMode}>{children}</Text>
+	return (
+		<Text
+			style={[textStyle, style]}
+			numberOfLines={numberOfLines}
+			ellipsizeMode={ellipsizeMode}
+		>
+			{children}
+		</Text>
+	)
 }

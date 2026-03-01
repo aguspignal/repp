@@ -4,7 +4,7 @@ import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { navigationStyles } from "../../navigation/styles"
 import { ParamListBase } from "@react-navigation/native"
-import { RootStackScreenProps } from "../../navigation/params"
+import { RoutinesTabScreenProps } from "../../navigation/params"
 import { TouchableOpacity, View } from "react-native"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -17,7 +17,7 @@ import useRoutineMutation from "../../hooks/useRoutineMutation"
 
 type Props = {
 	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>
-	route: RootStackScreenProps<"Routine">["route"]
+	route: RoutinesTabScreenProps<"Routine">["route"]
 	back?: {
 		title: string | undefined
 		href: string | undefined

@@ -1,9 +1,9 @@
 import { Header } from "@react-navigation/elements"
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { navigationStyles } from "../../navigation/styles";
-import { ParamListBase } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native';
-import MCIcon from "../icons/MCIcon";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+import { navigationStyles } from "../../navigation/styles"
+import { ParamListBase } from "@react-navigation/native"
+import { TouchableOpacity } from "react-native"
+import MCIcon from "../icons/MCIcon"
 
 type Props = {
 	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>
@@ -13,7 +13,7 @@ type Props = {
 	}
 }
 
-export default function HomeHeader({ navigation, back }: Props) {
+export default function MyRoutinesHeader({ navigation, back }: Props) {
 	return (
 		<Header
 			title="Repp"

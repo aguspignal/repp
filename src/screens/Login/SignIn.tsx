@@ -1,13 +1,14 @@
 import { LoginScreenProps } from "../../navigation/params"
 import { parseSupabaseErrorToTranslation } from "../../utils/queriesHelpers"
 import { SignInSchema, SignInValues } from "../../utils/zodSchemas"
-import { useForm } from "react-hook-form"
+import { SubmitErrorHandler, useForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { yupResolver } from "@hookform/resolvers/yup"
 import LoginLayout from "./LoginLayout"
 import SignInInput from "../../components/inputs/SignInInput"
 import ToastNotification from "../../components/notifications/ToastNotification"
 import useSession from "../../hooks/useSession"
+import { useState } from "react"
 
 export default function SignIn({ navigation }: LoginScreenProps<"SignIn">) {
 	const { t } = useTranslation()
@@ -16,30 +17,52 @@ export default function SignIn({ navigation }: LoginScreenProps<"SignIn">) {
 	const {
 		handleSubmit,
 		control,
-		formState: { isLoading, isSubmitting }
+		formState: { isLoading, isSubmitting },
+		getValues,
+		getFieldState
 	} = useForm<SignInValues>({
 		defaultValues: { email: "", password: "" },
 		resolver: yupResolver(SignInSchema)
 	})
 
-	async function handleSignIn(values: SignInValues) {
-		const error = await signInWithEmail(values)
+	const [loading, setLoading] = useState(false)
 
-		if (error) {
-			if (error.code === "email_not_confirmed") {
-				// navigation.navigate("EmailVerification", { email: values.email })
-				return
+	async function handleSignIn() {
+		try {
+			setLoading(true)
+			const emailState = getFieldState("email")
+			const pswState = getFieldState("password")
+			console.log(emailState)
+			console.log(pswState)
+
+			const error = await signInWithEmail(getValues())
+
+			if (error) {
+				if (error.code === "email_not_confirmed") {
+					// navigation.navigate("EmailVerification", { email: values.email })
+					return
+				}
+				ToastNotification({
+					title: t(parseSupabaseErrorToTranslation(error.code))
+				})
 			}
+		} catch (error) {
 			ToastNotification({
-				title: t(parseSupabaseErrorToTranslation(error.code))
+				title: t("error-messages.an-error-ocurred-try-again")
 			})
+		} finally {
+			setLoading(false)
 		}
 	}
+
+	const onInvalid: SubmitErrorHandler<SignInValues> = (errors) =>
+		console.error(errors)
 
 	return (
 		<LoginLayout
 			type="signin"
-			onSubmit={handleSubmit(handleSignIn)}
+			// onSubmit={handleSubmit(handleSignIn)}
+			onSubmit={handleSignIn}
 			isLoading={isLoading || isSubmitting}
 			navigation={navigation}
 		>

@@ -172,10 +172,15 @@ export default function EditRoutineDayInner({
 					nav.reset({
 						index: 0,
 						routes: [
-							{ name: "Home" },
 							{
-								name: "Routine",
-								params: { id: newRoutineDay.routine_id }
+								name: "Tabs",
+								params: {
+									screen: "RoutinesTab",
+									params: {
+										screen: "Routine",
+										params: { id: newRoutineDay.routine_id }
+									}
+								}
 							}
 						]
 					})
@@ -184,8 +189,8 @@ export default function EditRoutineDayInner({
 		)
 	}
 
-	function handleAddExercise() {
-		nav.navigate("ExerciseRepository", { editingRoutineDayId: day.id })
+	function goToAddExercise() {
+		nav.navigate("AddExercisesFromRepo", { dayId: day.id })
 	}
 
 	function handleDeleteExercise(draftRDE: DraftRoutineDayExercise) {
@@ -296,7 +301,7 @@ export default function EditRoutineDayInner({
 				</View>
 
 				<TouchableOpacity
-					onPress={handleAddExercise}
+					onPress={goToAddExercise}
 					style={styles.addExerciseBtn}
 				>
 					<MCIcon name="plus" color="primary" size="xxl" />

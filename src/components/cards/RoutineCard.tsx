@@ -15,7 +15,13 @@ export default function RoutineCard({ routine: { routine, days } }: Props) {
 	const nav = useNavigation<RootStackNavigationProp>()
 
 	function handlePressCard() {
-		nav.navigate("Routine", { id: routine.id })
+		nav.navigate("Tabs", {
+			screen: "RoutinesTab",
+			params: {
+				screen: "Routine",
+				params: { id: routine.id }
+			}
+		})
 	}
 
 	return (

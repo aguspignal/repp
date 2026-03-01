@@ -40,7 +40,18 @@ export default function Workout({
 						ToastNotification({ title: workoutAndSets?.message })
 						return
 					}
-					navigation.reset({ index: 0, routes: [{ name: "Home" }] })
+					navigation.reset({
+						index: 0,
+						routes: [
+							{
+								name: "Tabs",
+								params: {
+									screen: "RoutinesTab",
+									params: { screen: "MyRoutines" }
+								}
+							}
+						]
+					})
 				}
 			}
 		)

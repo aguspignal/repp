@@ -5,32 +5,22 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { invalidateQueries } from "../utils/queriesHelpers"
 import { navigationStyles } from "./styles"
 import { RootStackParams, RootStackScreenProps } from "./params"
+import { TabsNavigator } from "./TabsNavigator"
 import { theme } from "../resources/theme"
 import { useEffect } from "react"
-import CreateExercise from "../screens/Exercises/CreateExercise"
-import EditExercise from "../screens/Exercises/EditExercise"
-import EditExerciseHeader from "../components/header/EditExerciseHeader"
-import EditRoutineDay from "../screens/Routines/EditRoutineDay"
-import EditRoutineDayHeader from "../components/header/EditRoutineDayHeader"
-import ExerciseRepository from "../screens/Exercises/ExerciseRepository"
-import Home from "../screens/Home"
-import HomeHeader from "../components/header/HomeHeader"
-import i18next from "i18next"
-import Loading from "../screens/Loading"
-import Routine from "../screens/Routines/Routine"
-import Settings from "../screens/Settings"
-import EditRoutine from "../screens/Routines/EditRoutine"
-import RoutineHeader from "../components/header/RoutineHeader"
-import Workout from "../screens/Workouts/Workout"
-import WorkoutHeader from "../components/header/WorkoutHeader"
-import RoutineDayHistory from "../screens/Routines/RoutineDayHistory"
-import RoutineDayHistoryHeader from "../components/header/RoutineDayHistoryHeader"
 import EditWorkout from "../screens/Workouts/EditWorkout"
 import EditWorkoutHeader from "../components/header/EditWorkoutHeader"
-import RoutineSchedule from "../screens/Routines/RoutineSchedule"
-import RoutineScheduleHeader from "../components/header/RoutineScheduleHeader"
 import ExerciseHistory from "../screens/Exercises/ExerciseHistory"
-import ArchivedRoutines from "../screens/Routines/ArchivedRoutines"
+import i18next from "i18next"
+import Loading from "../screens/Loading"
+import RoutineDayHistory from "../screens/Routines/RoutineDayHistory"
+import RoutineDayHistoryHeader from "../components/header/RoutineDayHistoryHeader"
+import Settings from "../screens/Settings"
+import Workout from "../screens/Workouts/Workout"
+import WorkoutHeader from "../components/header/WorkoutHeader"
+import AddExercisesFromRepo from "../screens/Routines/AddExercisesFromRepo"
+import EditRoutineDayHeader from "../components/header/EditRoutineDayHeader"
+import EditRoutineDay from "../screens/Routines/EditRoutineDay"
 
 type Props = {
 	uuid: string
@@ -57,86 +47,25 @@ const RootStack = createNativeStackNavigator<RootStackParams>()
 function RootNavigator() {
 	return (
 		<RootStack.Navigator
-			screenOptions={{
+			initialRouteName="Tabs"
+			screenOptions={({ route }) => ({
+				headerShown: route.name !== "Tabs",
 				headerStyle: navigationStyles.headerBackground,
 				headerTitleStyle: navigationStyles.headerTitle,
 				headerTintColor: theme.colors.textLight,
 				headerShadowVisible: false
-			}}
+			})}
 		>
-			<RootStack.Screen
-				name="Home"
-				component={Home}
-				options={{
-					header: ({ navigation, back }) => (
-						<HomeHeader navigation={navigation} back={back} />
-					)
-				}}
-			/>
+			<RootStack.Screen name="Tabs" component={TabsNavigator} />
+
 			<RootStack.Screen name="Settings" component={Settings} />
+
 			<RootStack.Screen
-				name="ExerciseRepository"
-				component={ExerciseRepository}
-				options={{
-					headerTitle: i18next.t("titles.exercise-repository")
-				}}
+				name="AddExercisesFromRepo"
+				component={AddExercisesFromRepo}
+				options={{ headerTitle: i18next.t("actions.add-exercises") }}
 			/>
-			<RootStack.Screen
-				name="CreateExercise"
-				component={CreateExercise}
-				options={{
-					headerTitle: i18next.t("actions.create-exercise")
-				}}
-			/>
-			<RootStack.Screen
-				name="EditExercise"
-				component={EditExercise}
-				options={{
-					header: ({ navigation, route, back }) => (
-						<EditExerciseHeader
-							navigation={navigation}
-							route={
-								route as RootStackScreenProps<"EditExercise">["route"]
-							}
-							back={back}
-						/>
-					)
-				}}
-			/>
-			<RootStack.Screen
-				name="Routine"
-				component={Routine}
-				options={{
-					header: ({ navigation, back, route }) => (
-						<RoutineHeader
-							navigation={navigation}
-							route={
-								route as RootStackScreenProps<"Routine">["route"]
-							}
-							back={back}
-						/>
-					)
-				}}
-			/>
-			<RootStack.Screen
-				name="EditRoutine"
-				component={EditRoutine}
-				options={{ headerTitle: i18next.t("actions.edit-routine") }}
-			/>
-			<RootStack.Screen
-				name="RoutineSchedule"
-				component={RoutineSchedule}
-				options={{
-					header: ({ back, route }) => (
-						<RoutineScheduleHeader
-							route={
-								route as RootStackScreenProps<"RoutineSchedule">["route"]
-							}
-							back={back}
-						/>
-					)
-				}}
-			/>
+
 			<RootStack.Screen
 				name="EditRoutineDay"
 				component={EditRoutineDay}
@@ -152,13 +81,7 @@ function RootNavigator() {
 					)
 				}}
 			/>
-			<RootStack.Screen
-				name="ArchivedRoutines"
-				component={ArchivedRoutines}
-				options={{
-					headerTitle: i18next.t("titles.archived-routines")
-				}}
-			/>
+
 			<RootStack.Screen
 				name="Workout"
 				component={Workout}
@@ -174,20 +97,7 @@ function RootNavigator() {
 					)
 				}}
 			/>
-			<RootStack.Screen
-				name="RoutineDayHistory"
-				component={RoutineDayHistory}
-				options={{
-					header: ({ route, back }) => (
-						<RoutineDayHistoryHeader
-							route={
-								route as RootStackScreenProps<"RoutineDayHistory">["route"]
-							}
-							back={back}
-						/>
-					)
-				}}
-			/>
+
 			<RootStack.Screen
 				name="EditWorkout"
 				component={EditWorkout}
@@ -203,6 +113,22 @@ function RootNavigator() {
 					)
 				}}
 			/>
+
+			<RootStack.Screen
+				name="RoutineDayHistory"
+				component={RoutineDayHistory}
+				options={{
+					header: ({ route, back }) => (
+						<RoutineDayHistoryHeader
+							route={
+								route as RootStackScreenProps<"RoutineDayHistory">["route"]
+							}
+							back={back}
+						/>
+					)
+				}}
+			/>
+
 			<RootStack.Screen
 				name="ExerciseHistory"
 				component={ExerciseHistory}

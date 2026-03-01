@@ -53,10 +53,10 @@ export default function LoginLayout({
 						{type === "signin"
 							? t("actions.signin")
 							: type === "signup"
-							? t("actions.create-an-account")
-							: type === "recovery"
-							? t("actions.recover-password")
-							: t("actions.update-your-password")}
+								? t("actions.create-an-account")
+								: type === "recovery"
+									? t("actions.recover-password")
+									: t("actions.update-your-password")}
 					</StyledText>
 				)}
 
@@ -67,12 +67,12 @@ export default function LoginLayout({
 						type === "signin"
 							? t("actions.signin")
 							: type === "signup"
-							? t("actions.create-account")
-							: type === "recovery"
-							? t("actions.recover-password")
-							: type === "updatepsw"
-							? t("actions.update-password")
-							: t("actions.verify")
+								? t("actions.create-account")
+								: type === "recovery"
+									? t("actions.recover-password")
+									: type === "updatepsw"
+										? t("actions.update-password")
+										: t("actions.verify")
 					}
 					onPress={onSubmit}
 					isLoading={isLoading}
@@ -96,7 +96,7 @@ export default function LoginLayout({
 									: t("actions.go-signin")
 							}
 							color="primary"
-							textType="subtitle"
+							textType="boldText"
 						/>
 					</View>
 				) : null}
