@@ -80,36 +80,10 @@ export default function ExerciseRepoInner({
 	function handleAddSelectedExercises() {
 		if (!dayId) return
 
-		nav.reset({
-			index: 0,
-			routes: [
-				{
-					name: "Tabs",
-					params: {
-						screen: "RoutinesTab",
-						params: {
-							screen: "Routine",
-							params: {
-								id: routines.find((r) =>
-									r.days.some((d) => d.id === dayId)
-								)?.routine.id
-							}
-						}
-					}
-				},
-				{
-					name: "EditRoutineDay",
-					params: {
-						id: dayId,
-						selectedExercises
-					}
-				}
-			]
+		nav.popTo("EditRoutineDay", {
+			id: dayId,
+			selectedExercises
 		})
-		// nav.popTo("EditRoutineDay", {
-		// 	id: dayId,
-		// 	selectedExercises
-		// })
 	}
 
 	function goToCreateExercise() {

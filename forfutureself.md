@@ -9,8 +9,7 @@
 
 # To implement
 
-    - bottom tabs
-        - different screen for exerciseRepo (maybe do inner)
+    - restyle with new text sizes
 
     - milestones
     - sqlite

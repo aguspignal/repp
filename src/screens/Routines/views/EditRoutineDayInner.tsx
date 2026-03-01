@@ -169,21 +169,7 @@ export default function EditRoutineDayInner({
 					)
 					invalidateQueries(GETROUTINEDAYANDEXERCISES_KEY(user?.id))
 					setConfirmationModalVisible(false)
-					nav.reset({
-						index: 0,
-						routes: [
-							{
-								name: "Tabs",
-								params: {
-									screen: "RoutinesTab",
-									params: {
-										screen: "Routine",
-										params: { id: newRoutineDay.routine_id }
-									}
-								}
-							}
-						]
-					})
+					nav.goBack()
 				}
 			}
 		)
