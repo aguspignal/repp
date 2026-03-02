@@ -1,4 +1,4 @@
-import { GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY } from "../../hooks/useExercisesQuery"
+import { GETUSEREXERCISESANDPROGRESSIONS_KEY } from "../../hooks/useExercisesQuery"
 import { Header } from "@react-navigation/elements"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
@@ -68,12 +68,21 @@ function HeaderRight({ navigation, exerciseId }: HeaderRightProps) {
 
 				removeExercise(exerciseId)
 				invalidateQueries(
-					GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY(user?.id ?? 0)
+					GETUSEREXERCISESANDPROGRESSIONS_KEY(user?.id ?? 0)
 				)
-				navigation.reset({
-					index: 0,
-					routes: [{ name: "Home" }, { name: "ExerciseRepository" }]
-				})
+				navigation.goBack()
+				// navigation.reset({
+				// 	index: 0,
+				// 	routes: [
+				// 		{
+				// 			name: "Tabs",
+				// 			params: {
+				// 				screen: "ExercisesTab",
+				// 				params: { screen: "ExerciseRepository" }
+				// 			}
+				// 		}
+				// 	]
+				// })
 			}
 		})
 	}

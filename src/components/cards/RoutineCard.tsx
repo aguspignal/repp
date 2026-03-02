@@ -26,7 +26,7 @@ export default function RoutineCard({ routine: { routine, days } }: Props) {
 
 	return (
 		<TouchableOpacity style={styles.container} onPress={handlePressCard}>
-			<StyledText type="boldText">{routine.name}</StyledText>
+			<StyledText type="subtitle">{routine.name}</StyledText>
 
 			<View style={styles.daysContainer}>
 				{divideRoutineDayInGroups(days).map((group) => (

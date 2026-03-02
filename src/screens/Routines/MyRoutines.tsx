@@ -74,18 +74,6 @@ export default function MyRoutines({
 		if (dayId) navigation.navigate("Workout", { dayId })
 	}
 
-	function goToExerciseRepository() {
-		navigation.navigate("Tabs", {
-			screen: "ExercisesTab",
-			params: {
-				screen: "ExerciseRepository",
-				params: {
-					editingRoutineDayId: undefined
-				}
-			}
-		})
-	}
-
 	function goToArchivedRoutines() {
 		navigation.navigate("ArchivedRoutines")
 	}

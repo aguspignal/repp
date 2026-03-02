@@ -293,51 +293,25 @@ const routinesService = {
 		rdeIds: number[]
 	): Promise<number | PostgrestError> {
 		console.log("R-SERVICE: deleteRoutineDayExercises")
-		console.log("del rdeIds: ", rdeIds)
 		const { error, count } = await supabase
 			.from("RoutineDayExercises")
 			.delete({ count: "exact" })
 			.in("exercise_id", rdeIds)
 
 		if (error) return error
-		console.log("del count: ", count)
 		return count ?? 0
 	},
 
-	async deleteAllRoutineDayExercises(
-		dayId: number
-	): Promise<number | PostgrestError> {
-		console.log("R-SERVICE: deleteRoutineDayExercises")
-		const { error, count } = await supabase
-			.from("RoutineDayExercises")
-			.delete({ count: "exact" })
-			.eq("routineday_id", dayId)
-
-		if (error) return error
-		return count ?? 0
-	},
-
-	async deleteRoutineDaySchedules(
-		dayId: number
-	): Promise<number | PostgrestError> {
-		console.log("R-SERVICE: deleteRoutineDaySchedules")
-		const { error, count } = await supabase
-			.from("RoutineSchedules")
-			.delete({ count: "exact" })
-			.eq("routineday_id", dayId)
-
-		if (error) return error
-		return count ?? 0
-	},
-
-	async deleteRoutineDayWorkouts(
+	async deleteRoutineDayData(
 		dayId: number
 	): Promise<number | PostgrestError> {
 		console.log("R-SERVICE: deleteRoutineDayWorkouts")
-		const { error, count } = await supabase
-			.from("Workouts")
-			.delete({ count: "exact" })
-			.eq("routineday_id", dayId)
+		const { error, count } = await supabase.rpc(
+			"delete_routineday_cascade",
+			{
+				p_routineday_id: dayId
+			}
+		)
 
 		if (error) return error
 		return count ?? 0
@@ -349,8 +323,6 @@ const routinesService = {
 			p_routine_id: rId
 		})
 
-		console.log(error)
-		console.log(count)
 		if (error) return error
 		return count ?? 0
 	}

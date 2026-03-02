@@ -378,6 +378,10 @@ export type Database = {
         Args: { p_routine_id: number }
         Returns: undefined
       }
+      delete_routineday_cascade: {
+        Args: { p_routineday_id: number }
+        Returns: undefined
+      }
       get_exercise_workout_sets: {
         Args: {
           exercise_id: number

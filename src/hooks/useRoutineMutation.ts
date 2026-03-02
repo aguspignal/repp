@@ -164,16 +164,7 @@ async function replaceRoutineSchedule(
 async function deleteRoutineDay(
 	dayId: number
 ): Promise<number | PostgrestError> {
-	const exercisesResult =
-		await routinesService.deleteAllRoutineDayExercises(dayId)
-	const schedulesResult =
-		await routinesService.deleteRoutineDaySchedules(dayId)
-	const workoutsResult = await routinesService.deleteRoutineDayWorkouts(dayId)
-
-	if (isPostgrestError(exercisesResult)) return exercisesResult
-	if (isPostgrestError(schedulesResult)) return schedulesResult
-	if (isPostgrestError(workoutsResult)) return workoutsResult
-	return await routinesService.deleteRoutineDay(dayId)
+	return await routinesService.deleteRoutineDayData(dayId)
 }
 
 async function deleteAllRoutineData(

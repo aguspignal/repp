@@ -1,6 +1,5 @@
 # To fix
 
-    - login
     - edit finished workouts
         - troubles with order
         - not deleting
@@ -10,6 +9,7 @@
 # To implement
 
     - restyle with new text sizes
+    - on delete exercise, delete workoutsets and dayexercises
 
     - milestones
     - sqlite
