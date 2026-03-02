@@ -96,13 +96,7 @@ export default function ExerciseRepoInner({
 	}
 
 	function goToExercise(exercise: DatabaseExercise) {
-		nav.navigate("Tabs", {
-			screen: "ExercisesTab",
-			params: {
-				screen: "EditExercise",
-				params: { id: exercise.id }
-			}
-		})
+		nav.navigate("EditExercise", { id: exercise.id })
 	}
 
 	function handleRefresh() {

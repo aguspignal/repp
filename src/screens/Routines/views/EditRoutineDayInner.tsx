@@ -16,8 +16,6 @@ import {
 	EditRoutineDaySchema,
 	EditRoutineDayValues
 } from "../../../utils/zodSchemas"
-import { DatabaseExercise } from "../../../types/exercises"
-import { RootStackNavigationProp } from "../../../navigation/params"
 import {
 	KeyboardAvoidingView,
 	ScrollView,
@@ -25,6 +23,8 @@ import {
 	TouchableOpacity,
 	View
 } from "react-native"
+import { DatabaseExercise } from "../../../types/exercises"
+import { RootStackNavigationProp } from "../../../navigation/params"
 import { theme } from "../../../resources/theme"
 import { useCallback, useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -130,10 +130,6 @@ export default function EditRoutineDayInner({
 					)
 			)
 			.map((pe) => pe.exercise_id)
-
-		console.log("upsert: ", upsertExercises)
-		console.log("deleExercises: ", deleteExercisesIds)
-		console.log("insert: ", insertExercises)
 
 		const newDay: DatabaseRoutineDay = { ...day, code, name }
 

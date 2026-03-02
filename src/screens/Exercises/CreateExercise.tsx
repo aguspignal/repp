@@ -3,7 +3,7 @@ import {
 	RootStackNavigationProp
 } from "../../navigation/params"
 import { ExerciseUpdatePayload } from "../../types/exercises"
-import { GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY } from "../../hooks/useExercisesQuery"
+import { GETUSEREXERCISESANDPROGRESSIONS_KEY } from "../../hooks/useExercisesQuery"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { useNavigation } from "@react-navigation/native"
 import { useTranslation } from "react-i18next"
@@ -52,7 +52,7 @@ export default function CreateExercise({}: ExercisesTabScreenProps<"CreateExerci
 
 					addExercise(newExercise)
 					invalidateQueries(
-						GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY(user.id)
+						GETUSEREXERCISESANDPROGRESSIONS_KEY(user.id)
 					)
 					nav.reset({
 						index: 0,

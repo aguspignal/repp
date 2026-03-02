@@ -23,6 +23,10 @@ export type RootStackParams = {
 	Tabs: NavigatorScreenParams<TabParams>
 	Settings: undefined
 	AddExercisesFromRepo: { dayId: number }
+	EditExercise: {
+		id: number
+		comingFromWorkout?: number[]
+	}
 	EditRoutineDay: {
 		id: number
 		selectedExercises?: DatabaseExercise[]
@@ -79,10 +83,6 @@ export type RoutinesTabScreenProps<T extends keyof RoutinesTabParams> =
 export type ExercisesTabParams = {
 	ExerciseRepository: undefined
 	CreateExercise: undefined
-	EditExercise: {
-		id: number
-		comingFromWorkout?: number[]
-	}
 }
 
 export type ExercisesTabScreenProps<T extends keyof ExercisesTabParams> =

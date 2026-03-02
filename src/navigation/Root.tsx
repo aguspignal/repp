@@ -21,6 +21,8 @@ import WorkoutHeader from "../components/header/WorkoutHeader"
 import AddExercisesFromRepo from "../screens/Routines/AddExercisesFromRepo"
 import EditRoutineDayHeader from "../components/header/EditRoutineDayHeader"
 import EditRoutineDay from "../screens/Routines/EditRoutineDay"
+import EditExerciseHeader from "../components/header/EditExerciseHeader"
+import EditExercise from "../screens/Exercises/EditExercise"
 
 type Props = {
 	uuid: string
@@ -59,6 +61,22 @@ function RootNavigator() {
 			<RootStack.Screen name="Tabs" component={TabsNavigator} />
 
 			<RootStack.Screen name="Settings" component={Settings} />
+
+			<RootStack.Screen
+				name="EditExercise"
+				component={EditExercise}
+				options={{
+					header: ({ navigation, route, back }) => (
+						<EditExerciseHeader
+							navigation={navigation}
+							route={
+								route as RootStackScreenProps<"EditExercise">["route"]
+							}
+							back={back}
+						/>
+					)
+				}}
+			/>
 
 			<RootStack.Screen
 				name="AddExercisesFromRepo"

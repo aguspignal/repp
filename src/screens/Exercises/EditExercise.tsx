@@ -5,14 +5,15 @@ import {
 } from "../../types/exercises"
 import useExercisesQuery, {
 	GETEXERCISEANDPROGRESSIONSBYID_KEY,
-	GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY
+	GETUSEREXERCISESANDPROGRESSIONS_KEY
 } from "../../hooks/useExercisesQuery"
 import {
-	ExercisesTabScreenProps,
-	RootStackNavigationProp
+	RootStackNavigationProp,
+	RootStackScreenProps
 } from "../../navigation/params"
 import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { useEffect } from "react"
+import { useNavigation } from "@react-navigation/native"
 import { useTranslation } from "react-i18next"
 import { useUserStore } from "../../stores/useUserStore"
 import ErrorScreen from "../ErrorScreen"
@@ -20,12 +21,11 @@ import ExerciseInner from "./views/ExerciseInner"
 import Loading from "../Loading"
 import ToastNotification from "../../components/notifications/ToastNotification"
 import useExercisesMutation from "../../hooks/useExercisesMutation"
-import { useNavigation } from "@react-navigation/native"
 
 export default function EditExercise({
 	navigation,
 	route
-}: ExercisesTabScreenProps<"EditExercise">) {
+}: RootStackScreenProps<"EditExercise">) {
 	const { t } = useTranslation()
 	const { user, addExercise, updateExerciseAndProgressions } = useUserStore()
 	const { getExerciseAndProgressionsById } = useExercisesQuery()
@@ -159,7 +159,7 @@ export default function EditExercise({
 			insertedProgressions,
 			deleteFromOrder
 		)
-		invalidateQueries(GETUSEREXERCISESANDPROGRESSIONSLAZY_KEY(user.id))
+		invalidateQueries(GETUSEREXERCISESANDPROGRESSIONS_KEY(user.id))
 		invalidateQueries(GETEXERCISEANDPROGRESSIONSBYID_KEY(route.params.id))
 
 		if (route.params.comingFromWorkout) {

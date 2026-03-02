@@ -9,7 +9,6 @@
 # To implement
 
     - restyle with new text sizes
-    - on delete exercise, delete workoutsets and dayexercises
 
     - milestones
     - sqlite

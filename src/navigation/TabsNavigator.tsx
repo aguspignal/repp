@@ -4,7 +4,6 @@ import {
 } from "@react-navigation/bottom-tabs"
 import {
 	ExercisesTabParams,
-	ExercisesTabScreenProps,
 	RoutinesTabParams,
 	RoutinesTabScreenProps,
 	TabParams
@@ -14,8 +13,6 @@ import { navigationStyles } from "./styles"
 import { theme } from "../resources/theme"
 import ArchivedRoutines from "../screens/Routines/ArchivedRoutines"
 import CreateExercise from "../screens/Exercises/CreateExercise"
-import EditExercise from "../screens/Exercises/EditExercise"
-import EditExerciseHeader from "../components/header/EditExerciseHeader"
 import EditRoutine from "../screens/Routines/EditRoutine"
 import ExerciseRepository from "../screens/Exercises/ExerciseRepository"
 import i18next from "../lib/i18n"
@@ -144,21 +141,6 @@ function ExercisesTabNavigator() {
 				component={CreateExercise}
 				options={{
 					headerTitle: i18next.t("actions.create-exercise")
-				}}
-			/>
-			<ExercisesTab.Screen
-				name="EditExercise"
-				component={EditExercise}
-				options={{
-					header: ({ navigation, route, back }) => (
-						<EditExerciseHeader
-							navigation={navigation}
-							route={
-								route as ExercisesTabScreenProps<"EditExercise">["route"]
-							}
-							back={back}
-						/>
-					)
 				}}
 			/>
 		</ExercisesTab.Navigator>

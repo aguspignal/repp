@@ -125,7 +125,8 @@
 		"per-set": "Per set",
 		"per-progression": "Per progression",
 		"this-will-delete-routine-data-cannot-be-undone": "This will delete any data related to this routine, including your workouts, and cannot be undone",
-		"all-your-routines-will-appear-here": "All your routines will appear here"
+		"all-your-routines-will-appear-here": "All your routines will appear here",
+		"no-workouts-this-exercise-in-specified-range": "No workouts including this exercise in the specified range"
 	},
 	"questions": {
 		"already-have-one": "Already have one?",
