@@ -82,13 +82,18 @@ function HeaderRight({ navigation, dayId, workoutId }: HeaderRightProps) {
 				navigation.reset({
 					index: 0,
 					routes: [
-						{ name: "Home" },
 						{
-							name: "Routine",
+							name: "Tabs",
 							params: {
-								id: routines.find((r) =>
-									r.days.some((d) => d.id === dayId)
-								)?.routine.id
+								screen: "RoutinesTab",
+								params: {
+									screen: "Routine",
+									params: {
+										id: routines.find((r) =>
+											r.days.some((d) => d.id === dayId)
+										)!.routine.id
+									}
+								}
 							}
 						},
 						{

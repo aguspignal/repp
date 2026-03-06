@@ -6,7 +6,7 @@ import {
 	DatabaseProgression,
 	ExerciseWithProgressions
 } from "../../types/exercises"
-import { Dispatch, SetStateAction, useMemo, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react"
 import { DraftWorkoutSet, ExerciseIdWithDraftSets } from "../../types/workouts"
 import { parseGoalsToText, parseNumericInput } from "../../utils/parsing"
 import { RoutineDayExerciseGoals } from "../../types/routines"
@@ -319,6 +319,10 @@ function SetRow({
 		const num = parseNumericInput(txt, setReps)
 		onUpdateReps(draftSet, num)
 	}
+
+	useEffect(() => {
+		setReps(draftSet.reps?.toString() ?? "")
+	}, [draftSet.reps])
 
 	return (
 		<View style={styles.row}>

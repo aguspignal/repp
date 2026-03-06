@@ -25,7 +25,7 @@ export type RootStackParams = {
 	AddExercisesFromRepo: { dayId: number }
 	EditExercise: {
 		id: number
-		comingFromWorkout?: number[]
+		comingFromWorkout?: boolean
 	}
 	EditRoutineDay: {
 		id: number

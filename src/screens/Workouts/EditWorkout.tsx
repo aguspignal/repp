@@ -14,6 +14,7 @@ import useRoutineQuery from "../../hooks/useRoutineQuery"
 import useWorkoutMutation from "../../hooks/useWorkoutMutation"
 import useWorkoutQuery from "../../hooks/useWorkoutQuery"
 import WorkoutInner from "./views/WorkoutInner"
+import { useUserStore } from "../../stores/useUserStore"
 
 export default function EditWorkout({
 	navigation,
@@ -23,6 +24,7 @@ export default function EditWorkout({
 		useWorkoutMutation()
 	const { getRoutineDayAndExercises } = useRoutineQuery()
 	const { getWorkoutAndSetsById } = useWorkoutQuery()
+	const { routines } = useUserStore()
 
 	const { mutate: updateWorkoutAndSets, isPending: isPendingWorkoutAndSets } =
 		updateWorkoutAndSetsMutation
@@ -44,7 +46,7 @@ export default function EditWorkout({
 	function handleSaveChanges({
 		insertSets,
 		upsertSets,
-		deleteSets,
+		deleteSetsIds,
 		draftWorkout
 	}: WorkoutUpdatePayload) {
 		if (!workoutAndSets || isPostgrestError(workoutAndSets)) return
@@ -57,7 +59,7 @@ export default function EditWorkout({
 					workoutId: route.params.wId,
 					insertSets,
 					upsertSets,
-					deleteSets
+					deleteSetsIds
 				},
 				{ onSuccess: (result) => onMutationSuccess(result) }
 			)
@@ -71,7 +73,7 @@ export default function EditWorkout({
 					},
 					insertSets,
 					upsertSets,
-					deleteSets
+					deleteSetsIds
 				},
 				{ onSuccess: (result) => onMutationSuccess(result) }
 			)
@@ -92,7 +94,16 @@ export default function EditWorkout({
 					name: "Tabs",
 					params: {
 						screen: "RoutinesTab",
-						params: { screen: "MyRoutines" }
+						params: {
+							screen: "Routine",
+							params: {
+								id: routines.find((r) =>
+									r.days.some(
+										(d) => d.id === route.params.dayId
+									)
+								)!.routine.id
+							}
+						}
 					}
 				}
 			]

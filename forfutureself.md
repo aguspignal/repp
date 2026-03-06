@@ -1,14 +1,6 @@
 # To fix
 
-    - edit finished workouts
-        - troubles with order
-        - not deleting
-        - inserting more
-        - maybe consider draftId?
-
 # To implement
-
-    - restyle with new text sizes
 
     - milestones
     - sqlite

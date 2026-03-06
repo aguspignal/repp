@@ -39,7 +39,7 @@ export type WorkoutUpdatePayload = {
 	draftWorkout: DraftWorkout
 	upsertSets: DatabaseWorkoutSet[]
 	insertSets: DraftWorkoutSet[]
-	deleteSets: DatabaseWorkoutSet[]
+	deleteSetsIds: number[]
 }
 
 export type WorkoutHistorySortBy = "newest" | "oldest"

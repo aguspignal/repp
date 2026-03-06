@@ -4,7 +4,7 @@ import { invalidateQueries, isPostgrestError } from "../../utils/queriesHelpers"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { navigationStyles } from "../../navigation/styles"
 import { ParamListBase } from "@react-navigation/native"
-import { ExercisesTabScreenProps } from "../../navigation/params"
+import { RootStackScreenProps } from "../../navigation/params"
 import { TouchableOpacity, View } from "react-native"
 import { useState } from "react"
 import { useUserStore } from "../../stores/useUserStore"
@@ -16,7 +16,7 @@ import useExercisesMutation from "../../hooks/useExercisesMutation"
 
 type Props = {
 	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>
-	route: ExercisesTabScreenProps<"EditExercise">["route"]
+	route: RootStackScreenProps<"EditExercise">["route"]
 	back?: {
 		title: string | undefined
 		href: string | undefined
@@ -32,6 +32,7 @@ export default function EditExerciseHeader({ navigation, route, back }: Props) {
 				<HeaderRight
 					navigation={navigation}
 					exerciseId={route.params.id}
+					comingFromWorkout={!!route.params.comingFromWorkout}
 				/>
 			)}
 			headerStyle={navigationStyles.headerBackground}
@@ -45,8 +46,13 @@ export default function EditExerciseHeader({ navigation, route, back }: Props) {
 type HeaderRightProps = {
 	navigation: NativeStackNavigationProp<ParamListBase, string, undefined>
 	exerciseId: number
+	comingFromWorkout: boolean
 }
-function HeaderRight({ navigation, exerciseId }: HeaderRightProps) {
+function HeaderRight({
+	navigation,
+	exerciseId,
+	comingFromWorkout
+}: HeaderRightProps) {
 	const { user, removeExercise } = useUserStore()
 	const { deleteExerciseMutation } = useExercisesMutation()
 
@@ -71,39 +77,39 @@ function HeaderRight({ navigation, exerciseId }: HeaderRightProps) {
 					GETUSEREXERCISESANDPROGRESSIONS_KEY(user?.id ?? 0)
 				)
 				navigation.goBack()
-				// navigation.reset({
-				// 	index: 0,
-				// 	routes: [
-				// 		{
-				// 			name: "Tabs",
-				// 			params: {
-				// 				screen: "ExercisesTab",
-				// 				params: { screen: "ExerciseRepository" }
-				// 			}
-				// 		}
-				// 	]
-				// })
 			}
 		})
 	}
 
 	return (
 		<View style={navigationStyles.headerRightContainer}>
-			<TouchableOpacity
-				onPress={() =>
-					navigation.navigate("ExerciseHistory", { id: exerciseId })
-				}
-				disabled={isPending}
-			>
-				<MCIcon name="history" style={navigationStyles.headerIcon} />
-			</TouchableOpacity>
+			{!comingFromWorkout && (
+				<>
+					<TouchableOpacity
+						onPress={() =>
+							navigation.navigate("ExerciseHistory", {
+								id: exerciseId
+							})
+						}
+						disabled={isPending}
+					>
+						<MCIcon
+							name="history"
+							style={navigationStyles.headerIcon}
+						/>
+					</TouchableOpacity>
 
-			<TouchableOpacity
-				onPress={() => setModalVisible(true)}
-				disabled={isPending}
-			>
-				<MCIcon name="trash-can" style={navigationStyles.headerIcon} />
-			</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => setModalVisible(true)}
+						disabled={isPending}
+					>
+						<MCIcon
+							name="trash-can"
+							style={navigationStyles.headerIcon}
+						/>
+					</TouchableOpacity>
+				</>
+			)}
 
 			<ConfirmationModal
 				isVisible={modalVisible}

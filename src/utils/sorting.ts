@@ -10,6 +10,7 @@ import {
 } from "../types/exercises"
 import {
 	DraftWorkoutSet,
+	ExerciseIdWithDraftSets,
 	WorkoutHistorySortBy,
 	WorkoutWithSets
 } from "../types/workouts"
@@ -24,6 +25,59 @@ export function sortDraftWorkoutSetsByOrderAsc(
 	sets: DraftWorkoutSet[]
 ): DraftWorkoutSet[] {
 	return sets.sort((a, b) => a.order - b.order)
+}
+
+export function sortExerciseIdWithDraftSets(
+	item: ExerciseIdWithDraftSets
+): ExerciseIdWithDraftSets {
+	return {
+		exerciseId: item.exerciseId,
+		sets: [...item.sets].sort(
+			(a, b) =>
+				a.order - b.order ||
+				a.reps - b.reps ||
+				(a.progression_id ?? -1) - (b.progression_id ?? -1)
+		)
+	}
+}
+
+export function areExerciseIdWithDraftSetsEqual(
+	a: ExerciseIdWithDraftSets,
+	b: ExerciseIdWithDraftSets
+): boolean {
+	if (a.exerciseId !== b.exerciseId) return false
+	if (a.sets.length !== b.sets.length) return false
+
+	const sortedA = sortExerciseIdWithDraftSets(a)
+	const sortedB = sortExerciseIdWithDraftSets(b)
+
+	return sortedA.sets.every((setA, i) => {
+		const setB = sortedB.sets[i]
+		return (
+			setA.order === setB.order &&
+			setA.reps === setB.reps &&
+			setA.progression_id === setB.progression_id
+		)
+	})
+}
+
+export function areExerciseIdWithDraftSetsArrayEqual(
+	a: ExerciseIdWithDraftSets[],
+	b: ExerciseIdWithDraftSets[]
+): boolean {
+	if (a.length !== b.length) return false
+
+	const sortArray = (arr: ExerciseIdWithDraftSets[]) =>
+		[...arr]
+			.sort((x, y) => x.exerciseId - y.exerciseId)
+			.map(sortExerciseIdWithDraftSets)
+
+	const sortedA = sortArray(a)
+	const sortedB = sortArray(b)
+
+	return sortedA.every((itemA, i) =>
+		areExerciseIdWithDraftSetsEqual(itemA, sortedB[i])
+	)
 }
 
 export function sortExercisesAndProgressionsBy(

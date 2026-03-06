@@ -58,6 +58,7 @@ export default function RoutineInner({
 		useState(false)
 
 	function handleStartWorkout(dayId: number | undefined) {
+		setRoutineDayModalVisible(false)
 		if (dayId) nav.navigate("Workout", { dayId })
 	}
 

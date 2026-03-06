@@ -1,8 +1,7 @@
 import {
 	DatabaseRoutineDay,
 	DatabaseRoutineDayExercise,
-	RoutineDayExerciseGoals,
-	Weekday
+	RoutineDayExerciseGoals
 } from "../types/routines"
 import {
 	ExerciseFilterBy,
@@ -21,6 +20,7 @@ import {
 import { Dispatch, SetStateAction } from "react"
 import i18next from "i18next"
 import { SheetOption } from "../lib/sheets"
+import { Weekday } from "../types/misc"
 
 export function parseExerciseSortByToText(sortBy: ExerciseSortBy): string {
 	if (sortBy === "ascending") return "A-Z"

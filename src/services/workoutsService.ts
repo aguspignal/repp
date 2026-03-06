@@ -105,7 +105,10 @@ const workoutsService = {
 			.from("WorkoutSets")
 			.insert(
 				draftSets
-					.filter((ds) => ds.progression_id && ds.progression_id > 0)
+					.filter(
+						(ds) =>
+							ds.progression_id !== null && ds.progression_id > 0
+					)
 					.map((ds) => ({
 						workout_id: workoutId,
 						progression_id: ds.progression_id!,
@@ -115,7 +118,6 @@ const workoutsService = {
 			)
 			.select()
 
-		console.log(error)
 		if (error) return error
 		return data
 	},
@@ -160,13 +162,13 @@ const workoutsService = {
 	},
 
 	async deleteWorkoutSetsByIds(
-		wsIds: number[]
+		setsIds: number[]
 	): Promise<number | PostgrestError> {
 		console.log("R-SERVICE: deleteWorkoutSetsByIds")
 		const { error, count } = await supabase
 			.from("WorkoutSets")
 			.delete({ count: "exact" })
-			.in("id", wsIds)
+			.in("id", setsIds)
 
 		if (error) return error
 		return count ?? 0

@@ -22,7 +22,10 @@ import {
 } from "../../../types/workouts"
 import { areDraftWorkoutExerciseSetsInvalid } from "../../../utils/validation"
 import { RootStackNavigationProp } from "../../../navigation/params"
-import { sortRDExercisesByOrderAsc } from "../../../utils/sorting"
+import {
+	areExerciseIdWithDraftSetsArrayEqual,
+	sortRDExercisesByOrderAsc
+} from "../../../utils/sorting"
 import { theme } from "../../../resources/theme"
 import { useCallback, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -85,7 +88,7 @@ export default function WorkoutInner({
 	function handleGoCreateProgression(eId: number) {
 		nav.navigate("EditExercise", {
 			id: eId,
-			comingFromWorkout: dayExercises.map((de) => de.exercise_id)
+			comingFromWorkout: true
 		})
 	}
 
@@ -141,11 +144,11 @@ export default function WorkoutInner({
 			).length
 
 			return ws.sets.length > oldSetsCount
-				? ws.sets.slice(oldSetsCount - 1)
+				? ws.sets.slice(oldSetsCount)
 				: []
 		})
 
-		const deleteSets: DatabaseWorkoutSet[] = workoutSets.flatMap((ws) => {
+		const deleteSetsIds: number[] = workoutSets.flatMap((ws) => {
 			const thisExercise = exercises.find(
 				(e) => e.exercise.id === ws.exerciseId
 			)
@@ -157,11 +160,11 @@ export default function WorkoutInner({
 			)
 
 			return ws.sets.length < thisExerciseOldSets.length
-				? thisExerciseOldSets.slice(ws.sets.length)
+				? thisExerciseOldSets.slice(ws.sets.length).map((s) => s.id)
 				: []
 		})
 
-		return { upsertSets, insertSets, deleteSets }
+		return { upsertSets, insertSets, deleteSetsIds }
 	}
 
 	function handleFinishWorkout({ note }: WorkoutValues) {
@@ -182,9 +185,10 @@ export default function WorkoutInner({
 				},
 				insertSets: workoutSets.flatMap((ws) => ws.sets),
 				upsertSets: [],
-				deleteSets: []
+				deleteSetsIds: []
 			})
 			setConfirmationModalVisible(false)
+			nav.goBack()
 			return
 		}
 
@@ -193,7 +197,11 @@ export default function WorkoutInner({
 			exercises
 		)
 
-		if (JSON.stringify(workoutSets) === JSON.stringify(oldWorkoutSets)) {
+		if (
+			note === workoutData.workout.note &&
+			date.toISOString() === workoutData.workout.date &&
+			areExerciseIdWithDraftSetsArrayEqual(workoutSets, oldWorkoutSets)
+		) {
 			setConfirmationModalVisible(false)
 			nav.goBack()
 			return
@@ -214,7 +222,7 @@ export default function WorkoutInner({
 			},
 			insertSets: mappedSets.insertSets,
 			upsertSets: mappedSets.upsertSets,
-			deleteSets: mappedSets.deleteSets
+			deleteSetsIds: mappedSets.deleteSetsIds ?? []
 		})
 		setConfirmationModalVisible(false)
 	}

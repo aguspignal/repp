@@ -68,30 +68,24 @@ async function updateWorkoutAndSets({
 	workout,
 	insertSets,
 	upsertSets,
-	deleteSets
+	deleteSetsIds
 }: UpdateWorkoutAndSetsParams): Promise<
 	WorkoutWithSets | null | PostgrestError
 > {
 	const workoutResult = await workoutsService.updateWorkout(workout)
 	if (!workoutResult || isPostgrestError(workoutResult)) return workoutResult
 
-	let upsertResult: DatabaseWorkoutSet[] | PostgrestError = []
-	if (upsertSets.length > 0)
-		upsertResult = await workoutsService.upsertSetsBulk(upsertSets)
-
-	let insertResult: DatabaseWorkoutSet[] | PostgrestError = []
-	if (insertSets.length > 0)
-		insertResult = await workoutsService.postWorkoutSetsBulk({
-			workoutId: workout.id,
-			draftSets: insertSets
-		})
-
-	if (isPostgrestError(upsertResult)) return upsertResult
-	if (isPostgrestError(insertResult)) return insertResult
+	const updateSetsResult = await updateWorkoutSets({
+		workoutId: workout.id,
+		insertSets,
+		upsertSets,
+		deleteSetsIds
+	})
+	if (isPostgrestError(updateSetsResult)) return updateSetsResult
 
 	return {
 		workout: workoutResult,
-		sets: [...upsertResult, ...insertResult]
+		sets: updateSetsResult
 	}
 }
 
@@ -99,13 +93,12 @@ async function updateWorkoutSets({
 	workoutId,
 	insertSets,
 	upsertSets,
-	deleteSets
+	deleteSetsIds
 }: UpdateWorkoutSetsParams): Promise<DatabaseWorkoutSet[] | PostgrestError> {
 	let deleteResult: number | PostgrestError = 0
-	if (deleteSets.length > 0)
-		deleteResult = await workoutsService.deleteWorkoutSetsByIds(
-			deleteSets.map((s) => s.id)
-		)
+	if (deleteSetsIds.length > 0)
+		deleteResult =
+			await workoutsService.deleteWorkoutSetsByIds(deleteSetsIds)
 
 	let insertResult: DatabaseWorkoutSet[] | PostgrestError = []
 	if (insertSets.length > 0)
@@ -144,12 +137,12 @@ type UpdateWorkoutAndSetsParams = {
 	workout: DatabaseWorkout
 	insertSets: DraftWorkoutSet[]
 	upsertSets: DatabaseWorkoutSet[]
-	deleteSets: DatabaseWorkoutSet[]
+	deleteSetsIds: number[]
 }
 
 type UpdateWorkoutSetsParams = {
 	workoutId: number
 	insertSets: DraftWorkoutSet[]
 	upsertSets: DatabaseWorkoutSet[]
-	deleteSets: DatabaseWorkoutSet[]
+	deleteSetsIds: number[]
 }
