@@ -192,7 +192,7 @@ export default function WorkoutExerciseCard({
 						</StyledText>
 					) : null}
 
-					{goalsText ? (
+					{goalsText && showNote ? (
 						<StyledText type="boldNote" color="secondary">
 							{goalsText}
 						</StyledText>
@@ -313,7 +313,9 @@ function SetRow({
 }: SetRowProps) {
 	const { t } = useTranslation()
 
-	const [reps, setReps] = useState<string>(draftSet.reps?.toString() ?? "")
+	const [reps, setReps] = useState<string>(
+		draftSet.reps ? draftSet.reps.toString() : ""
+	)
 
 	function handleChange(txt: string) {
 		const num = parseNumericInput(txt, setReps)
@@ -321,7 +323,7 @@ function SetRow({
 	}
 
 	useEffect(() => {
-		setReps(draftSet.reps?.toString() ?? "")
+		setReps(draftSet.reps ? draftSet.reps.toString() : "")
 	}, [draftSet.reps])
 
 	return (
@@ -373,6 +375,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: theme.spacing.s
 	},
 	nameAndNote: {
+		flex: 1,
 		gap: theme.spacing.xxs
 	},
 	row: {
