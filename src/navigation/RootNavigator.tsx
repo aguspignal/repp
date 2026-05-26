@@ -4,20 +4,32 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { ActivityIndicator, View } from "react-native"
 
 import { useAuthListener } from "../hooks/useAuth"
+import { OnboardingScreen } from "../screens/auth/OnboardingScreen"
+import { SignInScreen } from "../screens/auth/SignInScreen"
+import { SignUpScreen } from "../screens/auth/SignUpScreen"
+import { WelcomeScreen } from "../screens/auth/WelcomeScreen"
 import { PlaceholderScreen } from "../screens/PlaceholderScreen"
-import { SignInScreen } from "../screens/SignInScreen"
 import { useAuthStore } from "../stores/authStore"
+import { useOnboardingStore } from "../stores/onboardingStore"
 import type { AppTabParamList, AuthStackParamList, RootStackParamList } from "./types"
 
 const RootStack = createNativeStackNavigator<RootStackParamList>()
 const AuthStack = createNativeStackNavigator<AuthStackParamList>()
 const Tabs = createBottomTabNavigator<AppTabParamList>()
 
-const AuthNavigator = () => (
-	<AuthStack.Navigator>
-		<AuthStack.Screen name="SignIn" component={SignInScreen} options={{ title: "Sign in" }} />
-	</AuthStack.Navigator>
-)
+const AuthNavigator = () => {
+	const hasCompleted = useOnboardingStore(s => s.hasCompleted)
+	const initialRoute: keyof AuthStackParamList = hasCompleted ? "SignIn" : "Welcome"
+
+	return (
+		<AuthStack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
+			<AuthStack.Screen name="Welcome" component={WelcomeScreen} />
+			<AuthStack.Screen name="Onboarding" component={OnboardingScreen} />
+			<AuthStack.Screen name="SignIn" component={SignInScreen} />
+			<AuthStack.Screen name="SignUp" component={SignUpScreen} />
+		</AuthStack.Navigator>
+	)
+}
 
 const HomeScreen = () => <PlaceholderScreen title="Home" />
 const WorkoutsScreen = () => <PlaceholderScreen title="Workouts" />
@@ -38,9 +50,10 @@ const AppTabsNavigator = () => (
 export const RootNavigator = () => {
 	useAuthListener()
 	const session = useAuthStore(s => s.session)
-	const isReady = useAuthStore(s => s.isReady)
+	const authReady = useAuthStore(s => s.isReady)
+	const onboardingReady = useOnboardingStore(s => s.isHydrated)
 
-	if (!isReady) {
+	if (!authReady || !onboardingReady) {
 		return (
 			<View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
 				<ActivityIndicator />

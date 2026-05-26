@@ -28,7 +28,11 @@ export const useRoutine = (id: number | null) =>
 		queryKey: queryKeys.routines.byId(id ?? -1),
 		queryFn: async (): Promise<Routine | null> => {
 			if (!id) return null
-			const { data, error } = await supabase.from("routines").select("*").eq("id", id).maybeSingle()
+			const { data, error } = await supabase
+				.from("routines")
+				.select("*")
+				.eq("id", id)
+				.maybeSingle()
 			if (error) throw error
 			return data
 		},

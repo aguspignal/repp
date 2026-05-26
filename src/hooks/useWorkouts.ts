@@ -31,7 +31,9 @@ export const useWorkouts = () => {
 export const useRecentWorkouts = (limit = 10) => {
 	const userId = useAuthStore(s => s.profile?.id)
 	return useQuery({
-		queryKey: userId ? queryKeys.workouts.recent(userId, limit) : ["workouts", "noUser", "recent"],
+		queryKey: userId
+			? queryKeys.workouts.recent(userId, limit)
+			: ["workouts", "noUser", "recent"],
 		queryFn: async (): Promise<Workout[]> => {
 			const { data, error } = await supabase
 				.from("workouts")

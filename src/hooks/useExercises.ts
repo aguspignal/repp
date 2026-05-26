@@ -30,7 +30,11 @@ export const useExercise = (id: number | null) =>
 		queryKey: queryKeys.exercises.byId(id ?? -1),
 		queryFn: async (): Promise<Exercise | null> => {
 			if (!id) return null
-			const { data, error } = await supabase.from("exercises").select("*").eq("id", id).maybeSingle()
+			const { data, error } = await supabase
+				.from("exercises")
+				.select("*")
+				.eq("id", id)
+				.maybeSingle()
 			if (error) throw error
 			return data
 		},
