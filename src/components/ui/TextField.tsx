@@ -1,4 +1,4 @@
-import { forwardRef } from "react"
+import { forwardRef, type ReactNode } from "react"
 import {
 	StyleSheet,
 	TextInput,
@@ -14,22 +14,33 @@ type Props = TextInputProps & {
 	label?: string
 	error?: string | null
 	hint?: string
+	rightAdornment?: ReactNode
 }
 
 export const TextField = forwardRef<TextInputType, Props>(
-	({ label, error, hint, style, ...props }, ref) => (
+	({ label, error, hint, rightAdornment, style, ...props }, ref) => (
 		<View style={styles.wrap}>
 			{label ? (
 				<Text variant="label" color="textLight">
 					{label}
 				</Text>
 			) : null}
-			<TextInput
-				ref={ref}
-				placeholderTextColor={theme.colors.grayDark}
-				{...props}
-				style={[styles.input, error ? styles.inputError : null, style]}
-			/>
+			<View style={styles.inputRow}>
+				<TextInput
+					ref={ref}
+					placeholderTextColor={theme.colors.grayDark}
+					{...props}
+					style={[
+						styles.input,
+						rightAdornment ? styles.inputWithRight : null,
+						error ? styles.inputError : null,
+						style,
+					]}
+				/>
+				{rightAdornment ? (
+					<View style={styles.rightAdornment}>{rightAdornment}</View>
+				) : null}
+			</View>
 			{error ? (
 				<Text variant="caption" color="danger">
 					{error}
@@ -45,8 +56,11 @@ export const TextField = forwardRef<TextInputType, Props>(
 
 TextField.displayName = "TextField"
 
+const ADORNMENT_WIDTH = 44
+
 const styles = StyleSheet.create({
 	wrap: { gap: theme.spacing.x3s },
+	inputRow: { position: "relative", justifyContent: "center" },
 	input: {
 		borderWidth: 1,
 		borderColor: theme.colors.backgroundGray,
@@ -57,5 +71,15 @@ const styles = StyleSheet.create({
 		color: theme.colors.textLight,
 		backgroundColor: theme.colors.backgroundDark,
 	},
+	inputWithRight: { paddingRight: ADORNMENT_WIDTH },
 	inputError: { borderColor: theme.colors.danger },
+	rightAdornment: {
+		position: "absolute",
+		right: 0,
+		top: 0,
+		bottom: 0,
+		width: ADORNMENT_WIDTH,
+		alignItems: "center",
+		justifyContent: "center",
+	},
 })

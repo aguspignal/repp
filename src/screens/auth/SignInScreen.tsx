@@ -6,6 +6,7 @@ import type { TextInput as TextInputType } from "react-native"
 import {
 	Banner,
 	Button,
+	PasswordField,
 	Row,
 	Screen,
 	ScreenHeader,
@@ -74,13 +75,12 @@ export const SignInScreen = ({ navigation }: Props) => {
 						onSubmitEditing={() => passwordRef.current?.focus()}
 						error={errors.email}
 					/>
-					<TextField
+					<PasswordField
 						ref={passwordRef}
 						label={t("auth.signIn.passwordLabel")}
 						placeholder={t("auth.signIn.passwordPlaceholder")}
 						value={password}
 						onChangeText={setPassword}
-						secureTextEntry
 						autoComplete="password"
 						returnKeyType="go"
 						onSubmitEditing={onSubmit}

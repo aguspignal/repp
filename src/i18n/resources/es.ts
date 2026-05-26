@@ -12,6 +12,8 @@ export const es: Translations = {
 		edit: "Editar",
 		done: "Listo",
 		retry: "Reintentar",
+		showPassword: "Mostrar contraseña",
+		hidePassword: "Ocultar contraseña",
 	},
 	tabs: {
 		home: "Inicio",

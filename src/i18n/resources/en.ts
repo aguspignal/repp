@@ -10,6 +10,8 @@ export const en = {
 		edit: "Edit",
 		done: "Done",
 		retry: "Retry",
+		showPassword: "Show password",
+		hidePassword: "Hide password",
 	},
 	tabs: {
 		home: "Home",

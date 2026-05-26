@@ -43,7 +43,10 @@
 		"lint:fix": "expo lint --fix",
 		"format": "prettier --write \"**/*.{ts,tsx,js,jsx,json}\"",
 		"format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json}\"",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"build-dev": "eas build --platform android --profile development",
+		"build-prev": "eas build --platform android --profile preview",
+		"build-prod": "eas build --platform android --profile production"
 	},
 	"private": true
 }
