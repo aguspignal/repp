@@ -29,7 +29,9 @@ export type DraftWorkout = {
 type ActiveWorkoutState = {
 	draft: DraftWorkout | null
 	startedAt: number | null
-	startWorkout: (init: Omit<DraftWorkout, "exercises"> & { exercises?: DraftWorkoutExercise[] }) => void
+	startWorkout: (
+		init: Omit<DraftWorkout, "exercises"> & { exercises?: DraftWorkoutExercise[] },
+	) => void
 	cancelWorkout: () => void
 	addExercise: (exercise: DraftWorkoutExercise) => void
 	removeExercise: (tempId: string) => void
@@ -90,7 +92,9 @@ export const useActiveWorkoutStore = create<ActiveWorkoutState>((set, get) => ({
 					e.tempId === exerciseTempId
 						? {
 								...e,
-								sets: e.sets.map(s => (s.tempId === setTempId ? { ...s, ...patch } : s)),
+								sets: e.sets.map(s =>
+									s.tempId === setTempId ? { ...s, ...patch } : s,
+								),
 							}
 						: e,
 				),

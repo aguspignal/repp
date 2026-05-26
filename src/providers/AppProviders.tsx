@@ -5,20 +5,23 @@ import { SafeAreaProvider } from "react-native-safe-area-context"
 
 import { getDb } from "../lib/db"
 import { queryClient } from "../lib/queryClient"
+import { useOnboardingStore } from "../stores/onboardingStore"
 
 type Props = { children: ReactNode }
 
 export const AppProviders = ({ children }: Props) => {
 	const [dbReady, setDbReady] = useState(false)
+	const hydrateOnboarding = useOnboardingStore(s => s.hydrate)
 
 	useEffect(() => {
+		hydrateOnboarding()
 		getDb()
 			.then(() => setDbReady(true))
 			.catch(err => {
 				console.error("[AppProviders] Failed to init SQLite", err)
 				setDbReady(true)
 			})
-	}, [])
+	}, [hydrateOnboarding])
 
 	if (!dbReady) {
 		return (
