@@ -6,6 +6,7 @@ import type { TextInput as TextInputType } from "react-native"
 import {
 	Banner,
 	Button,
+	PasswordField,
 	Row,
 	Screen,
 	ScreenHeader,
@@ -44,15 +45,19 @@ export const SignUpScreen = ({ navigation }: Props) => {
 		confirmValue: string,
 	): FieldErrors => {
 		const fieldErrors: FieldErrors = {}
+
 		if (!emailValue) fieldErrors.email = t("auth.signUp.errors.emailRequired")
 		else if (!/^\S+@\S+\.\S+$/.test(emailValue))
 			fieldErrors.email = t("auth.signUp.errors.emailInvalid")
+
 		if (!passwordValue) fieldErrors.password = t("auth.signUp.errors.passwordRequired")
 		else if (passwordValue.length < MIN_PASSWORD)
 			fieldErrors.password = t("auth.signUp.errors.passwordTooShort", { min: MIN_PASSWORD })
+
 		if (!confirmValue) fieldErrors.confirm = t("auth.signUp.errors.confirmRequired")
 		else if (confirmValue !== passwordValue)
 			fieldErrors.confirm = t("auth.signUp.errors.confirmMismatch")
+
 		return fieldErrors
 	}
 
@@ -98,25 +103,23 @@ export const SignUpScreen = ({ navigation }: Props) => {
 						onSubmitEditing={() => passwordRef.current?.focus()}
 						error={errors.email}
 					/>
-					<TextField
+					<PasswordField
 						ref={passwordRef}
 						label={t("auth.signUp.passwordLabel")}
 						placeholder={t("auth.signUp.passwordPlaceholder", { min: MIN_PASSWORD })}
 						value={password}
 						onChangeText={setPassword}
-						secureTextEntry
 						autoComplete="new-password"
 						returnKeyType="next"
 						onSubmitEditing={() => confirmRef.current?.focus()}
 						error={errors.password}
 					/>
-					<TextField
+					<PasswordField
 						ref={confirmRef}
 						label={t("auth.signUp.confirmLabel")}
 						placeholder={t("auth.signUp.confirmPlaceholder")}
 						value={confirm}
 						onChangeText={setConfirm}
-						secureTextEntry
 						autoComplete="new-password"
 						returnKeyType="go"
 						onSubmitEditing={onSubmit}
