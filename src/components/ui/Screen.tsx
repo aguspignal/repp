@@ -13,7 +13,7 @@ import { SafeAreaView, type Edge } from "react-native-safe-area-context"
 import { theme, type ThemeColor, type ThemeSpacing } from "../../theme"
 
 type Props = {
-	children: ReactNode
+	children?: ReactNode
 	background?: ThemeColor
 	padding?: ThemeSpacing
 	scroll?: boolean
@@ -26,7 +26,7 @@ type Props = {
 export const Screen = ({
 	children,
 	background = "backgroundBlack",
-	padding = "l",
+	padding = "s",
 	scroll = false,
 	avoidKeyboard = false,
 	edges = ["top", "bottom"],
