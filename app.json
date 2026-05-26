@@ -21,6 +21,11 @@
 		"web": {
 			"favicon": "./assets/favicon.png"
 		},
-		"plugins": ["expo-sqlite", "expo-secure-store"]
+		"plugins": [
+			"expo-sqlite",
+			"expo-secure-store",
+			"expo-localization",
+			"@react-native-vector-icons/ionicons"
+		]
 	}
 }
