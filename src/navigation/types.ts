@@ -7,12 +7,29 @@ export type AuthStackParamList = {
 	SignUp: undefined
 }
 
-export type AppTabParamList = {
-	Home: undefined
-	Workouts: undefined
+export type HomeStackParamList = {
+	HomeMain: undefined
+}
+
+export type LibraryTopTabParamList = {
 	Routines: undefined
 	Exercises: undefined
-	Profile: undefined
+}
+
+export type StatsStackParamList = {
+	StatsMain: undefined
+}
+
+export type ProfileStackParamList = {
+	ProfileMain: undefined
+	Settings: undefined
+}
+
+export type AppTabParamList = {
+	Home: NavigatorScreenParams<HomeStackParamList>
+	Library: NavigatorScreenParams<LibraryTopTabParamList>
+	Stats: NavigatorScreenParams<StatsStackParamList>
+	Profile: NavigatorScreenParams<ProfileStackParamList>
 }
 
 export type RootStackParamList = {

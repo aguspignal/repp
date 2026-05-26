@@ -31,17 +31,10 @@ if (supabaseUrl) {
 					`[config] EXPO_PUBLIC_SUPABASE_URL should be the project root (e.g. https://xxx.supabase.co) — no path. Got path "${u.pathname}". The auth API will append /auth/v1 itself.`,
 				)
 			}
-			console.log(`[config] Supabase target: ${u.origin}`)
 		} catch {
 			console.warn(`[config] EXPO_PUBLIC_SUPABASE_URL is not a valid URL: "${supabaseUrl}"`)
 		}
 	}
-}
-
-if (supabaseAnonKey && !supabaseAnonKey.startsWith("ey")) {
-	console.warn(
-		`[config] EXPO_PUBLIC_SUPABASE_ANON_KEY does not look like a JWT (should start with "ey..."). Double-check the value.`,
-	)
 }
 
 export const config = {
