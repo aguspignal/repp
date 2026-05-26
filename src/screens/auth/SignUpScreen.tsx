@@ -1,5 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import type { TextInput as TextInputType } from "react-native"
 
 import {
@@ -25,19 +26,8 @@ type FieldErrors = {
 
 const MIN_PASSWORD = 8
 
-const validate = (email: string, password: string, confirm: string): FieldErrors => {
-	const errors: FieldErrors = {}
-	if (!email) errors.email = "Email is required"
-	else if (!/^\S+@\S+\.\S+$/.test(email)) errors.email = "Enter a valid email"
-	if (!password) errors.password = "Password is required"
-	else if (password.length < MIN_PASSWORD)
-		errors.password = `Use at least ${MIN_PASSWORD} characters`
-	if (!confirm) errors.confirm = "Please confirm your password"
-	else if (confirm !== password) errors.confirm = "Passwords do not match"
-	return errors
-}
-
 export const SignUpScreen = ({ navigation }: Props) => {
+	const { t } = useTranslation()
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	const [confirm, setConfirm] = useState("")
@@ -47,6 +37,24 @@ export const SignUpScreen = ({ navigation }: Props) => {
 	const [successMessage, setSuccessMessage] = useState<string | null>(null)
 	const passwordRef = useRef<TextInputType>(null)
 	const confirmRef = useRef<TextInputType>(null)
+
+	const validate = (
+		emailValue: string,
+		passwordValue: string,
+		confirmValue: string,
+	): FieldErrors => {
+		const fieldErrors: FieldErrors = {}
+		if (!emailValue) fieldErrors.email = t("auth.signUp.errors.emailRequired")
+		else if (!/^\S+@\S+\.\S+$/.test(emailValue))
+			fieldErrors.email = t("auth.signUp.errors.emailInvalid")
+		if (!passwordValue) fieldErrors.password = t("auth.signUp.errors.passwordRequired")
+		else if (passwordValue.length < MIN_PASSWORD)
+			fieldErrors.password = t("auth.signUp.errors.passwordTooShort", { min: MIN_PASSWORD })
+		if (!confirmValue) fieldErrors.confirm = t("auth.signUp.errors.confirmRequired")
+		else if (confirmValue !== passwordValue)
+			fieldErrors.confirm = t("auth.signUp.errors.confirmMismatch")
+		return fieldErrors
+	}
 
 	const onSubmit = async () => {
 		const fieldErrors = validate(email.trim(), password, confirm)
@@ -59,13 +67,11 @@ export const SignUpScreen = ({ navigation }: Props) => {
 		try {
 			const result = await signUpWithPassword(email.trim(), password)
 			if (result.session) return
-			setSuccessMessage(
-				"Account created! Check your inbox to confirm your email, then sign in.",
-			)
+			setSuccessMessage(t("auth.signUp.successMessage"))
 			setPassword("")
 			setConfirm("")
 		} catch (err) {
-			setFormError(err instanceof Error ? err.message : "Could not create account")
+			setFormError(err instanceof Error ? err.message : t("auth.signUp.errors.generic"))
 		} finally {
 			setLoading(false)
 		}
@@ -74,18 +80,15 @@ export const SignUpScreen = ({ navigation }: Props) => {
 	return (
 		<Screen scroll avoidKeyboard padding="l">
 			<Stack gap="l" flex={1}>
-				<ScreenHeader
-					title="Create your account"
-					subtitle="It only takes a minute. Start tracking your training today."
-				/>
+				<ScreenHeader title={t("auth.signUp.title")} subtitle={t("auth.signUp.subtitle")} />
 
 				{formError ? <Banner tone="error" message={formError} /> : null}
 				{successMessage ? <Banner tone="success" message={successMessage} /> : null}
 
 				<Stack gap="s">
 					<TextField
-						label="Email"
-						placeholder="you@example.com"
+						label={t("auth.signUp.emailLabel")}
+						placeholder={t("auth.signUp.emailPlaceholder")}
 						value={email}
 						onChangeText={setEmail}
 						autoCapitalize="none"
@@ -97,8 +100,8 @@ export const SignUpScreen = ({ navigation }: Props) => {
 					/>
 					<TextField
 						ref={passwordRef}
-						label="Password"
-						placeholder={`At least ${MIN_PASSWORD} characters`}
+						label={t("auth.signUp.passwordLabel")}
+						placeholder={t("auth.signUp.passwordPlaceholder", { min: MIN_PASSWORD })}
 						value={password}
 						onChangeText={setPassword}
 						secureTextEntry
@@ -109,8 +112,8 @@ export const SignUpScreen = ({ navigation }: Props) => {
 					/>
 					<TextField
 						ref={confirmRef}
-						label="Confirm password"
-						placeholder="Repeat your password"
+						label={t("auth.signUp.confirmLabel")}
+						placeholder={t("auth.signUp.confirmPlaceholder")}
 						value={confirm}
 						onChangeText={setConfirm}
 						secureTextEntry
@@ -122,13 +125,18 @@ export const SignUpScreen = ({ navigation }: Props) => {
 				</Stack>
 
 				<Stack gap="xxs">
-					<Button title="Create account" fullWidth onPress={onSubmit} loading={loading} />
+					<Button
+						title={t("auth.signUp.submit")}
+						fullWidth
+						onPress={onSubmit}
+						loading={loading}
+					/>
 					<Row gap="x3s" align="center" justify="center">
 						<Text variant="bodySmall" color="grayDark">
-							Already have an account?
+							{t("auth.signUp.alreadyHaveAccount")}
 						</Text>
 						<Button
-							title="Sign in"
+							title={t("auth.signUp.signIn")}
 							variant="ghost"
 							size="sm"
 							onPress={() => navigation.navigate("SignIn")}

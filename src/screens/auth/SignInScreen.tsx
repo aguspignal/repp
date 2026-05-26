@@ -1,5 +1,6 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import type { TextInput as TextInputType } from "react-native"
 
 import {
@@ -19,21 +20,23 @@ type Props = NativeStackScreenProps<AuthStackParamList, "SignIn">
 
 type FieldErrors = { email?: string; password?: string }
 
-const validate = (email: string, password: string): FieldErrors => {
-	const errors: FieldErrors = {}
-	if (!email) errors.email = "Email is required"
-	else if (!/^\S+@\S+\.\S+$/.test(email)) errors.email = "Enter a valid email"
-	if (!password) errors.password = "Password is required"
-	return errors
-}
-
 export const SignInScreen = ({ navigation }: Props) => {
+	const { t } = useTranslation()
 	const [email, setEmail] = useState("")
 	const [password, setPassword] = useState("")
 	const [errors, setErrors] = useState<FieldErrors>({})
 	const [loading, setLoading] = useState(false)
 	const [formError, setFormError] = useState<string | null>(null)
 	const passwordRef = useRef<TextInputType>(null)
+
+	const validate = (emailValue: string, passwordValue: string): FieldErrors => {
+		const fieldErrors: FieldErrors = {}
+		if (!emailValue) fieldErrors.email = t("auth.signIn.errors.emailRequired")
+		else if (!/^\S+@\S+\.\S+$/.test(emailValue))
+			fieldErrors.email = t("auth.signIn.errors.emailInvalid")
+		if (!passwordValue) fieldErrors.password = t("auth.signIn.errors.passwordRequired")
+		return fieldErrors
+	}
 
 	const onSubmit = async () => {
 		const fieldErrors = validate(email.trim(), password)
@@ -45,7 +48,7 @@ export const SignInScreen = ({ navigation }: Props) => {
 		try {
 			await signInWithPassword(email.trim(), password)
 		} catch (err) {
-			setFormError(err instanceof Error ? err.message : "Could not sign in")
+			setFormError(err instanceof Error ? err.message : t("auth.signIn.errors.generic"))
 		} finally {
 			setLoading(false)
 		}
@@ -54,17 +57,14 @@ export const SignInScreen = ({ navigation }: Props) => {
 	return (
 		<Screen scroll avoidKeyboard padding="l">
 			<Stack gap="l" flex={1}>
-				<ScreenHeader
-					title="Welcome back"
-					subtitle="Sign in to keep tracking your progress."
-				/>
+				<ScreenHeader title={t("auth.signIn.title")} subtitle={t("auth.signIn.subtitle")} />
 
 				{formError ? <Banner tone="error" message={formError} /> : null}
 
 				<Stack gap="s">
 					<TextField
-						label="Email"
-						placeholder="you@example.com"
+						label={t("auth.signIn.emailLabel")}
+						placeholder={t("auth.signIn.emailPlaceholder")}
 						value={email}
 						onChangeText={setEmail}
 						autoCapitalize="none"
@@ -76,8 +76,8 @@ export const SignInScreen = ({ navigation }: Props) => {
 					/>
 					<TextField
 						ref={passwordRef}
-						label="Password"
-						placeholder="••••••••"
+						label={t("auth.signIn.passwordLabel")}
+						placeholder={t("auth.signIn.passwordPlaceholder")}
 						value={password}
 						onChangeText={setPassword}
 						secureTextEntry
@@ -89,13 +89,18 @@ export const SignInScreen = ({ navigation }: Props) => {
 				</Stack>
 
 				<Stack gap="xxs">
-					<Button title="Sign in" fullWidth onPress={onSubmit} loading={loading} />
+					<Button
+						title={t("auth.signIn.submit")}
+						fullWidth
+						onPress={onSubmit}
+						loading={loading}
+					/>
 					<Row gap="x3s" align="center" justify="center">
 						<Text variant="bodySmall" color="grayDark">
-							New here?
+							{t("auth.signIn.newHere")}
 						</Text>
 						<Button
-							title="Create an account"
+							title={t("auth.signIn.createAccount")}
 							variant="ghost"
 							size="sm"
 							onPress={() => navigation.navigate("SignUp")}
