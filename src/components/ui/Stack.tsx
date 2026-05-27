@@ -1,3 +1,4 @@
+import type { Ref } from "react"
 import { View, type ViewProps, type ViewStyle } from "react-native"
 
 import { theme, type ThemeSpacing } from "../../theme"
@@ -11,6 +12,7 @@ type Props = ViewProps & {
 	justify?: ViewStyle["justifyContent"]
 	flex?: number
 	wrap?: boolean
+	ref?: Ref<View>
 }
 
 export const Stack = ({
@@ -22,6 +24,7 @@ export const Stack = ({
 	wrap,
 	style,
 	children,
+	ref,
 	...rest
 }: Props) => {
 	const resolved: ViewStyle = {
@@ -33,7 +36,7 @@ export const Stack = ({
 		flexWrap: wrap ? "wrap" : undefined,
 	}
 	return (
-		<View {...rest} style={[resolved, style]}>
+		<View ref={ref} collapsable={false} {...rest} style={[resolved, style]}>
 			{children}
 		</View>
 	)

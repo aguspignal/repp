@@ -38,6 +38,7 @@ export type RootStackParamList = {
 	WorkoutDetail: { workoutId: number }
 	RoutineDetail: { routineId: number }
 	ExerciseDetail: { exerciseId: number }
+	ExerciseCreate: undefined
 }
 
 declare global {

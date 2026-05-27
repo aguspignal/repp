@@ -3,10 +3,12 @@ export { signInWithPassword, signOut, signUpWithPassword, useAuthListener } from
 export { useBodyweightLogs, useLogBodyweight } from "./useBodyweightLogs"
 export {
 	useCreateExercise,
+	useCreateExerciseWithProgressions,
 	useDeleteExercise,
 	useExercise,
 	useExercises,
 	useUpdateExercise,
+	useUpdateExerciseWithProgressions,
 } from "./useExercises"
 export { useActiveMesocycle, useCreateMesocycle, useMesocycles } from "./useMesocycles"
 export { useCreateMilestone, useMilestones } from "./useMilestones"

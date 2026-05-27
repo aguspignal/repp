@@ -1,3 +1,4 @@
+import { Constants } from "./supabase"
 import type { Database, Enums, Tables, TablesInsert, TablesUpdate } from "./supabase"
 
 export type DB = Database["public"]
@@ -35,3 +36,9 @@ export type ExerciseType = Enums<"exercise_type">
 export type MovementPattern = Enums<"movement_pattern">
 export type RoutineStatus = Enums<"routine_status">
 export type Weekday = Enums<"weekday">
+
+export const CYCLE_STATUSES = Constants.public.Enums.cycle_status
+export const EXERCISE_TYPES = Constants.public.Enums.exercise_type
+export const MOVEMENT_PATTERNS = Constants.public.Enums.movement_pattern
+export const ROUTINE_STATUSES = Constants.public.Enums.routine_status
+export const WEEKDAYS = Constants.public.Enums.weekday
