@@ -13,6 +13,8 @@ import { SignInScreen } from "../screens/auth/SignInScreen"
 import { SignUpScreen } from "../screens/auth/SignUpScreen"
 import { WelcomeScreen } from "../screens/auth/WelcomeScreen"
 import { HomeScreen } from "../screens/home/HomeScreen"
+import { ExerciseCreateScreen } from "../screens/library/ExerciseCreateScreen"
+import { ExerciseDetailScreen } from "../screens/library/ExerciseDetailScreen"
 import { ExercisesScreen } from "../screens/library/ExercisesScreen"
 import { RoutinesScreen } from "../screens/library/RoutinesScreen"
 import { ProfileScreen } from "../screens/profile/ProfileScreen"
@@ -212,6 +214,7 @@ const AppTabsNavigator = () => {
 
 export const RootNavigator = () => {
 	useAuthListener()
+	const { t } = useTranslation()
 	const session = useAuthStore(s => s.session)
 	const authReady = useAuthStore(s => s.isReady)
 	const onboardingReady = useOnboardingStore(s => s.isHydrated)
@@ -228,7 +231,28 @@ export const RootNavigator = () => {
 		<NavigationContainer>
 			<RootStack.Navigator screenOptions={{ headerShown: false }}>
 				{session ? (
-					<RootStack.Screen name="App" component={AppTabsNavigator} />
+					<RootStack.Group>
+						<RootStack.Screen name="App" component={AppTabsNavigator} />
+						<RootStack.Screen
+							name="ExerciseCreate"
+							component={ExerciseCreateScreen}
+							options={{
+								...stackScreenOptions,
+								headerShown: true,
+								presentation: "modal",
+								title: t("exerciseForm.title"),
+							}}
+						/>
+						<RootStack.Screen
+							name="ExerciseDetail"
+							component={ExerciseDetailScreen}
+							options={{
+								...stackScreenOptions,
+								headerShown: true,
+								title: t("exerciseForm.editTitle"),
+							}}
+						/>
+					</RootStack.Group>
 				) : (
 					<RootStack.Screen name="Auth" component={AuthNavigator} />
 				)}

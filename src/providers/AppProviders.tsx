@@ -1,6 +1,7 @@
 import { QueryClientProvider } from "@tanstack/react-query"
 import { useEffect, useState, type ReactNode } from "react"
 import { ActivityIndicator, View } from "react-native"
+import { GestureHandlerRootView } from "react-native-gesture-handler"
 import { SafeAreaProvider } from "react-native-safe-area-context"
 
 import { detectDeviceLocale, initI18n } from "../i18n"
@@ -59,8 +60,10 @@ export const AppProviders = ({ children }: Props) => {
 	}
 
 	return (
-		<SafeAreaProvider>
-			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-		</SafeAreaProvider>
+		<GestureHandlerRootView style={{ flex: 1 }}>
+			<SafeAreaProvider>
+				<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+			</SafeAreaProvider>
+		</GestureHandlerRootView>
 	)
 }

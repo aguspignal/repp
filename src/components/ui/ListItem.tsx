@@ -27,37 +27,34 @@ export const ListItem = ({
 	disabled,
 	variant = "card",
 	style,
-}: Props) => {
-	const Container = onPress ? Pressable : View
-	return (
-		<Container
-			onPress={onPress}
-			disabled={disabled}
-			style={({ pressed }: { pressed?: boolean } = {}) => [
-				styles.row,
-				variantStyles[variant],
-				pressed && !disabled ? styles.pressed : null,
-				disabled ? styles.disabled : null,
-				style,
-			]}
-		>
-			{leftIcon ? (
-				<View style={styles.leftIcon}>
-					<Icon name={leftIcon} color="primary" size={22} />
-				</View>
+}: Props) => (
+	<Pressable
+		onPress={onPress}
+		disabled={disabled || !onPress}
+		style={({ pressed }) => [
+			styles.row,
+			variantStyles[variant],
+			onPress && pressed && !disabled ? styles.pressed : null,
+			disabled ? styles.disabled : null,
+			style,
+		]}
+	>
+		{leftIcon ? (
+			<View style={styles.leftIcon}>
+				<Icon name={leftIcon} color="primary" size={22} />
+			</View>
+		) : null}
+		<Stack flex={1} gap="x3s">
+			<Text variant="subtitle">{title}</Text>
+			{description ? (
+				<Text variant="bodySmall" color="grayDark">
+					{description}
+				</Text>
 			) : null}
-			<Stack flex={1} gap="x3s">
-				<Text variant="subtitle">{title}</Text>
-				{description ? (
-					<Text variant="bodySmall" color="grayDark">
-						{description}
-					</Text>
-				) : null}
-			</Stack>
-			{onPress ? <Icon name={rightIcon} color="grayDark" size={18} /> : null}
-		</Container>
-	)
-}
+		</Stack>
+		{onPress ? <Icon name={rightIcon} color="grayDark" size={18} /> : null}
+	</Pressable>
+)
 
 const styles = StyleSheet.create({
 	row: {

@@ -78,11 +78,11 @@ export type Database = {
           description: string | null
           id: number
           is_isometric: boolean
+          is_weighted: boolean
           move_pattern: Database["public"]["Enums"]["movement_pattern"] | null
           name: string
           type: Database["public"]["Enums"]["exercise_type"]
           user_id: number
-          weighted_only: boolean
         }
         Insert: {
           created_at?: string
@@ -90,11 +90,11 @@ export type Database = {
           description?: string | null
           id?: number
           is_isometric?: boolean
+          is_weighted?: boolean
           move_pattern?: Database["public"]["Enums"]["movement_pattern"] | null
           name: string
           type: Database["public"]["Enums"]["exercise_type"]
           user_id: number
-          weighted_only?: boolean
         }
         Update: {
           created_at?: string
@@ -102,11 +102,11 @@ export type Database = {
           description?: string | null
           id?: number
           is_isometric?: boolean
+          is_weighted?: boolean
           move_pattern?: Database["public"]["Enums"]["movement_pattern"] | null
           name?: string
           type?: Database["public"]["Enums"]["exercise_type"]
           user_id?: number
-          weighted_only?: boolean
         }
         Relationships: [
           {
@@ -649,7 +649,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      auth_user_id: { Args: never; Returns: number }
     }
     Enums: {
       cycle_status: "active" | "completed" | "planned" | "abandoned"

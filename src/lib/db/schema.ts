@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS exercises (
   type TEXT NOT NULL,
   move_pattern TEXT,
   is_isometric INTEGER NOT NULL DEFAULT 0,
-  weighted_only INTEGER NOT NULL DEFAULT 0,
+  is_weighted INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL,
   deleted_at TEXT,
   FOREIGN KEY (user_id) REFERENCES users(id)
