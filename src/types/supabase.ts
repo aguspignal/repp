@@ -548,6 +548,7 @@ export type Database = {
         Row: {
           created_at: string
           id: number
+          logged_progression_name: string
           order: number
           progression_id: number
           reps: number
@@ -557,6 +558,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: number
+          logged_progression_name: string
           order: number
           progression_id: number
           reps: number
@@ -566,6 +568,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
+          logged_progression_name?: string
           order?: number
           progression_id?: number
           reps?: number

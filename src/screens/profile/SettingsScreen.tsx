@@ -1,10 +1,14 @@
+import type { NativeStackScreenProps } from "@react-navigation/native-stack"
 import { useTranslation } from "react-i18next"
 
 import { Button, ListItem, Screen, Stack, Text } from "../../components/ui"
 import { signOut } from "../../hooks/useAuth"
 import { changeLanguage, type SupportedLocale } from "../../i18n"
+import type { ProfileStackParamList } from "../../navigation/types"
 import { useAuthStore } from "../../stores/authStore"
 import { usePreferencesStore, type WeightUnit } from "../../stores/preferencesStore"
+
+type Props = NativeStackScreenProps<ProfileStackParamList, "Settings">
 
 const languages: {
 	code: SupportedLocale
@@ -20,7 +24,7 @@ const units: { value: WeightUnit; labelKey: "settings.weightUnitKg" | "settings.
 		{ value: "lb", labelKey: "settings.weightUnitLb" },
 	]
 
-export const SettingsScreen = () => {
+export const SettingsScreen = ({ navigation }: Props) => {
 	const { t, i18n } = useTranslation()
 	const profile = useAuthStore(s => s.profile)
 	const session = useAuthStore(s => s.session)
@@ -82,6 +86,19 @@ export const SettingsScreen = () => {
 								onPress={() => setWeightUnit(u.value)}
 							/>
 						))}
+					</Stack>
+				</Stack>
+
+				<Stack gap="xs">
+					<Text variant="caption" color="grayDark">
+						{t("settings.data")}
+					</Text>
+					<Stack>
+						<ListItem
+							variant="plain"
+							title={t("settings.deletedExercises")}
+							onPress={() => navigation.navigate("DeletedExercises")}
+						/>
 					</Stack>
 				</Stack>
 

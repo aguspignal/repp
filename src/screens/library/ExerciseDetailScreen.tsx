@@ -1,16 +1,20 @@
 import type { NativeStackScreenProps } from "@react-navigation/native-stack"
-import { useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ActivityIndicator, View } from "react-native"
+import { ActivityIndicator, Alert, Pressable, View } from "react-native"
 
-import { Banner, Screen } from "../../components/ui"
+import { Banner, Icon, Screen } from "../../components/ui"
 import {
 	ExerciseForm,
 	type DraftProgression,
 	type ExerciseFormInitial,
 	type ExerciseFormValues,
 } from "../../components/exercises/ExerciseForm"
-import { useExercise, useUpdateExerciseWithProgressions } from "../../hooks/useExercises"
+import {
+	useDeleteExercise,
+	useExercise,
+	useUpdateExerciseWithProgressions,
+} from "../../hooks/useExercises"
 import { useProgressions } from "../../hooks/useProgressions"
 import type { RootStackParamList } from "../../navigation/types"
 
@@ -28,7 +32,45 @@ export const ExerciseDetailScreen = ({ route, navigation }: Props) => {
 		error: progError,
 	} = useProgressions(exerciseId)
 	const updateExercise = useUpdateExerciseWithProgressions()
+	const deleteExercise = useDeleteExercise()
 	const [formError, setFormError] = useState<string | null>(null)
+
+	const confirmDelete = useCallback(() => {
+		Alert.alert(t("exerciseForm.deleteConfirmTitle"), t("exerciseForm.deleteConfirmMessage"), [
+			{ text: t("common.cancel"), style: "cancel" },
+			{
+				text: t("exerciseForm.deleteAction"),
+				style: "destructive",
+				onPress: async () => {
+					setFormError(null)
+					try {
+						await deleteExercise.mutateAsync(exerciseId)
+						navigation.goBack()
+					} catch (err) {
+						setFormError(
+							err instanceof Error ? err.message : t("exerciseForm.deleteError"),
+						)
+					}
+				},
+			},
+		])
+	}, [deleteExercise, exerciseId, navigation, t])
+
+	useEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<Pressable
+					onPress={confirmDelete}
+					hitSlop={10}
+					disabled={deleteExercise.isPending}
+					accessibilityRole="button"
+					accessibilityLabel={t("exerciseForm.delete")}
+				>
+					<Icon name="trash-outline" color="danger" size={22} />
+				</Pressable>
+			),
+		})
+	}, [navigation, confirmDelete, deleteExercise.isPending, t])
 
 	const initial: ExerciseFormInitial | null = useMemo(() => {
 		if (!exercise) return null

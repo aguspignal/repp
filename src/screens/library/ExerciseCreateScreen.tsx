@@ -26,10 +26,7 @@ export const ExerciseCreateScreen = ({ navigation }: Props) => {
 					is_isometric: values.isIsometric,
 					is_weighted: values.isWeighted,
 				},
-				progressions: values.progressions.map(p => ({
-					name: p.name,
-					order: p.order,
-				})),
+				progressions: values.progressions.map(p => ({ name: p.name })),
 			})
 			navigation.goBack()
 		} catch (err) {

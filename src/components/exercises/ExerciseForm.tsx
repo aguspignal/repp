@@ -28,7 +28,7 @@ export type ExerciseFormValues = {
 	movePattern: MovementPattern | null
 	isIsometric: boolean
 	isWeighted: boolean
-	progressions: { existingId: number | null; name: string; order: number }[]
+	progressions: { existingId: number | null; name: string }[]
 }
 
 export type ExerciseFormInitial = {
@@ -53,9 +53,16 @@ type Props = {
 type FieldErrors = {
 	name?: string
 	type?: string
+	progressions?: string
 }
 
 const tempId = () => Math.random().toString(36).slice(2, 10)
+
+const makeEmptyProgression = (): DraftProgression => ({
+	id: tempId(),
+	existingId: null,
+	name: "",
+})
 
 const isWeightTrackedType = (t: ExerciseType | null) => t === "freeweight" || t === "machine"
 
@@ -77,43 +84,48 @@ export const ExerciseForm = ({
 	)
 	const [isIsometric, setIsIsometric] = useState<boolean>(initial?.isIsometric ?? false)
 	const [isWeighted, setIsWeighted] = useState<boolean>(initial?.isWeighted ?? false)
-	const [progressions, setProgressions] = useState<DraftProgression[]>(
-		initial?.progressions ?? [],
-	)
+	const [progressions, setProgressions] = useState<DraftProgression[]>(() => {
+		const init = initial?.progressions ?? []
+		return init.length > 0 ? init : [makeEmptyProgression()]
+	})
 	const [errors, setErrors] = useState<FieldErrors>({})
 	const submittingRef = useRef(false)
 
 	const weightTracked = isWeightTrackedType(type)
 
-	const addProgression = () =>
-		setProgressions(p => [...p, { id: tempId(), existingId: null, name: "" }])
+	const addProgression = () => setProgressions(p => [makeEmptyProgression(), ...p])
 
 	const updateProgression = (id: string, value: string) =>
 		setProgressions(p => p.map(x => (x.id === id ? { ...x, name: value } : x)))
 
-	const removeProgression = (id: string) => setProgressions(p => p.filter(x => x.id !== id))
+	const removeProgression = (id: string) =>
+		setProgressions(p => (p.length <= 1 ? p : p.filter(x => x.id !== id)))
 
 	const handleSubmit = () => {
 		if (submittingRef.current || submitting) return
 		const fieldErrors: FieldErrors = {}
 		if (!name.trim()) fieldErrors.name = t("exerciseForm.errors.nameRequired")
 		if (!type) fieldErrors.type = t("exerciseForm.errors.typeRequired")
-		setErrors(fieldErrors)
-		if (Object.keys(fieldErrors).length > 0) return
 
 		const trimmedName = name.trim()
 		const submitWeightTracked = isWeightTrackedType(type)
+		const named = progressions.filter(p => p.name.trim().length > 0)
 
-		let cleanProgressions: { existingId: number | null; name: string; order: number }[]
+		if (type && !submitWeightTracked && named.length === 0) {
+			fieldErrors.progressions = t("exerciseForm.errors.progressionsRequired")
+		}
+
+		setErrors(fieldErrors)
+		if (Object.keys(fieldErrors).length > 0) return
+
+		let cleanProgressions: { existingId: number | null; name: string }[]
 		if (submitWeightTracked) {
 			const firstExistingId = progressions.find(p => p.existingId != null)?.existingId ?? null
-			cleanProgressions = [{ existingId: firstExistingId, name: trimmedName, order: 1 }]
+			cleanProgressions = [{ existingId: firstExistingId, name: trimmedName }]
 		} else {
-			const named = progressions.filter(p => p.name.trim().length > 0)
-			cleanProgressions = named.map((p, idx) => ({
+			cleanProgressions = named.map(p => ({
 				existingId: p.existingId,
 				name: p.name.trim(),
-				order: named.length - idx,
 			}))
 		}
 
@@ -148,6 +160,7 @@ export const ExerciseForm = ({
 	}: RenderItemParams<DraftProgression>) => {
 		const index = getIndex() ?? 0
 		const order = progressions.length - index
+		const canRemove = progressions.length > 1
 		return (
 			<ScaleDecorator>
 				<View
@@ -179,12 +192,18 @@ export const ExerciseForm = ({
 					</View>
 					<Pressable
 						onPress={() => removeProgression(item.id)}
+						disabled={!canRemove}
 						hitSlop={8}
 						accessibilityRole="button"
+						accessibilityState={{ disabled: !canRemove }}
 						accessibilityLabel={t("exerciseForm.removeProgression")}
-						style={({ pressed }) => [styles.removeBtn, pressed ? styles.pressed : null]}
+						style={({ pressed }) => [
+							styles.removeBtn,
+							!canRemove ? styles.removeBtnDisabled : null,
+							canRemove && pressed ? styles.pressed : null,
+						]}
 					>
-						<Icon name="close" color="danger" size={20} />
+						<Icon name="close" color={canRemove ? "danger" : "grayDark"} size={20} />
 					</Pressable>
 				</View>
 			</ScaleDecorator>
@@ -268,10 +287,15 @@ export const ExerciseForm = ({
 				<Banner tone="info" message={t("exerciseForm.weightTrackedNote")} />
 			) : (
 				<Stack gap="x3s" style={styles.progressionsLabel}>
-					<Text variant="label">{t("exerciseForm.progressionsLabel")}</Text>
+					<Text variant="label">{`${t("exerciseForm.progressionsLabel")} *`}</Text>
 					<Text variant="caption" color="grayDark">
 						{t("exerciseForm.progressionsHint")}
 					</Text>
+					{errors.progressions ? (
+						<Text variant="caption" color="danger">
+							{errors.progressions}
+						</Text>
+					) : null}
 				</Stack>
 			)}
 		</Stack>
@@ -366,5 +390,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		justifyContent: "center",
 	},
+	removeBtnDisabled: { opacity: 0.4 },
 	pressed: { opacity: 0.7 },
 })

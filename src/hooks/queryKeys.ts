@@ -5,6 +5,7 @@ export const queryKeys = {
 	exercises: {
 		all: (userId: number) => ["exercises", userId] as const,
 		byId: (id: number) => ["exercises", "byId", id] as const,
+		deleted: (userId: number) => ["exercises", userId, "deleted"] as const,
 	},
 	progressions: {
 		byExercise: (exerciseId: number) => ["progressions", "byExercise", exerciseId] as const,
