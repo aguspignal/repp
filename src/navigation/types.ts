@@ -16,19 +16,20 @@ export type LibraryTopTabParamList = {
 	Exercises: undefined
 }
 
-export type StatsStackParamList = {
-	StatsMain: undefined
+export type HistoryStackParamList = {
+	HistoryMain: undefined
 }
 
 export type ProfileStackParamList = {
 	ProfileMain: undefined
 	Settings: undefined
+	DeletedExercises: undefined
 }
 
 export type AppTabParamList = {
 	Home: NavigatorScreenParams<HomeStackParamList>
 	Library: NavigatorScreenParams<LibraryTopTabParamList>
-	Stats: NavigatorScreenParams<StatsStackParamList>
+	History: NavigatorScreenParams<HistoryStackParamList>
 	Profile: NavigatorScreenParams<ProfileStackParamList>
 }
 

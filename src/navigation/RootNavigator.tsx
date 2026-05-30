@@ -15,22 +15,23 @@ import { WelcomeScreen } from "../screens/auth/WelcomeScreen"
 import { HomeScreen } from "../screens/home/HomeScreen"
 import { ExerciseCreateScreen } from "../screens/library/ExerciseCreateScreen"
 import { ExerciseDetailScreen } from "../screens/library/ExerciseDetailScreen"
+import { HistoryScreen } from "../screens/history/HistoryScreen"
 import { ExercisesScreen } from "../screens/library/ExercisesScreen"
 import { RoutinesScreen } from "../screens/library/RoutinesScreen"
+import { DeletedExercisesScreen } from "../screens/profile/DeletedExercisesScreen"
 import { ProfileScreen } from "../screens/profile/ProfileScreen"
 import { SettingsScreen } from "../screens/profile/SettingsScreen"
-import { StatsScreen } from "../screens/stats/StatsScreen"
 import { useAuthStore } from "../stores/authStore"
 import { useOnboardingStore } from "../stores/onboardingStore"
 import { theme } from "../theme"
 import type {
 	AppTabParamList,
 	AuthStackParamList,
+	HistoryStackParamList,
 	HomeStackParamList,
 	LibraryTopTabParamList,
 	ProfileStackParamList,
 	RootStackParamList,
-	StatsStackParamList,
 } from "./types"
 
 const RootStack = createNativeStackNavigator<RootStackParamList>()
@@ -38,7 +39,7 @@ const AuthStack = createNativeStackNavigator<AuthStackParamList>()
 const Tabs = createBottomTabNavigator<AppTabParamList>()
 const HomeStack = createNativeStackNavigator<HomeStackParamList>()
 const LibraryTabs = createMaterialTopTabNavigator<LibraryTopTabParamList>()
-const StatsStack = createNativeStackNavigator<StatsStackParamList>()
+const HistoryStack = createNativeStackNavigator<HistoryStackParamList>()
 const ProfileStack = createNativeStackNavigator<ProfileStackParamList>()
 
 const AuthNavigator = () => {
@@ -117,16 +118,16 @@ const LibraryNavigator = () => {
 	)
 }
 
-const StatsNavigator = () => {
+const HistoryNavigator = () => {
 	const { t } = useTranslation()
 	return (
-		<StatsStack.Navigator screenOptions={stackScreenOptions}>
-			<StatsStack.Screen
-				name="StatsMain"
-				component={StatsScreen}
-				options={{ title: t("stats.title") }}
+		<HistoryStack.Navigator screenOptions={stackScreenOptions}>
+			<HistoryStack.Screen
+				name="HistoryMain"
+				component={HistoryScreen}
+				options={{ title: t("history.title") }}
 			/>
-		</StatsStack.Navigator>
+		</HistoryStack.Navigator>
 	)
 }
 
@@ -156,6 +157,11 @@ const ProfileNavigator = () => {
 				component={SettingsScreen}
 				options={{ title: t("settings.title") }}
 			/>
+			<ProfileStack.Screen
+				name="DeletedExercises"
+				component={DeletedExercisesScreen}
+				options={{ title: t("deletedExercises.title") }}
+			/>
 		</ProfileStack.Navigator>
 	)
 }
@@ -165,7 +171,7 @@ type TabKey = keyof AppTabParamList
 const tabIcons: Record<TabKey, { active: IconName; inactive: IconName }> = {
 	Home: { active: "home", inactive: "home-outline" },
 	Library: { active: "library", inactive: "library-outline" },
-	Stats: { active: "stats-chart", inactive: "stats-chart-outline" },
+	History: { active: "time", inactive: "time-outline" },
 	Profile: { active: "person", inactive: "person-outline" },
 }
 
@@ -199,9 +205,9 @@ const AppTabsNavigator = () => {
 				options={{ title: t("tabs.library") }}
 			/>
 			<Tabs.Screen
-				name="Stats"
-				component={StatsNavigator}
-				options={{ title: t("tabs.stats") }}
+				name="History"
+				component={HistoryNavigator}
+				options={{ title: t("tabs.history") }}
 			/>
 			<Tabs.Screen
 				name="Profile"

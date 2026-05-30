@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next"
 
-import { Card, EmptyState, ListItem, Screen, Stack, Text } from "../../components/ui"
+import { EmptyState, ListItem, Screen, Stack, Text } from "../../components/ui"
 import { useMesocycles } from "../../hooks/useMesocycles"
 import { useRecentWorkouts } from "../../hooks/useWorkouts"
 
-export const StatsScreen = () => {
+export const HistoryScreen = () => {
 	const { t } = useTranslation()
 	const { data: recentWorkouts } = useRecentWorkouts(5)
 	const { data: mesocycles } = useMesocycles()
@@ -19,28 +19,9 @@ export const StatsScreen = () => {
 			<Stack gap="l">
 				<Stack gap="xs">
 					<Text variant="caption" color="grayDark">
-						{t("stats.trendsHeading")}
+						{t("history.recentWorkoutsHeading")}
 					</Text>
 					{hasWorkouts ? (
-						<Card padding="l">
-							<Text variant="body" color="grayDark">
-								{/* TODO: trend charts */}
-							</Text>
-						</Card>
-					) : (
-						<EmptyState
-							icon="trending-up-outline"
-							title={t("stats.noWorkouts")}
-							description={t("stats.noWorkoutsDescription")}
-						/>
-					)}
-				</Stack>
-
-				{hasWorkouts ? (
-					<Stack gap="xs">
-						<Text variant="caption" color="grayDark">
-							{t("stats.recentWorkoutsHeading")}
-						</Text>
 						<Stack gap="xxs">
 							{recentWorkouts!.map(w => (
 								<ListItem
@@ -54,12 +35,18 @@ export const StatsScreen = () => {
 								/>
 							))}
 						</Stack>
-					</Stack>
-				) : null}
+					) : (
+						<EmptyState
+							icon="time-outline"
+							title={t("history.noWorkouts")}
+							description={t("history.noWorkoutsDescription")}
+						/>
+					)}
+				</Stack>
 
 				<Stack gap="xs">
 					<Text variant="caption" color="grayDark">
-						{t("stats.pastMesocyclesHeading")}
+						{t("history.pastMesocyclesHeading")}
 					</Text>
 					{pastMesocycles.length > 0 ? (
 						<Stack gap="xxs">
@@ -74,8 +61,8 @@ export const StatsScreen = () => {
 						</Stack>
 					) : (
 						<EmptyState
-							title={t("stats.noPastMesocycles")}
-							description={t("stats.noPastMesocyclesDescription")}
+							title={t("history.noPastMesocycles")}
+							description={t("history.noPastMesocyclesDescription")}
 						/>
 					)}
 				</Stack>

@@ -11,36 +11,20 @@ export const useAuthListener = (): void => {
 	useEffect(() => {
 		let mounted = true
 
-		const bootstrap = async () => {
-			const { data } = await supabase.auth.getSession()
-			if (!mounted) return
-			setSession(data.session)
-
-			if (data.session?.user) {
-				const { data: profile } = await supabase
-					.from("users")
-					.select("*")
-					.eq("uuid", data.session.user.id)
-					.maybeSingle()
-				if (mounted) setProfile(profile ?? null)
-			}
-			if (mounted) setReady(true)
+		const loadProfile = async (uuid: string) => {
+			const { data } = await supabase.from("users").select("*").eq("uuid", uuid).maybeSingle()
+			if (mounted) setProfile(data ?? null)
 		}
 
-		bootstrap()
-
-		const { data: sub } = supabase.auth.onAuthStateChange(async (_event, session) => {
+		const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+			if (!mounted) return
 			setSession(session)
-			if (!session?.user) {
+			setReady(true)
+			if (session?.user) {
+				loadProfile(session.user.id)
+			} else {
 				setProfile(null)
-				return
 			}
-			const { data: profile } = await supabase
-				.from("users")
-				.select("*")
-				.eq("uuid", session.user.id)
-				.maybeSingle()
-			setProfile(profile ?? null)
 		})
 
 		return () => {

@@ -18,7 +18,7 @@ export const es: Translations = {
 	tabs: {
 		home: "Inicio",
 		library: "Biblioteca",
-		stats: "Estadísticas",
+		history: "Historial",
 		profile: "Perfil",
 	},
 	home: {
@@ -48,11 +48,31 @@ export const es: Translations = {
 		empty: "Aún no tienes ejercicios",
 		emptyDescription: "Agrega ejercicios para empezar a construir rutinas.",
 		add: "Nuevo ejercicio",
+		filters: "Filtros",
+		sortAsc: "A-Z",
+		sortDesc: "Z-A",
+		filterType: "Tipo",
+		filterMovePattern: "Patrón de movimiento",
+		filterIsometric: "Isométrico",
+		filterWeighted: "Con peso",
+		filterAny: "Todos",
+		filterYes: "Sí",
+		filterNo: "No",
+		movePatternNone: "Sin patrón",
+		clearFilters: "Limpiar filtros",
+		noResults: "Sin coincidencias",
+		noResultsDescription: "Ningún ejercicio coincide con los filtros actuales.",
 	},
 	exerciseForm: {
 		title: "Nuevo ejercicio",
 		editTitle: "Editar ejercicio",
 		save: "Guardar cambios",
+		delete: "Eliminar",
+		deleteConfirmTitle: "Eliminar ejercicio",
+		deleteConfirmMessage:
+			"El ejercicio será eliminado. Los entrenamientos registrados que lo usaron conservarán su historial.",
+		deleteAction: "Eliminar",
+		deleteError: "No se pudo eliminar el ejercicio",
 		loadFailed: "No se pudo cargar el ejercicio.",
 		nameLabel: "Nombre",
 		namePlaceholder: "p. ej. Flexión",
@@ -89,17 +109,16 @@ export const es: Translations = {
 		errors: {
 			nameRequired: "El nombre es obligatorio",
 			typeRequired: "Selecciona un tipo",
+			progressionsRequired: "Agrega al menos una progresión",
 			generic: "No se pudo crear el ejercicio",
 		},
 	},
-	stats: {
-		title: "Estadísticas",
+	history: {
+		title: "Historial",
 		recentWorkoutsHeading: "Entrenamientos recientes",
-		trendsHeading: "Tendencias",
 		pastMesocyclesHeading: "Mesociclos anteriores",
 		noWorkouts: "No hay entrenamientos registrados",
-		noWorkoutsDescription:
-			"Cuando registres un entrenamiento, verás tus tendencias e historial aquí.",
+		noWorkoutsDescription: "Cuando registres un entrenamiento, aparecerá aquí.",
 		noPastMesocycles: "Sin mesociclos completados",
 		noPastMesocyclesDescription: "Termina un mesociclo y aparecerá aquí.",
 	},
@@ -123,7 +142,21 @@ export const es: Translations = {
 		weightUnit: "Unidad de peso",
 		weightUnitKg: "Kilogramos (kg)",
 		weightUnitLb: "Libras (lb)",
+		data: "Datos",
+		deletedExercises: "Ejercicios eliminados",
 		signOut: "Cerrar sesión",
+	},
+	deletedExercises: {
+		title: "Ejercicios eliminados",
+		empty: "Sin ejercicios eliminados",
+		emptyDescription:
+			"Los ejercicios que elimines aparecerán aquí para que puedas restaurarlos.",
+		restore: "Restaurar",
+		restoreConfirmTitle: "Restaurar ejercicio",
+		restoreConfirmMessage:
+			"Se restaurará el ejercicio junto con todas sus progresiones que fueron conservadas.",
+		restoreError: "No se pudo restaurar el ejercicio",
+		deletedOn: "Eliminado el {{date}}",
 	},
 	welcome: {
 		tagline:
